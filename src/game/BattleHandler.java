@@ -69,7 +69,7 @@ public class BattleHandler {
                                 W_SHEET_KNIFEATTACK = 16,
                                 W_SHEET_ATTACKFIELD = 546,
                                 W_SHEET_ATTACKCURSORS = 14,
-                                W_SHEET_DAMAGENUMBERS = 30,
+                                W_SHEET_DAMAGENUMBERS = 31,
             
                                 H_BATTLERECT = 141,
                                 H_SHEET_BUTTONS = 42,

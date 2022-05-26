@@ -385,7 +385,7 @@ public class Battle {
         if (attackAnimation.finished() && System.currentTimeMillis() - 
                 lastStateSwitch >= delayStateSwitchMS) {
             state = b.ENEMY_TAKING_DAMAGE;
-            int damage = 151;
+            int damage = 2049;
             enemies[enemySelected].getHPBar().slideToNumerator(
                     enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
@@ -437,10 +437,29 @@ public class Battle {
         
     }
     
+    private Sprite getNumberOneSprite( ) {
+        int[] pixels = b.DAMAGE_NUMBERS.getSprite(1, 0).getPixels();
+        int[] newPixels = new int[570];
+        int counter1 = 0, counter2 = 0;
+        for (int i = 0; i < pixels.length; i++) {
+            counter1++;
+            if (counter1 == 31) counter1 = 0;
+            if (counter1 > 11) {
+                newPixels[counter2] = pixels[i + 1];
+                counter2++;
+            }
+        }
+        return new Sprite(newPixels, 19, 30);
+    }
+    
     private Sprite getDamageNumberSprite( int damage ) {
         
-        if (damage < 10)
+        if (damage < 10) {
+            if (damage == 1) {
+                return getNumberOneSprite();
+            }
             return b.DAMAGE_NUMBERS.getSprite(damage, 0);
+        }
         
         String damageString = String.valueOf(damage);
         Sprite[] numbers = new Sprite[damageString.length()];
@@ -448,9 +467,11 @@ public class Battle {
             int x = Integer.parseInt(
                     new String(new char[] {damageString.charAt(i)}));
             numbers[i] = b.DAMAGE_NUMBERS.getSprite(x, 0);
+            if (damageString.charAt(i) == '1') numbers[i] = getNumberOneSprite();
         }
         
-        //for (int pixel : numbers[0].getPixels()) System.out.println(pixel);
+        return new Sprite(numbers);
+        /*
         int[] pixels = new int[30 * 30 * numbers.length];
         for (int i = 0; i < 30; i++) { // for each row
             int[] row = new int[30 * numbers.length];
@@ -463,13 +484,12 @@ public class Battle {
                     row[(j * 30) + k] = subrow[k];
                 }
             }
-            //for (int r : row) System.out.println("row " + i + ": " + r);
             for (int k = 0; k < row.length; k++) {
                 pixels[(i * row.length) + k] = row[k];
             }
         }
         return new Sprite(pixels, 30 * numbers.length, 30);
-        
+        */
     }
     
     private void selectTarget( boolean returning ) {
