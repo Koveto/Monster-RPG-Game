@@ -9,6 +9,7 @@ import game.gameObjects.PathedAnimatedSpritedObject;
 import game.gameObjects.Player;
 import game.gameObjects.Rectangle;
 import game.gameObjects.SpritedObject;
+import java.awt.BorderLayout;
 import java.awt.Color;
 
 /**
@@ -385,16 +386,20 @@ public class Battle {
         if (attackAnimation.finished() && System.currentTimeMillis() - 
                 lastStateSwitch >= delayStateSwitchMS) {
             state = b.ENEMY_TAKING_DAMAGE;
-            int damage = 5;
+            int damage = 15;
             enemies[enemySelected].getHPBar().slideToNumerator(
                     enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
+            
             int x = enemies[enemySelected].getHPBar().getX();
             int y = enemies[enemySelected].getHPBar().getY() - 3 -
                     b.H_SHEET_DAMAGENUMBERS;
             damageNumber.getPath().startAt(x, y);
             damageNumber.setX(x);
             damageNumber.setY(y);
+            
+            damageNumber.setSprite(getDamageNumberSprite(damage));
+            
             damageNumber.show();
             lastStateSwitch = System.currentTimeMillis();
         } else if (!attackAnimation.finished())
@@ -430,6 +435,49 @@ public class Battle {
         else if (!mercyButton.isSpriteA()) buttonSelected = b.MERCY_BUTTON;
         
         return buttonSelected;
+        
+    }
+    
+    private Sprite getDamageNumberSprite( int damage ) {
+        
+        if (damage < 10)
+            return b.DAMAGE_NUMBERS.getSprite(damage, 0);
+        
+        String damageString = String.valueOf(damage);
+        Sprite[] numbers = new Sprite[damageString.length()];
+        for (int i = 0; i < damageString.length(); i++) {
+            int x = Integer.parseInt(
+                    new String(new char[] {damageString.charAt(i)}));
+            numbers[i] = b.DAMAGE_NUMBERS.getSprite(x, 0);
+        }
+        
+        //for (int pixel : numbers[0].getPixels()) System.out.println(pixel);
+        int[] pixels = new int[30 * 30 * numbers.length];
+        for (int i = 0; i < 30; i++) { // for each row
+            int[] row = new int[30 * numbers.length];
+            for (int j = 0; j < numbers.length; j++) { // for each number, get row
+                int[] subrow = new int[30];
+                for (int k = 0; k < subrow.length; k++) {
+                    /*if (j == 0 && k == 0) {
+                        System.out.println("row " + j);
+                        for (int pixel : numbers[j].getPixels()) System.out.println(pixel);
+                    }*/
+                    subrow[k] = numbers[j].getPixels()[k + (30 * j)];
+                    /*if (j == 0 && k == subrow.length) {
+                        System.out.println("subrow:");
+                        for (int subrowA : subrow) System.out.println(subrowA);
+                    }*/
+                }
+                for (int k = 0; k < subrow.length; k++) {
+                    row[(j * 30) + k] = subrow[k];
+                }
+            }
+            //for (int r : row) System.out.println("row " + i + ": " + r);
+            for (int k = 0; k < row.length; k++) {
+                pixels[(i * row.length) + k] = row[k];
+            }
+        }
+        return new Sprite(pixels, 30 * numbers.length, 30);
         
     }
     

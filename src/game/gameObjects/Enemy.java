@@ -185,7 +185,7 @@ public class Enemy extends Battler {
                 new CompoundPath( xPosition, y, true,
                     new Path("0", "t", xPosition, y, 0, 10, 0.1, false),
                     new Path("0", "-1 * t", xPosition, y, 0, 10, 0.1, false)),
-                xPosition, y, 370, 370, 80 + y, 
+                xPosition, y, 10, 370, 80 + y, 
                 370, false, true);
         e.getSpritedObject().animate();
         e.getSpritedObject().startMoving();
