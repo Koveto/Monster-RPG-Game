@@ -69,12 +69,14 @@ public class BattleHandler {
                                 W_SHEET_KNIFEATTACK = 16,
                                 W_SHEET_ATTACKFIELD = 546,
                                 W_SHEET_ATTACKCURSORS = 14,
+                                W_SHEET_DAMAGENUMBERS = 30,
             
                                 H_BATTLERECT = 141,
                                 H_SHEET_BUTTONS = 42,
                                 H_SHEET_KNIFEATTACK = 66,
                                 H_SHEET_ATTACKFIELD = 115,
                                 H_SHEET_ATTACKCURSORS = 128,
+                                H_SHEET_DAMAGENUMBERS = 30,
 
                                 TIMES_TO_DARKEN = 6,
                                 TIMES_TO_BRIGHTEN = 6,
@@ -96,6 +98,7 @@ public class BattleHandler {
                                 PATH_KNIFEATTACK = "ss\\knifeAttack.png",
                                 PATH_ATTACKFIELD = "ss\\battleBar.png",
                                 PATH_ATTACKCURSORS = "ss\\attackCursors.png",
+                                PATH_DAMAGENUMBERS = "ss\\damageNums.png",
             
                                 TEXT_DEFAULTFLAVOR = "Negative b plus or minus the /Bsquare root of b squared/B minus four a c all over two a.";
     
@@ -113,7 +116,11 @@ public class BattleHandler {
     
                                         ATTACK_CURSORS = new SpriteSheet(
                                 Game.loadImage(PATH_ATTACKCURSORS), 
-                                W_SHEET_ATTACKCURSORS, H_SHEET_ATTACKCURSORS);
+                                W_SHEET_ATTACKCURSORS, H_SHEET_ATTACKCURSORS),
+                                
+                                        DAMAGE_NUMBERS = new SpriteSheet(
+                                Game.loadImage(PATH_DAMAGENUMBERS),
+                                W_SHEET_DAMAGENUMBERS, H_SHEET_DAMAGENUMBERS);
     
     public DoublySpritedObject newButton( int button ) {
         

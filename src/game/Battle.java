@@ -36,7 +36,7 @@ public class Battle {
     
     private AnimatedSpritedObject attackAnimation;
     private SpritedObject attackField;
-    private PathedAnimatedSpritedObject attackCursor;
+    private PathedAnimatedSpritedObject attackCursor, damageNumber;
     
     private String[] initialOptions, extraOptions;
     private Player player;
@@ -103,6 +103,18 @@ public class Battle {
                         b.Y_ATTACKCURSOR, 
                         b.DELAY_ATTACKCURSORPATH, true),
             b.DELAY_ATTACKCURSORANIM, false, true);
+        
+        this.damageNumber = new PathedAnimatedSpritedObject(
+            new Sprite[] {  b.DAMAGE_NUMBERS.getSprite(0, 0) },
+            new Path(   "0",
+                        "t",
+                        0,
+                        0,
+                        0,
+                        0,
+                        0, true),
+            1, false, true);
+        damageNumber.startMoving();
         
         this.initialOptions = new String[0];
         this.extraOptions = new String[0];
@@ -306,7 +318,8 @@ public class Battle {
         
         GameObject[] temp = new GameObject[] {
             backgroundImage, fightButton, actButton, itemButton, mercyButton,
-            player, player.getHPBar(), attackField, battleRect, attackCursor};
+            player, player.getHPBar(), attackField, battleRect, attackCursor,
+            damageNumber};
         GameObject[] objects = new GameObject[temp.length + (2 * enemies.length) + backgroundRects.length + 1];
         for (int i = 0; i < temp.length; i++) {
             objects[i] = temp[i];
