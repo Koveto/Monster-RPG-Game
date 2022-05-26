@@ -9,7 +9,6 @@ import game.gameObjects.PathedAnimatedSpritedObject;
 import game.gameObjects.Player;
 import game.gameObjects.Rectangle;
 import game.gameObjects.SpritedObject;
-import java.awt.BorderLayout;
 import java.awt.Color;
 
 /**
@@ -386,7 +385,7 @@ public class Battle {
         if (attackAnimation.finished() && System.currentTimeMillis() - 
                 lastStateSwitch >= delayStateSwitchMS) {
             state = b.ENEMY_TAKING_DAMAGE;
-            int damage = 15;
+            int damage = 151;
             enemies[enemySelected].getHPBar().slideToNumerator(
                     enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
@@ -458,15 +457,7 @@ public class Battle {
             for (int j = 0; j < numbers.length; j++) { // for each number, get row
                 int[] subrow = new int[30];
                 for (int k = 0; k < subrow.length; k++) {
-                    /*if (j == 0 && k == 0) {
-                        System.out.println("row " + j);
-                        for (int pixel : numbers[j].getPixels()) System.out.println(pixel);
-                    }*/
-                    subrow[k] = numbers[j].getPixels()[k + (30 * j)];
-                    /*if (j == 0 && k == subrow.length) {
-                        System.out.println("subrow:");
-                        for (int subrowA : subrow) System.out.println(subrowA);
-                    }*/
+                    subrow[k] = numbers[j].getPixels()[k + (30 * i)];
                 }
                 for (int k = 0; k < subrow.length; k++) {
                     row[(j * 30) + k] = subrow[k];
