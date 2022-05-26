@@ -1,6 +1,5 @@
 package game.gameObjects;
 
-import game.AbstractPath;
 import game.CompoundPath;
 import game.CompoundPathQueue;
 import game.Game;

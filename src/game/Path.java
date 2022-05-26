@@ -3,15 +3,16 @@ package game;
 import game.shuntingyardresources.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
- 
 
 /**
  * Path
  * @author Kobe Goodwin
- * @version 5/20/2022
+ * @version 5/25/2022
  * 
- * A two-dimensional path parameterized in the form r(t) that travels
- * from a start t value to an end t value.
+ * A two-dimensional path parameterized in the form r(t) with respect to an
+ * original x and y position that travels from a start to an end t value. For
+ * example, consider the vector r(t) = (5, t). At t = 0, r(0) = (5, 0). With
+ * respect to the original point P = (10, 10), the path at t = 0 is (15, 10).
  */
 public class Path implements MovingPath {
     
@@ -20,8 +21,50 @@ public class Path implements MovingPath {
     private int originX, originY;
     private LinkedQueue<String> x, y;  // postfix equations
     
-    public Path( String xComponent, String yComponent, int respectToX, int respectToY, double startT, 
+    /**
+     * Constructor. Path travels with respect to the origin, (0, 0). In this
+     * case, the return values of xComponent() and getX() are equal. The return 
+     * values of yComponent() and getY() are also equal.
+     * @param xComponent    function of x as a String. In the path r(t) =
+     *      (-t, 5), xComponent is "-1 * t". Operators and operators must be
+     *      separated by spaces. Grouping symbols are supported. Trigonometric
+     *      functions, logarithms, and exponents are not supported.
+     * @param yComponent    function of y as a String. In the path r(t) =
+     *      (5, -t), yComponent is "-1 * t". Operators and operators must be
+     *      separated by spaces. Grouping symbols are supported. Trigonometric
+     *      functions, logarithms, and exponents are not supported.
+     * @param startT        t value for which to begin traveling.
+     * @param endT          t value for which to end traveling.
+     * @param increment     number to increment t every frame.
+     * @param loop          true to loop Path from the start when finished.
+     */
+    public Path( String xComponent, String yComponent, double startT, 
             double endT, double increment, boolean loop ) {
+        
+        this(xComponent, yComponent, 0, 0, startT, endT, increment, loop);
+    
+    }
+    
+    /**
+     * Constructor.
+     * @param xComponent    function of x as a String. In the path r(t) =
+     *      (-t, 5), xComponent is "-1 * t". Operators and operators must be
+     *      separated by spaces. Grouping symbols are supported. Trigonometric
+     *      functions, logarithms, and exponents are not supported.
+     * @param yComponent    function of y as a String. In the path r(t) =
+     *      (5, -t), yComponent is "-1 * t". Operators and operators must be
+     *      separated by spaces. Grouping symbols are supported. Trigonometric
+     *      functions, logarithms, and exponents are not supported.
+     * @param respectToX    x value to travel with respect to.
+     * @param respectToY    y value to travel with respect to.
+     * @param startT        t value for which to begin traveling.
+     * @param endT          t value for which to end traveling.
+     * @param increment     number to increment t every frame.
+     * @param loop          true to loop Path from the start when finished.
+     */
+    public Path( String xComponent, String yComponent, int respectToX, 
+            int respectToY, double startT, double endT, double increment, 
+            boolean loop ) {
         
         this.t = startT;
         this.startT = startT;
@@ -38,91 +81,136 @@ public class Path implements MovingPath {
     }
     
     /**
-     * Stops the movement of the path
+     * Stops the movement of the path.
      */
+    @Override
     public void stop( ) { moving = false; }
     
     /**
-     * Starts the movement of the path
+     * Starts the movement of the path.
      */
+    @Override
     public void start( ) { moving = true; }
     
     /**
-     * Accessor for time
-     * @return  time
+     * Accessor for t value.
+     * @return  current t value
      */
     public double getT( ) { return t; }
     
     /**
-     * Accessor for start time
+     * Accessor for start time, the t value at which the Path starts moving.
      * @return  start time
      */
     public double getStartT( ) { return startT; }
     
     /**
-     * Accessor for end time
+     * Accessor for end time, the t value for which the Path stops moving.
      * @return  end time
      */
     public double getEndT( ) { return endT; }
     
+    /**
+     * Accessor for original x position. For example, a sprite at (5, 10)
+     * along the path r(t) = (t, 0) would be have an original x position of 5.
+     * @return  original x position
+     */
     public int getOriginX( ) { return originX; }
     
+    /**
+     * Accessor for original y position. For example, a sprite at (5, 10)
+     * along the path r(t) = (t, 0) would be have an original y position of 10.
+     * @return  original y position
+     */
     public int getOriginY( ) { return originY; }
     
+    /**
+     * Mutator for original x position.
+     * @param originX   new x position to move with respect to.
+     */
     public void setOriginX( int originX ) { this.originX = originX; }
     
+    /**
+     * Mutator for original y position.
+     * @param originY   new y position to move with respect to.
+     */
     public void setOriginY( int originY ) { this.originY = originY; }
     
     /**
-     * Evaluates if the path is moving
+     * Evaluates if the path is moving.
      * @return  true if moving, false if not
      */
+    @Override
     public boolean isMoving( ) { return moving; }
     
-    public boolean isFinished( ) { return t >= endT && !loop && endT != Double.NaN; }
-    
-    public void restart( ) { t = 0; }
-    
     /**
-     * Evaluates the x component of the path with the current t value.
-     * @return  x component of r(t) at current t.
+     * Evaluates if the path is finished traveling. This method will never
+     * return true for a path that loops.
+     * @return  true if finished traveling, false if not.
      */
-    public double xComponent( ) {
+    @Override
+    public boolean isFinished( ) { 
         
-        return PostfixCalculator.evaluatePostfix(x, "t", getT());
-        //return t;
-        //return 200 + (50 * Math.cos(t));
-        //return 200 + ((100 / (Math.pow(t, 2) + 1)) - 1);
+        return t >= endT && !loop && endT != Double.NaN;
         
     }
     
     /**
-     * Evaluates the y component of the path with the current t value.
+     * Sets the t value to the starting t value. 
+     */
+    public void restart( ) { t = startT; }
+    
+    /**
+     * Evaluates the x component of the path with the current t value. For
+     * example, the path r(t) = (8 * t, 5) where t = 1 will return 8.
+     * @return  x component of r(t) at current t.
+     */
+    @Override
+    public double xComponent( ) {
+        
+        return PostfixCalculator.evaluatePostfix(x, "t", getT());
+        
+    }
+    
+    /**
+     * Evaluates the y component of the path with the current t value. For
+     * example, the path r(t) = (5, 8 * t) where t = 1 will return 8.
      * @return  y component of r(t) at current t.
      */
     public double yComponent( ) {
         
         return PostfixCalculator.evaluatePostfix(y, "t", getT());
-        //return 200 + (50 * Math.sin(t));
-        //return 200 + (100 * t) / (Math.pow(t, 2) + 1);
         
     }
     
-    public int xWithRespectToOrigin( ) {
+    /**
+     * Accessor for the x position of the Path. Equal to the sum of xComponent()
+     * and getOriginX().
+     * @return  x position
+     */
+    @Override
+    public int getX( ) {
         
         return originX + (int) xComponent();
         
     }
     
-    public int yWithRespectToOrigin( ) {
+    /**
+     * Accessor for the y position of the Path. Equal to the sum of yComponent()
+     * and getOriginY().
+     * @return  y position
+     */
+    @Override
+    public int getY( ) {
         
         return originY + (int) yComponent();
         
     }
     
     /**
-     * Increment the t value.
+     * Increments the t value by the increment value.
      */
+    @Override
     public void increment( ) {
         
         if (isFinished())

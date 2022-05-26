@@ -1,6 +1,5 @@
 package game.gameObjects;
 
-import game.AbstractPath;
 import game.Game;
 import game.MovingPath;
 import game.Path;
@@ -26,8 +25,8 @@ public class PathedAnimatedSpritedObject extends AnimatedSpritedObject {
         
         super(sprites, 0, 0, timePerSwitchMillis, hideWhenFinished, loopAnimation);
         this.path = path;
-        setX(path.xWithRespectToOrigin());
-        setY(path.yWithRespectToOrigin());
+        setX(path.getX());
+        setY(path.getY());
         path.increment();
         path.stop();
         
@@ -56,8 +55,8 @@ public class PathedAnimatedSpritedObject extends AnimatedSpritedObject {
         
         super.update(g);
         if (path.isMoving()) {
-            setX(path.xWithRespectToOrigin());
-            setY(path.yWithRespectToOrigin());
+            setX(path.getX());
+            setY(path.getY());
             path.increment();
         }
         
