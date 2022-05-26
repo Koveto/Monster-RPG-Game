@@ -3,7 +3,7 @@ package game;
 /**
  * MovingPath
  * @author Kobe Goodwin
- * @version 5/25/2022
+ * @version 5/26/2022
  * 
  * A path that moves along two dimensions over a period of time t. It can be
  * started and stopped, and finishes when an end t value is reached. The path
@@ -20,6 +20,13 @@ public interface MovingPath {
      * Starts the movement of the path
      */
     void start( );
+    
+    /**
+     * Starts the movement of the path at the point (x, y).
+     * @param x     X Position
+     * @param y     Y Position
+     */
+    void startAt( int x, int y );
     
     /**
      * Evaluates if the path is moving

@@ -1,12 +1,6 @@
 package game;
 
-import game.Encounter;
-import game.Game;
-import game.SpriteSheet;
-import game.Text;
-import game.TextHandler;
 import game.gameObjects.AnimatedSpritedObject;
-import game.gameObjects.BattleBox;
 import game.gameObjects.DoublySpritedObject;
 import game.gameObjects.Enemy;
 import game.gameObjects.GameObject;
@@ -20,7 +14,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 5/20/2022
+ * @version 5/26/2022
  * 
  * Handles the properties of a battle.
  */
@@ -106,15 +100,12 @@ public class Battle {
         
         this.damageNumber = new PathedAnimatedSpritedObject(
             new Sprite[] {  b.DAMAGE_NUMBERS.getSprite(0, 0) },
-            new Path(   "0",
-                        "t",
-                        0,
-                        0,
-                        0,
-                        0,
-                        0, true),
+            new CompoundPath(false, 
+                new Path("0", "-2 * t", 0, 6, 0.5, false),
+                new Path("0", "2 * t", 0, 8, 0.5, false),
+                new Path("0", "-2 * t", 0, 2, 0.5, false)),
             1, false, true);
-        damageNumber.startMoving();
+        this.damageNumber.hide();
         
         this.initialOptions = new String[0];
         this.extraOptions = new String[0];
@@ -318,9 +309,8 @@ public class Battle {
         
         GameObject[] temp = new GameObject[] {
             backgroundImage, fightButton, actButton, itemButton, mercyButton,
-            player, player.getHPBar(), attackField, battleRect, attackCursor,
-            damageNumber};
-        GameObject[] objects = new GameObject[temp.length + (2 * enemies.length) + backgroundRects.length + 1];
+            player, player.getHPBar(), attackField, battleRect, attackCursor};
+        GameObject[] objects = new GameObject[temp.length + (2 * enemies.length) + backgroundRects.length + 2];
         for (int i = 0; i < temp.length; i++) {
             objects[i] = temp[i];
         }
@@ -330,8 +320,11 @@ public class Battle {
         for (int i = 0; i < enemies.length; i++) {
             objects[i + temp.length + backgroundRects.length] = enemies[i];
         }
+        objects[objects.length - 2 - enemies.length] = damageNumber;
         for (int i = 0; i < enemies.length; i++) {
-            objects[i + temp.length + backgroundRects.length + enemies.length] = enemies[i].getHPBar();
+            objects[
+                i + temp.length + backgroundRects.length + enemies.length + 1] 
+                    = enemies[i].getHPBar();
         }
         objects[objects.length - 1] = attackAnimation;
         
@@ -389,10 +382,20 @@ public class Battle {
     
     public void checkIfAttackAnimationIsFinished( ) {
         
-        if (attackAnimation.finished() && System.currentTimeMillis() - lastStateSwitch >= delayStateSwitchMS) {
+        if (attackAnimation.finished() && System.currentTimeMillis() - 
+                lastStateSwitch >= delayStateSwitchMS) {
             state = b.ENEMY_TAKING_DAMAGE;
-            enemies[enemySelected].getHPBar().slideToNumerator(2);
+            int damage = 5;
+            enemies[enemySelected].getHPBar().slideToNumerator(
+                    enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
+            int x = enemies[enemySelected].getHPBar().getX();
+            int y = enemies[enemySelected].getHPBar().getY() - 3 -
+                    b.H_SHEET_DAMAGENUMBERS;
+            damageNumber.getPath().startAt(x, y);
+            damageNumber.setX(x);
+            damageNumber.setY(y);
+            damageNumber.show();
             lastStateSwitch = System.currentTimeMillis();
         } else if (!attackAnimation.finished())
             lastStateSwitch = System.currentTimeMillis();
