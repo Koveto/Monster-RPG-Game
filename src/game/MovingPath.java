@@ -1,11 +1,13 @@
 package game;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 /**
  * MovingPath
  * @author Kobe Goodwin
+ * @version 5/25/2022
+ * 
+ * A path that moves along two dimensions over a period of time t. It can be
+ * started and stopped, and finishes when an end t value is reached. The path
+ * moves with respect to some original point.
  */
 public interface MovingPath {
     
@@ -25,6 +27,10 @@ public interface MovingPath {
      */
     boolean isMoving( );
     
+    /**
+     * Evaluates if the path is finished traveling.
+     * @return  true if finished, false if not
+     */
     boolean isFinished( );
     
     /**
@@ -39,9 +45,17 @@ public interface MovingPath {
      */
     double yComponent( );
     
-    int xWithRespectToOrigin( );
+    /**
+     * Accessor for absolute x position.
+     * @return  absolute x position
+     */
+    int getX( );
     
-    int yWithRespectToOrigin( );
+    /**
+     * Accessor for absolute y position.
+     * @return  absolute y position
+     */
+    int getY( );
     
     /**
      * Increment the t value.
