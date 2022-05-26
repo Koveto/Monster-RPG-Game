@@ -75,6 +75,7 @@ public class Enemy extends Battler {
         
         takingDamage = true;
         hurtPaths = getHurtPathQueue(pathedSprite.getX(), pathedSprite.getY());
+        hurtPaths.start();
         pathedSprite.setPath(hurtPaths.get());
         pathedSprite.pause();
         pathedSprite.setSprite(hurtSprite);
