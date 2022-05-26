@@ -1,12 +1,6 @@
 package game;
 
-import game.Encounter;
-import game.Game;
-import game.SpriteSheet;
-import game.Text;
-import game.TextHandler;
 import game.gameObjects.AnimatedSpritedObject;
-import game.gameObjects.BattleBox;
 import game.gameObjects.DoublySpritedObject;
 import game.gameObjects.Enemy;
 import game.gameObjects.GameObject;
@@ -20,7 +14,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 5/20/2022
+ * @version 5/26/2022
  * 
  * Handles the properties of a battle.
  */
@@ -36,7 +30,7 @@ public class Battle {
     
     private AnimatedSpritedObject attackAnimation;
     private SpritedObject attackField;
-    private PathedAnimatedSpritedObject attackCursor;
+    private PathedAnimatedSpritedObject attackCursor, damageNumber;
     
     private String[] initialOptions, extraOptions;
     private Player player;
@@ -103,6 +97,15 @@ public class Battle {
                         b.Y_ATTACKCURSOR, 
                         b.DELAY_ATTACKCURSORPATH, true),
             b.DELAY_ATTACKCURSORANIM, false, true);
+        
+        this.damageNumber = new PathedAnimatedSpritedObject(
+            new Sprite[] {  b.DAMAGE_NUMBERS.getSprite(0, 0) },
+            new CompoundPath(false, 
+                new Path("0", "-2 * t", 0, 6, 0.5, false),
+                new Path("0", "2 * t", 0, 8, 0.5, false),
+                new Path("0", "-2 * t", 0, 2, 0.5, false)),
+            1, false, true);
+        this.damageNumber.hide();
         
         this.initialOptions = new String[0];
         this.extraOptions = new String[0];
@@ -307,7 +310,7 @@ public class Battle {
         GameObject[] temp = new GameObject[] {
             backgroundImage, fightButton, actButton, itemButton, mercyButton,
             player, player.getHPBar(), attackField, battleRect, attackCursor};
-        GameObject[] objects = new GameObject[temp.length + (2 * enemies.length) + backgroundRects.length + 1];
+        GameObject[] objects = new GameObject[temp.length + (2 * enemies.length) + backgroundRects.length + 2];
         for (int i = 0; i < temp.length; i++) {
             objects[i] = temp[i];
         }
@@ -317,8 +320,11 @@ public class Battle {
         for (int i = 0; i < enemies.length; i++) {
             objects[i + temp.length + backgroundRects.length] = enemies[i];
         }
+        objects[objects.length - 2 - enemies.length] = damageNumber;
         for (int i = 0; i < enemies.length; i++) {
-            objects[i + temp.length + backgroundRects.length + enemies.length] = enemies[i].getHPBar();
+            objects[
+                i + temp.length + backgroundRects.length + enemies.length + 1] 
+                    = enemies[i].getHPBar();
         }
         objects[objects.length - 1] = attackAnimation;
         
@@ -376,10 +382,24 @@ public class Battle {
     
     public void checkIfAttackAnimationIsFinished( ) {
         
-        if (attackAnimation.finished() && System.currentTimeMillis() - lastStateSwitch >= delayStateSwitchMS) {
+        if (attackAnimation.finished() && System.currentTimeMillis() - 
+                lastStateSwitch >= delayStateSwitchMS) {
             state = b.ENEMY_TAKING_DAMAGE;
-            enemies[enemySelected].getHPBar().slideToNumerator(2);
+            int damage = 121;
+            enemies[enemySelected].getHPBar().slideToNumerator(
+                    enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
+            
+            damageNumber.setSprite(getDamageNumberSprite(damage));
+            
+            int x = enemies[enemySelected].getHPBar().getX() + ((enemies[enemySelected].getHPBar().getWidth() - damageNumber.getSprite().getWidth()) / 2);
+            int y = enemies[enemySelected].getHPBar().getY() - 3 -
+                    b.H_SHEET_DAMAGENUMBERS;
+            damageNumber.getPath().startAt(x, y);
+            damageNumber.setX(x);
+            damageNumber.setY(y);
+            
+            damageNumber.show();
             lastStateSwitch = System.currentTimeMillis();
         } else if (!attackAnimation.finished())
             lastStateSwitch = System.currentTimeMillis();
@@ -415,6 +435,61 @@ public class Battle {
         
         return buttonSelected;
         
+    }
+    
+    private Sprite getNumberOneSprite( ) {
+        int[] pixels = b.DAMAGE_NUMBERS.getSprite(1, 0).getPixels();
+        int[] newPixels = new int[570];
+        int counter1 = 0, counter2 = 0;
+        for (int i = 0; i < pixels.length; i++) {
+            counter1++;
+            if (counter1 == 31) counter1 = 0;
+            if (counter1 > 11) {
+                newPixels[counter2] = pixels[i + 1];
+                counter2++;
+            }
+        }
+        return new Sprite(newPixels, 19, 30);
+    }
+    
+    private Sprite getDamageNumberSprite( int damage ) {
+        
+        if (damage < 10) {
+            if (damage == 1) {
+                return getNumberOneSprite();
+            }
+            return b.DAMAGE_NUMBERS.getSprite(damage, 0);
+        }
+        
+        String damageString = String.valueOf(damage);
+        Sprite[] numbers = new Sprite[damageString.length()];
+        for (int i = 0; i < damageString.length(); i++) {
+            int x = Integer.parseInt(
+                    new String(new char[] {damageString.charAt(i)}));
+            numbers[i] = b.DAMAGE_NUMBERS.getSprite(x, 0);
+            if (damageString.charAt(i) == '1') numbers[i] = getNumberOneSprite();
+        }
+        
+        return new Sprite(numbers);
+        /*
+        int[] pixels = new int[30 * 30 * numbers.length];
+        for (int i = 0; i < 30; i++) { // for each row
+            int[] row = new int[30 * numbers.length];
+            for (int j = 0; j < numbers.length; j++) { // for each number, get row
+                int[] subrow = new int[30];
+                for (int k = 0; k < subrow.length; k++) {
+                    subrow[k] = numbers[j].getPixels()[k + (30 * i)];
+                }
+                for (int k = 0; k < subrow.length; k++) {
+                    row[(j * 30) + k] = subrow[k];
+                }
+            }
+            for (int k = 0; k < row.length; k++) {
+                pixels[(i * row.length) + k] = row[k];
+            }
+        }
+        return new Sprite(pixels, 30 * numbers.length, 30);
+        */
     }
     
     private void selectTarget( boolean returning ) {

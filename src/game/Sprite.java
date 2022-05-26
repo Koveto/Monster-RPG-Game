@@ -61,6 +61,53 @@ public class Sprite {
     }
     
     /**
+     * Constructor
+     * @param sprites   Sprites to merge horizontally to create one total Sprite 
+     */
+    public Sprite( Sprite... sprites ) {
+        
+        int w = 0, h = 0;
+        for (Sprite s : sprites) {
+            w += s.getWidth();
+            if (s.getHeight() > h) h = s.getHeight();
+        }
+        
+        int[] spritePixels = new int[w * h * sprites.length];
+        for (int i = 0; i < spritePixels.length; i++) {
+            spritePixels[i] = Game.ALPHA;
+        }
+        
+        for (int rowIndex = 0; rowIndex < h; rowIndex++) {
+            int[] rowPixels = new int[w];
+            for (int spriteIndex = 0; spriteIndex < sprites.length; spriteIndex++) { 
+                int[] subrow = new int[sprites[spriteIndex].getWidth()];
+                for (int k = 0; k < subrow.length; k++) {
+                    subrow[k] = sprites[spriteIndex].getPixels()
+                            [k + (sprites[spriteIndex].getWidth() * rowIndex)];
+                }
+                for (int k = 0; k < subrow.length; k++) {
+                    if (spriteIndex == 0)
+                        rowPixels[k] = subrow[k];
+                    else {
+                        int offsetWidth = 0;
+                        for (int l = 0; l < spriteIndex; l++) {
+                            offsetWidth += sprites[l].getWidth();
+                        }
+                        rowPixels[offsetWidth + k] = subrow[k];
+                    }
+                }
+            }
+            for (int k = 0; k < rowPixels.length; k++) {
+                spritePixels[(rowIndex * rowPixels.length) + k] = rowPixels[k];
+            }
+        }
+        this.pixels = spritePixels;
+        this.width = w;
+        this.height = h;
+        
+    }
+    
+    /**
      * Accessor for Width
      * @return  Width
      */

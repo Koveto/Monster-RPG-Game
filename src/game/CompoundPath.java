@@ -3,7 +3,7 @@ package game;
 /**
  * CompoundPath
  * @author Kobe Goodwin
- * @version 5/25/2022
+ * @version 5/26/2022
  * 
  * A Path composed of one or more subpaths. When one subpath finishes its
  * motion, the next begins its motion with respect to the end point of the
@@ -23,10 +23,9 @@ package game;
 public class CompoundPath implements MovingPath {
     
     private final Path[] PATHS;
-    private final int ORIGIN_X, ORIGIN_Y;
     private final boolean LOOP;
     
-    private int current, respectToX, respectToY;
+    private int current, originX, originY, respectToX, respectToY;
     private boolean moving, finished;
     
     /**
@@ -48,12 +47,31 @@ public class CompoundPath implements MovingPath {
      * @param paths     Subpaths in the order to traverse them.
      */
     public CompoundPath(int originX, int originY, boolean loop, Path... paths ) {
-        this.ORIGIN_X = originX;
-        this.ORIGIN_Y = originY;
+        this.originX = originX;
+        this.originY = originY;
         this.respectToX = originX;
         this.respectToY = originY;
         this.LOOP = loop;
         this.PATHS = paths;
+    }
+    
+    /**
+     * Starts the movement of the Path at the point (x, y), starting from
+     * the first subpath.
+     * @param x     X Position
+     * @param y     Y Position
+     */
+    @Override
+    public void startAt( int x, int y ) {
+        
+        PATHS[current].setOriginX(x);
+        PATHS[current].setOriginY(y);
+        originX = x;
+        originY = y;
+        respectToX = x;
+        respectToY = y;
+        start();
+        
     }
     
     /**
@@ -131,8 +149,8 @@ public class CompoundPath implements MovingPath {
      * @return  true if path is finished, false if not.
      */
     @Override
-    public boolean isFinished() { return finished; }
-
+    public boolean isFinished( ) { return finished; }
+    
     /**
      * Increments the current subpath's t value. If the end t value of that
      * subpath is reached, the next subpath becomes the current subpath and
@@ -157,8 +175,8 @@ public class CompoundPath implements MovingPath {
             if (PATHS[current].isFinished()) {
                 if (LOOP) {
                     current = 0;
-                    respectToX = ORIGIN_X;
-                    respectToY = ORIGIN_Y;
+                    respectToX = originX;
+                    respectToY = originY;
                     for (Path p : PATHS) p.restart();
                 }
                 else finished = true;
