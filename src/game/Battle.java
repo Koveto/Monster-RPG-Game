@@ -385,19 +385,19 @@ public class Battle {
         if (attackAnimation.finished() && System.currentTimeMillis() - 
                 lastStateSwitch >= delayStateSwitchMS) {
             state = b.ENEMY_TAKING_DAMAGE;
-            int damage = 2049;
+            int damage = 121;
             enemies[enemySelected].getHPBar().slideToNumerator(
                     enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
             
-            int x = enemies[enemySelected].getHPBar().getX();
+            damageNumber.setSprite(getDamageNumberSprite(damage));
+            
+            int x = enemies[enemySelected].getHPBar().getX() + ((enemies[enemySelected].getHPBar().getWidth() - damageNumber.getSprite().getWidth()) / 2);
             int y = enemies[enemySelected].getHPBar().getY() - 3 -
                     b.H_SHEET_DAMAGENUMBERS;
             damageNumber.getPath().startAt(x, y);
             damageNumber.setX(x);
             damageNumber.setY(y);
-            
-            damageNumber.setSprite(getDamageNumberSprite(damage));
             
             damageNumber.show();
             lastStateSwitch = System.currentTimeMillis();
