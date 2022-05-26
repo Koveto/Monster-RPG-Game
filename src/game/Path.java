@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 /**
  * Path
  * @author Kobe Goodwin
- * @version 5/25/2022
+ * @version 5/26/2022
  * 
  * A two-dimensional path parameterized in the form r(t) with respect to an
  * original x and y position that travels from a start to an end t value. For
@@ -85,6 +85,18 @@ public class Path implements MovingPath {
      */
     @Override
     public void stop( ) { moving = false; }
+    
+    /**
+     * Starts the movement of the path at the point (x, y).
+     * @param x     X Position
+     * @param y     Y Position
+     */
+    @Override
+    public void startAt( int x, int y ) {
+        setOriginX(x);
+        setOriginY(y);
+        start();
+    }
     
     /**
      * Starts the movement of the path.

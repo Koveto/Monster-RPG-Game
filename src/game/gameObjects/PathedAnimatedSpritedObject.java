@@ -4,17 +4,14 @@ import game.Game;
 import game.MovingPath;
 import game.Path;
 import game.Sprite;
-import java.awt.Graphics;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
- * PathedSpritedObject
+ * PathedAnimatedSpritedObject
  * @author Kobe Goodwin
- * @version 5/20/2022
+ * @version 5/26/2022
  * 
- * A SpritedObject that moves along a two dimensional path parameterized in
- * the form r(t).
+ * An AnimatedSpritedObject that moves along a two dimensional path 
+ * parameterized in the form r(t).
  */
 public class PathedAnimatedSpritedObject extends AnimatedSpritedObject {
     
