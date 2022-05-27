@@ -170,6 +170,10 @@ public class Game extends JFrame implements Runnable {
         
         if (battle.isAttackAnimationPlaying() ) {
             battle.checkIfAttackAnimationIsFinished();
+        } else if (battle.isEnemyTakingDamage()) {
+            battle.checkIfDamageNumberFinished();
+        } else if (battle.isBetweenTurns()) {
+            battle.checkTimeBetweenTurns();
         }
         
     }

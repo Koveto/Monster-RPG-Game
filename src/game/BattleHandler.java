@@ -5,7 +5,7 @@ import game.gameObjects.DoublySpritedObject;
 /**
  * BattleProperties
  * @author Kobe Goodwin
- * @version 4/15/2022
+ * @version 5/27/2022
  * 
  * 
  */
@@ -20,6 +20,7 @@ public class BattleHandler {
                                 ATTACKING = 6,
                                 ATTACK_ANIMATION_PLAYING = 7,
                                 ENEMY_TAKING_DAMAGE = 8,
+                                BETWEEN_TURNS = 9,
 
                                 FIGHT_BUTTON = 0,
                                 ACT_BUTTON = 1,
@@ -84,6 +85,10 @@ public class BattleHandler {
                                 DELAY_ATTACKANIMATION = 100,
                                 DELAY_ATTACKCURSORPATH = 7,
                                 DELAY_ATTACKCURSORANIM = 100,
+                                
+                                DELAY_ATTACKTOTAKINGDAMAGE = 500,
+                                DELAY_TURNENDTOHPFADE = 500,
+                                DELAY_TURNENDTODEATH = 1000,
 
                                 FADE_OUT_SPEED_NORMAL = 50,
                                 FADE_OUT_SPEED_FAST = 150;

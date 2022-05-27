@@ -10,7 +10,7 @@ import java.awt.Graphics;
 /**
  * SpritedObject
  * @author Kobe Goodwin
- * @version 5/20/2022
+ * @version 5/27/2022
  * 
  * A GameObject with a sprite rendered at a given x and y position.
  */
@@ -85,6 +85,18 @@ public class SpritedObject implements GameObject {
      * @return  True if Sprite is showing, False if not
      */
     public boolean isShowing( ) {return show;}
+    
+    /**
+     * Determines if Sprite is fading in
+     * @return  True if Sprite is fading in, false if not
+     */
+    public boolean isFadingIn( ) {return isFadingIn;}
+    
+    /**
+     * Determines if Sprite is fading out
+     * @return  True if Sprite is fading out, false if not
+     */
+    public boolean isFadingOut( ) {return isFadingOut;}
     
     /**
      * Mutator for X Position
@@ -480,13 +492,15 @@ public class SpritedObject implements GameObject {
         
         if (isFadingOut && getTransparency() > 0) {
             
-            setTransparency(getTransparency() - (0.001 * fadeInSpeed));
+            System.out.println(getTransparency());
+            setTransparency(getTransparency() - (0.001 * fadeOutSpeed));
             if (getTransparency() < 0.0) setTransparency(0.0);
             
         } else if (isFadingOut && getTransparency() == 0) {
             
             isFadingOut = false;
-            resetBrightness();
+            hide();
+            setTransparency(1.0);
             
         }
     }

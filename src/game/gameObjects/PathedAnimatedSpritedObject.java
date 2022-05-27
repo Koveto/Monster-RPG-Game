@@ -8,7 +8,7 @@ import game.Sprite;
 /**
  * PathedAnimatedSpritedObject
  * @author Kobe Goodwin
- * @version 5/26/2022
+ * @version 5/27/2022
  * 
  * An AnimatedSpritedObject that moves along a two dimensional path 
  * parameterized in the form r(t).

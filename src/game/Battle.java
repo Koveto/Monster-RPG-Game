@@ -14,7 +14,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 5/26/2022
+ * @version 5/27/2022
  * 
  * Handles the properties of a battle.
  */
@@ -36,8 +36,7 @@ public class Battle {
     private Player player;
     private Enemy[] enemies;
     
-    private int state, optionSelected, enemySelected, lastOptionSelected,
-            delayStateSwitchMS;
+    private int state, optionSelected, enemySelected, lastOptionSelected;
     private long lastStateSwitch;
     
     /**
@@ -112,7 +111,6 @@ public class Battle {
         
         this.state = b.SELECTING_BATTLE_BUTTON;
         this.lastStateSwitch = System.currentTimeMillis();
-        this.delayStateSwitchMS = 500;
         
     }
     
@@ -127,6 +125,12 @@ public class Battle {
      * @return  True if enemy is taking damage
      */
     public boolean isEnemyTakingDamage( ) { return state == b.ENEMY_TAKING_DAMAGE; }
+    
+    /**
+     * Evaluates if battle is between player's turn and enemy's turn
+     * @return  True if battle is between turns
+     */
+    public boolean isBetweenTurns( ) { return state == b.BETWEEN_TURNS; }
     
     /**
      * Accessor for Player
@@ -383,7 +387,7 @@ public class Battle {
     public void checkIfAttackAnimationIsFinished( ) {
         
         if (attackAnimation.finished() && System.currentTimeMillis() - 
-                lastStateSwitch >= delayStateSwitchMS) {
+                lastStateSwitch >= b.DELAY_ATTACKTOTAKINGDAMAGE) {
             state = b.ENEMY_TAKING_DAMAGE;
             int damage = 121;
             enemies[enemySelected].getHPBar().slideToNumerator(
@@ -404,6 +408,31 @@ public class Battle {
         } else if (!attackAnimation.finished())
             lastStateSwitch = System.currentTimeMillis();
         
+    }
+    
+    public void checkIfDamageNumberFinished( ) {
+        
+        if (damageNumber.getPath().isFinished()) {
+            state = b.BETWEEN_TURNS;
+            lastStateSwitch = System.currentTimeMillis();
+        }
+        
+    }
+    
+    public void checkTimeBetweenTurns( ) {
+        
+        System.out.println(System.currentTimeMillis() - lastStateSwitch);
+        if (System.currentTimeMillis() - lastStateSwitch > 
+                b.DELAY_TURNENDTOHPFADE && !damageNumber.isFadingOut()
+                && damageNumber.isShowing()) {
+            damageNumber.fadeOut(b.FADE_OUT_SPEED_NORMAL);
+            enemies[enemySelected].getHPBar().fadeOut(b.FADE_OUT_SPEED_NORMAL);
+        }
+        if (System.currentTimeMillis() - lastStateSwitch >
+                b.DELAY_TURNENDTODEATH && !enemies[enemySelected].getSpritedObject().isFadingOut()
+                && enemies[enemySelected].getSpritedObject().isShowing()) {
+            enemies[enemySelected].getSpritedObject().fadeOut(b.FADE_OUT_SPEED_NORMAL);
+        }
     }
     
     /**
