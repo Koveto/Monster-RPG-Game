@@ -184,4 +184,11 @@ public class CompoundPath implements MovingPath {
         }
     }
     
+    public void restart( ) {
+        current = 0;
+        for (Path p : PATHS) {
+            p.restart();
+        }
+    }
+    
 }

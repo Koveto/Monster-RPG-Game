@@ -10,7 +10,7 @@ import java.awt.Graphics;
 /**
  * SpritedObject
  * @author Kobe Goodwin
- * @version 5/27/2022
+ * @version 8/31/2022
  * 
  * A GameObject with a sprite rendered at a given x and y position.
  */
@@ -19,10 +19,12 @@ public class SpritedObject implements GameObject {
     private Sprite sprite;
     private int x, y, flashCount, brightnessToggleCount, timesToToggleBrightness,
             fadeInCount, fadeInSpeed, fadeOutCount, fadeOutSpeed, colorToggleCount,
-            timesToToggleColor, tempCount, brightnessIndex;
-    private float brightnessToggleFactor, toFullBrightFactor, colorToggleFactor;
+            timesToToggleColor, tempCount, darkenToBlackCount, brightnessIndex,
+            brightestIndex;
+    private float brightnessToggleFactor, toFullBrightFactor, colorToggleFactor,
+            darkenToBlackFactor;
     private boolean show, isFlashing, isTogglingBrightness, isFadingIn, isFadingOut, 
-            isBrighteningToFull, isChangingColor;
+            isBrighteningToFull, isChangingColor, isDarkeningToBlack;
     private double transparency;
     
     private final int COUNT_UNTIL_BRIGHTEN = 15;
@@ -52,6 +54,7 @@ public class SpritedObject implements GameObject {
         this.defaultPixels = sprite.getPixels();
         this.tempCount = 0;
         this.brightnessIndex = -1;
+        this.brightestIndex = findBrightestIndex(sprite.getPixels());
         
         
     }
@@ -99,6 +102,12 @@ public class SpritedObject implements GameObject {
     public boolean isFadingOut( ) {return isFadingOut;}
     
     /**
+     * Determines if Sprite is darkening to black
+     * @return  True if Sprite is darkening, false if not
+     */
+    public boolean isDarkeningToBlack( ) {return isDarkeningToBlack;}
+    
+    /**
      * Mutator for X Position
      * @param x New x position
      */
@@ -126,7 +135,10 @@ public class SpritedObject implements GameObject {
      * Mutator for Sprite
      * @param sprite    New Sprite
      */
-    public void setSprite( Sprite sprite ) {this.sprite = sprite;}
+    public void setSprite( Sprite sprite ) {
+        this.sprite = sprite;
+        this.brightestIndex = findBrightestIndex(sprite.getPixels());
+    }
     
     /**
      * Shows the Sprite on screen.
@@ -213,14 +225,23 @@ public class SpritedObject implements GameObject {
         
     }
     
+    public void darkenToBlack( float factor ) {
+        
+        setDefaultPixels(sprite.getPixels());
+        this.darkenToBlackCount = 1;
+        this.darkenToBlackFactor = factor;
+        this.isDarkeningToBlack = true;
+        
+    }
+    
     /**
      * Resets brightness to default
      */
     public void resetBrightness( ) {
         
         sprite = new Sprite(defaultPixels, sprite.getWidth(), sprite.getHeight());
-        flashCount = 0;
-        isFlashing = false;
+        //flashCount = 0;
+        //isFlashing = false;
         isTogglingBrightness = false;
         brightnessToggleCount = 0;
         brightnessToggleFactor = 0;
@@ -306,6 +327,8 @@ public class SpritedObject implements GameObject {
     private Color scaleColorByFactor(Color c, float factor, boolean scaleRed,
             boolean scaleGreen, boolean scaleBlue){
         
+        if (factor < 0) factor = 0;
+        
         if (tempCount < 8113)
             tempCount++;
         else
@@ -372,6 +395,51 @@ public class SpritedObject implements GameObject {
         
     }
     
+    private int findFirstNonBlackIndex( int[] pixels ) {
+        
+        int indexOfColor = 0;
+        for (int i = 0; i < pixels.length; i++) {
+            Color c = Color.decode(String.valueOf(pixels[i]));
+            if (c.getRed() == 0 && c.getGreen() == 0 & c.getBlue() == 0) {
+                indexOfColor++;
+            }
+        }
+        return indexOfColor;
+        
+    }
+    
+    private int findFirstOpaqueIndex( int[] pixels ) {
+        
+        int indexOfColor = 0;
+        boolean indexFound = false;
+        while (!indexFound) {
+            Color c = Color.decode(String.valueOf(pixels[indexOfColor]));
+            if (!(c.getRed() == 27 && c.getGreen() == 36 & c.getBlue() == 30)) {
+                indexFound = true;
+            }
+            else
+                indexOfColor++;
+        }
+        return indexOfColor;
+        
+    }
+    
+    private int findBrightestIndex( int[] pixels ) {
+        
+        int indexOfColor = 0;
+        for (int i = 0; i < pixels.length; i++) {
+            Color c = Color.decode(String.valueOf(pixels[i]));
+            Color brightest = Color.decode(String.valueOf(pixels[indexOfColor]));
+            if (((c.getRed() + c.getGreen() + c.getBlue()) > 
+                    (brightest.getRed() + brightest.getGreen() + brightest.getBlue())
+                    && c.getRGB() != Game.ALPHA) || (brightest.getRGB() == Game.ALPHA)) {
+                indexOfColor = i;
+            }
+        }
+        return indexOfColor;
+        
+    }
+    
     /**
      * Renders the current sprite to the screen at its x and y position.
      */
@@ -388,6 +456,25 @@ public class SpritedObject implements GameObject {
     @Override
     public void render( Graphics graphics ) {
         if (show) RenderHandler.renderSprite(graphics, sprite, x, y, transparency);
+    }
+    
+    protected void updateBrightness( ) {
+        
+        if (isDarkeningToBlack) {
+            
+            resetBrightness();
+            toggleBrightness(Float.parseFloat(String.valueOf(
+                    (Math.pow(Double.parseDouble(String.valueOf(darkenToBlackFactor)),
+                            darkenToBlackCount)))));
+            Color c = Color.decode(String.valueOf(sprite.getPixels()[brightestIndex]));
+            if (c.getRed() < 10 && c.getGreen() < 10 && c.getBlue() < 10) {
+                isDarkeningToBlack = false;
+                hide();
+            }
+            darkenToBlackCount++;
+            
+        }
+        
     }
 
     /**
@@ -410,7 +497,19 @@ public class SpritedObject implements GameObject {
         
         if (isFlashing) {
             
-            if (flashCount < COUNT_UNTIL_BRIGHTEN) {
+            flashCount++;
+            float a = 0.03F;
+            if (flashCount == 51) flashCount = 0;
+            resetBrightness();
+            if (flashCount < 20) {
+                toggleBrightness(1 - (a * flashCount));
+            } else if (flashCount >= 20 && flashCount < 25) {
+                toggleBrightness(1 - (a * 20));
+            } else {
+                toggleBrightness(a * (flashCount - 5) - (a * 5));
+            }
+            
+            /*if (flashCount < COUNT_UNTIL_BRIGHTEN) {
                 toggleBrightness(0.9F);
                 flashCount++;
             }
@@ -420,7 +519,7 @@ public class SpritedObject implements GameObject {
             }
             else {
                 flashCount = 0;
-            }
+            }*/
            
             
         }
@@ -446,18 +545,14 @@ public class SpritedObject implements GameObject {
             
         }*/
         
+        
+        
         if (isBrighteningToFull) {
             
             toggleBrightness(toFullBrightFactor);
-            int indexOfColor = 0;
-            for (int i = 0; i < sprite.getPixels().length; i++) {
-                Color c = Color.decode(String.valueOf(sprite.getPixels()[i]));
-                if (c.getRed() == 0 && c.getGreen() == 0 & c.getBlue() == 0) {
-                    indexOfColor++;
-                }
-            }
-            Color currentColor = Color.decode(String.valueOf(sprite.getPixels()[indexOfColor]));
-            Color defaultColor = Color.decode(String.valueOf(defaultPixels[indexOfColor]));
+            int firstOpaqueIndex = findFirstNonBlackIndex(sprite.getPixels());
+            Color currentColor = Color.decode(String.valueOf(sprite.getPixels()[firstOpaqueIndex]));
+            Color defaultColor = Color.decode(String.valueOf(defaultPixels[firstOpaqueIndex]));
             if (currentColor.getRed() + currentColor.getGreen() + currentColor.getBlue() >=
                     defaultColor.getRed() + defaultColor.getGreen() + defaultColor.getBlue()) {
                 setSprite(new Sprite(defaultPixels, sprite.getWidth(), sprite.getHeight()));
@@ -481,6 +576,7 @@ public class SpritedObject implements GameObject {
         
         if (isFadingIn && getTransparency() < 1) {
             
+            //System.out.println(getTransparency() + (0.001 * 500));
             setTransparency(getTransparency() + (0.001 * fadeInSpeed));
             if (getTransparency() > 1.0) setTransparency(1.0);
             
@@ -492,12 +588,14 @@ public class SpritedObject implements GameObject {
         
         if (isFadingOut && getTransparency() > 0) {
             
-            System.out.println(getTransparency());
+            //System.out.println("Instance of: " + (this instanceof PathedAnimatedSpritedObject));
+            //System.out.println(name + getTransparency());
             setTransparency(getTransparency() - (0.001 * fadeOutSpeed));
             if (getTransparency() < 0.0) setTransparency(0.0);
             
         } else if (isFadingOut && getTransparency() == 0) {
             
+            //System.out.println("hidden");
             isFadingOut = false;
             hide();
             setTransparency(1.0);

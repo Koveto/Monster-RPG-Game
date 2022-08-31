@@ -10,17 +10,17 @@ import game.Sprite;
 import game.SpriteSheet;
 import game.TextHandler;
 import java.awt.Graphics;
+import java.util.Arrays;
 
 /**
  * Enemy
  * @author Kobe Goodwin
- * @version 5/26/2022
+ * @version 8/30/2022
  * 
  * An enemy in a battle.
  */
 public class Enemy extends Battler {
     
-    private final PathedAnimatedSpritedObject PATHED_SPRITE;
     private final MovingPath IDLE_PATH;
     private final Sprite HURT_SPRITE;
     private final boolean IS_KNOWN;
@@ -30,17 +30,17 @@ public class Enemy extends Battler {
     
     
     public Enemy( String name, String unknownName, String shortUnknownName,
-            String shortName, Sprite[] sprites, MovingPath path, int xPosition, 
+            String shortName, Sprite[] idle_sprites, Sprite hurtSprite, 
+            MovingPath path, int xPosition, 
             int yPosition, int maxHP, int level, int hpBarDistance,
             int timePerSwitchMillis,
             boolean hideWhenFinished, boolean loopAnimation) {
         
-        super(sprites[0], xPosition, yPosition, maxHP, level);
-        Sprite[] idleSprites = new Sprite[sprites.length - 1];
-        System.arraycopy(sprites, 0, idleSprites, 0, sprites.length - 1);
-        this.PATHED_SPRITE = new PathedAnimatedSpritedObject(idleSprites, path, timePerSwitchMillis, hideWhenFinished, loopAnimation);
+        super(idle_sprites, path, xPosition, yPosition, timePerSwitchMillis, maxHP, level, hideWhenFinished, loopAnimation);
+        //Sprite[] idleSprites = new Sprite[sprites.length - 1];
+        //System.arraycopy(sprites, 0, idleSprites, 0, sprites.length - 1);
         this.IDLE_PATH = path;
-        this.HURT_SPRITE = sprites[sprites.length - 1];
+        this.HURT_SPRITE = hurtSprite;
         this.unknownName = unknownName;
         this.shortUnknownName = shortUnknownName;
         this.shortName = shortName;
@@ -56,67 +56,30 @@ public class Enemy extends Battler {
     
     public void hurt( ) {
         
-        hurtPaths = getHurtPathQueue(PATHED_SPRITE.getX(), PATHED_SPRITE.getY());
+        hurtPaths = getHurtPathQueue(getSpritedObject().getX(), getSpritedObject().getY());
         hurtPaths.start();
-        PATHED_SPRITE.setPath(hurtPaths.get());
-        PATHED_SPRITE.pause();
-        PATHED_SPRITE.setSprite(HURT_SPRITE);
+        getSpritedObject().setPath(hurtPaths.get());
+        getSpritedObject().pause();
+        getSpritedObject().setSprite(HURT_SPRITE);
         
     }
     
-    /**
-     * Accessor for SpritedObject
-     * @return  SpritedObject
-     */
-    @Override
-    public PathedAnimatedSpritedObject getSpritedObject( ) {return PATHED_SPRITE;}
-    
-    @Override
-    public void render( ) {
-        PATHED_SPRITE.render();
-    }
-    
-    @Override
-    public void render( Graphics graphics ) {
-        this.render();
-    }
-    
-    @Override
-    public int getX() {
-        return PATHED_SPRITE.getX();
-    }
-
-    @Override
-    public int getY() {
-        return PATHED_SPRITE.getY();
-    }
-
-    @Override
-    public double getTransparency() {
-        return PATHED_SPRITE.getTransparency();
-    }
-
-    @Override
-    public void setX(int x) {
-        PATHED_SPRITE.setX(x);
-    }
-
-    @Override
-    public void setY(int y) {
-        PATHED_SPRITE.setY(y);
-    }
-
-    @Override
-    public void setTransparency(double transparency) {
-        PATHED_SPRITE.setTransparency(transparency);
+    public void noLongerHurt( ) {
+        
+        hurtPaths.stop();
+        getSpritedObject().setPath(IDLE_PATH);
+        getSpritedObject().resume();
+        if (getSpritedObject().getSprites().length == 1) {
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[0]);
+        }
+        
     }
 
     @Override
     public void update(Game game) {
-        PATHED_SPRITE.update(game);
-        getHPBar().update(game);
+        super.update(game);
         if (hurtPaths != null && hurtPaths.update()) {
-            PATHED_SPRITE.setPath(hurtPaths.get());
+            getSpritedObject().setPath(hurtPaths.get());
         }
     }
     
@@ -162,10 +125,13 @@ public class Enemy extends Battler {
         int y = 238 - dummySheet.getSprite(0, 0).getHeight();
         Enemy e = new Enemy( "Dummy", "Cotton-stuffed Doll", 
                 "Cotton Doll", "Dummy", 
-                dummySheet.getSprites(),
-                new Path(String.valueOf(xPosition), String.valueOf(y), xPosition, y, 0, 0, 0, false),
+                new Sprite[] {dummySheet.getSprites()[0]},
+                dummySheet.getSprites()[1],
+                new Path("0", "0", xPosition, y, 0, 0, 0, true),
                 xPosition, 
-                y, 10, 1, RenderHandler.ENEMY_HP_BAR_DISTANCE_FROM_Y, 0, false, false);
+                y, 10, 1, y - dummySheet.getSpriteHeight() - 55, 0, false, false);
+        e.getSpritedObject().animate();
+        e.getSpritedObject().startMoving();
         return e;
         
     }
@@ -181,7 +147,8 @@ public class Enemy extends Battler {
         int y = 15;
         Enemy e = new Enemy( "Whimsun", "Whimsun", 
                 "Whimsun", "Whimsun", 
-                whimsunSheet.getSprites(),
+                Arrays.copyOfRange(whimsunSheet.getSprites(), 0, 2),
+                whimsunSheet.getSprites()[whimsunSheet.getSprites().length - 1],
                 new CompoundPath( xPosition, y, true,
                     new Path("0", "t", xPosition, y, 0, 10, 0.1, false),
                     new Path("0", "-1 * t", xPosition, y, 0, 10, 0.1, false)),

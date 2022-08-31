@@ -7,6 +7,7 @@ import game.gameObjects.GameObject;
 import game.gameObjects.ImageObject;
 import game.gameObjects.PathedAnimatedSpritedObject;
 import game.gameObjects.Player;
+import game.gameObjects.RatioBar;
 import game.gameObjects.Rectangle;
 import game.gameObjects.SpritedObject;
 import java.awt.Color;
@@ -14,7 +15,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 5/27/2022
+ * @version 8/31/2022
  * 
  * Handles the properties of a battle.
  */
@@ -28,9 +29,11 @@ public class Battle {
     private final Rectangle[] backgroundRects;
     private final DoublySpritedObject fightButton, actButton, itemButton, mercyButton;
     
-    private AnimatedSpritedObject attackAnimation;
-    private SpritedObject attackField;
+    private SpritedObject textBubble;
+    private AnimatedSpritedObject attackAnimation, attackField;
     private PathedAnimatedSpritedObject attackCursor, damageNumber;
+    
+    private BulletPattern[] patterns;
     
     private String[] initialOptions, extraOptions;
     private Player player;
@@ -70,6 +73,9 @@ public class Battle {
             backgroundRects[i + 6] = new Rectangle( 16 + (i * 100), 126, 102, 119, 0x16532b, 2);
         }
         
+        this.textBubble = new SpritedObject(b.TEXT_BUBBLES.getSprite(0, 1), enemies[0].getX() + enemies[0].getSpritedObject().getSprite().getWidth(), enemies[0].getY() - (enemies[0].getSpritedObject().getSprite().getHeight() / 2));
+        this.textBubble.hide();
+        
         this.fightButton = b.newButton(b.FIGHT_BUTTON);
         this.actButton = b.newButton(b.ACT_BUTTON);
         this.itemButton = b.newButton(b.ITEM_BUTTON);
@@ -80,9 +86,10 @@ public class Battle {
                 0, 0, b.DELAY_ATTACKANIMATION);
         this.attackAnimation.hide();
         
-        this.attackField = new SpritedObject(
-                b.ATTACK_FIELD.getSprite(0, 0), 
-                b.X_ATTACKFIELD, b.Y_ATTACKFIELD);
+        this.attackField = new AnimatedSpritedObject(
+                b.ATTACK_FIELD.getSprites(), 
+                b.X_ATTACKFIELD, b.Y_ATTACKFIELD, 30,
+                false, false);
         this.attackField.hide();
         
         this.attackCursor = new PathedAnimatedSpritedObject(
@@ -105,6 +112,10 @@ public class Battle {
                 new Path("0", "-2 * t", 0, 2, 0.5, false)),
             1, false, true);
         this.damageNumber.hide();
+        
+        this.patterns = new BulletPattern[] {   new BulletPattern(),
+                                                new BulletPattern(),
+                                                new BulletPattern()};
         
         this.initialOptions = new String[0];
         this.extraOptions = new String[0];
@@ -133,6 +144,24 @@ public class Battle {
     public boolean isBetweenTurns( ) { return state == b.BETWEEN_TURNS; }
     
     /**
+     * Evaluates if battle is between enemy's turn and player's turn
+     * @return  True if battle is between turns
+     */
+    public boolean isTransitioningToPlayerTurn( ) { return state == b.ENEMY_TURN_FINISHED; }
+    
+    /**
+     * Determines if the battle is waiting to progress on the scroll of a Text.
+     * @return  True if waiting on a Text
+     */
+    public boolean isWaitingOnText( ) { return bt.getTextWaitingOn() != null; }
+    
+    /**
+     * Determines if the enemies' turn is in progress.
+     * @return  True if enemy turn in progress
+     */
+    public boolean isEnemyTurn( ) { return state == b.ENEMY_TURN; }
+    
+    /**
      * Accessor for Player
      * @return  Player character
      */
@@ -152,7 +181,7 @@ public class Battle {
     
     public void interpretButtonPress( int button ) {
         
-        if (player.getLastDirection() == button) {
+        if (player.getLastDirection() == button && state != b.ENEMY_TURN) {
             return;
         }
         
@@ -176,11 +205,17 @@ public class Battle {
                     highlightSelectedEnemy();
                     listOptions(new String[] {"Check", "Encourage",
                         "Talk", "Hug"}, false);
-                } else {
+                } else if (state == b.SELECTING_TARGET) {
                     bt.clear();
+                    fightButton.switchSprite();
                     attackField.show();
-                    attackCursor.startMoving();
-                    resetSelectedEnemy();
+                    attackCursor.show();
+                    attackCursor.startMoving();  //getPath().startAt(b.X_ATTACKCURSOR, b.Y_ATTACKCURSOR);
+                    //resetSelectedEnemy();
+                    for (Enemy e : enemies) {
+                        e.getSpritedObject().toggleBrightness(b.BRIGHTEN_FACTOR, b.TIMES_TO_BRIGHTEN);
+                        e.getSpritedObject().stopFlashing();
+                    }
                     for (int i = 0; i < enemies.length; i++) {
                         if (i != enemySelected) {
                             enemies[i].getHPBar().fadeOut(b.FADE_OUT_SPEED_NORMAL);
@@ -253,9 +288,32 @@ public class Battle {
                 
             }
             
-        } else if (state == b.ATTACK_ANIMATION_PLAYING) {
+        } else if (isWaitingOnText() && checkOnWaitingText() && button == Game.CONFIRM) {
             
-        } else if (state == b.ENEMY_TAKING_DAMAGE) {}
+            bt.waitOnText(null);
+        
+        } else if (state == b.ENEMY_TURN) {
+            
+            if (button == Game.LEFT) {
+                player.setX(player.getX() - b.PLAYER_SPEED);
+                if (!player.getRect().isInside(battleRect.getInnerRect()))
+                    player.setX(battleRect.getX() + battleRect.getBorderWidth());
+            } else if (button == Game.RIGHT) {
+                player.setX(player.getX() + b.PLAYER_SPEED);
+                if (!player.getRect().isInside(battleRect.getInnerRect()))
+                    player.setX(battleRect.getX() + battleRect.getWidth() - battleRect.getBorderWidth() - player.getSpritedObject().getSprite().getWidth());
+            } else if (button == Game.UP) {
+                player.setY(player.getY() - b.PLAYER_SPEED);
+                if (!player.getRect().isInside(battleRect.getInnerRect()))
+                    player.setY(battleRect.getY() + battleRect.getBorderWidth());
+            } else if (button == Game.DOWN) {
+                player.setY(player.getY() + b.PLAYER_SPEED);
+                if (!player.getRect().isInside(battleRect.getInnerRect())) {
+                    player.setY(battleRect.getY() + battleRect.getHeight() - battleRect.getBorderWidth() - player.getSpritedObject().getSprite().getHeight());
+                }
+            }
+            
+        }
         
         player.setLastDirection(button);
         
@@ -312,26 +370,51 @@ public class Battle {
     public GameObject[] getObjects( ) {
         
         GameObject[] temp = new GameObject[] {
-            backgroundImage, fightButton, actButton, itemButton, mercyButton,
-            player, player.getHPBar(), attackField, battleRect, attackCursor};
-        GameObject[] objects = new GameObject[temp.length + (2 * enemies.length) + backgroundRects.length + 2];
-        for (int i = 0; i < temp.length; i++) {
-            objects[i] = temp[i];
-        }
+            fightButton, actButton, itemButton, mercyButton,
+            player, player.getHPBar(), attackField, battleRect, attackCursor,
+            textBubble};
+        GameObject[] objects = new GameObject[temp.length + 
+                patterns[0].getObjects().length + 
+                patterns[1].getObjects().length + 
+                patterns[2].getObjects().length + 
+                (2 * enemies.length) + backgroundRects.length + 3];
+        objects[0] = backgroundImage;
         for (int i = 0; i < backgroundRects.length; i++) {
-            objects[i + temp.length] = backgroundRects[i];
+            objects[i + 1] = backgroundRects[i];
+        }
+        for (int i = 0; i < temp.length; i++) {
+            objects[i + backgroundRects.length + 1] = temp[i];
         }
         for (int i = 0; i < enemies.length; i++) {
-            objects[i + temp.length + backgroundRects.length] = enemies[i];
+            objects[i + temp.length + backgroundRects.length + 1] = enemies[i];
         }
-        objects[objects.length - 2 - enemies.length] = damageNumber;
+        objects[1 + backgroundRects.length + temp.length + enemies.length] = damageNumber;
         for (int i = 0; i < enemies.length; i++) {
             objects[
-                i + temp.length + backgroundRects.length + enemies.length + 1] 
+                i + temp.length + backgroundRects.length + enemies.length + 2] 
                     = enemies[i].getHPBar();
+        }
+        for (int i = 0; i < patterns[0].getObjects().length; i++) {
+            objects[
+                i + temp.length + backgroundRects.length + (2 * enemies.length) + 2] =
+                    patterns[0].getObjects()[i];
+        }
+        for (int i = 0; i < patterns[1].getObjects().length; i++) {
+            objects[
+                i + temp.length + backgroundRects.length + (2 * enemies.length) 
+                    + 2 + patterns[0].getObjects().length] =
+                    patterns[1].getObjects()[i];
+        }
+        for (int i = 0; i < patterns[2].getObjects().length; i++) {
+            objects[
+                i + temp.length + backgroundRects.length + (2 * enemies.length) 
+                    + 2 + patterns[0].getObjects().length + patterns[1].getObjects().length] =
+                    patterns[2].getObjects()[i];
         }
         objects[objects.length - 1] = attackAnimation;
         
+        //for (GameObject go : objects) System.out.println(go);
+        //System.out.println("");
         return objects;
         
     }
@@ -374,11 +457,14 @@ public class Battle {
                 GameObject[] tempArray = new GameObject[transparentObjects.length + 1];
                 for (int j = 0; j < transparentObjects.length; j++) {
                     tempArray[j] = transparentObjects[j];
+                    //System.out.println(transparentObjects[j].getTransparency() + String.valueOf(transparentObjects[j] instanceof Enemy));
                 }
                 tempArray[transparentObjects.length] = go;
                 transparentObjects = tempArray;
             }
         }
+        
+        //System.out.println(transparentObjects.length);
         
         return transparentObjects;
         
@@ -386,17 +472,20 @@ public class Battle {
     
     public void checkIfAttackAnimationIsFinished( ) {
         
-        if (attackAnimation.finished() && System.currentTimeMillis() - 
+        if (attackAnimation.finishedAnimating() && System.currentTimeMillis() - 
                 lastStateSwitch >= b.DELAY_ATTACKTOTAKINGDAMAGE) {
             state = b.ENEMY_TAKING_DAMAGE;
-            int damage = 121;
+            int damage = 5;
             enemies[enemySelected].getHPBar().slideToNumerator(
                     enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
+            enemies[enemySelected].takeDamage(damage);
             
             damageNumber.setSprite(getDamageNumberSprite(damage));
             
-            int x = enemies[enemySelected].getHPBar().getX() + ((enemies[enemySelected].getHPBar().getWidth() - damageNumber.getSprite().getWidth()) / 2);
+            int x = enemies[enemySelected].getHPBar().getX() + 
+                    ((enemies[enemySelected].getHPBar().getWidth() 
+                    - damageNumber.getSprite().getWidth()) / 2);
             int y = enemies[enemySelected].getHPBar().getY() - 3 -
                     b.H_SHEET_DAMAGENUMBERS;
             damageNumber.getPath().startAt(x, y);
@@ -405,8 +494,10 @@ public class Battle {
             
             damageNumber.show();
             lastStateSwitch = System.currentTimeMillis();
-        } else if (!attackAnimation.finished())
+        } else if (!attackAnimation.finishedAnimating()) {
             lastStateSwitch = System.currentTimeMillis();
+        }
+        
         
     }
     
@@ -419,20 +510,142 @@ public class Battle {
         
     }
     
+    public boolean isEnded( ) { return state == b.BATTLE_END; }
+    
     public void checkTimeBetweenTurns( ) {
         
-        System.out.println(System.currentTimeMillis() - lastStateSwitch);
-        if (System.currentTimeMillis() - lastStateSwitch > 
-                b.DELAY_TURNENDTOHPFADE && !damageNumber.isFadingOut()
+        if (System.currentTimeMillis() - lastStateSwitch > b.DELAY_TURNENDTOHPFADE
                 && damageNumber.isShowing()) {
-            damageNumber.fadeOut(b.FADE_OUT_SPEED_NORMAL);
-            enemies[enemySelected].getHPBar().fadeOut(b.FADE_OUT_SPEED_NORMAL);
+            damageNumber.hide();
+            enemies[enemySelected].getHPBar().hide();
         }
         if (System.currentTimeMillis() - lastStateSwitch >
-                b.DELAY_TURNENDTODEATH && !enemies[enemySelected].getSpritedObject().isFadingOut()
-                && enemies[enemySelected].getSpritedObject().isShowing()) {
-            enemies[enemySelected].getSpritedObject().fadeOut(b.FADE_OUT_SPEED_NORMAL);
+                500 && !enemies[enemySelected].getSpritedObject().isDarkeningToBlack()
+                && !enemies[enemySelected].isAlive()) {
+            enemies[enemySelected].getSpritedObject().darkenToBlack(b.DEATH_FADE_OUT_FACTOR);
         }
+        if (enemies[enemySelected].getSpritedObject().finishedMoving() &&
+                attackCursor.isShowing()) {
+            lastStateSwitch = System.currentTimeMillis(); //TURNEND
+            if (enemies[enemySelected].isAlive())enemies[enemySelected].noLongerHurt();
+            attackField.animate();
+            attackField.darkenToBlack(b.ATTACK_FIELD_DARKEN_FACTOR);
+            attackCursor.pause();
+            attackCursor.hide();
+        }
+        if (!attackField.isShowing() && !enemies[enemySelected].isAlive()
+                && bt.getTextWaitingOn() == null) {
+            if (Game.scrollSpeed == TextHandler.SLOW_SCROLL_SPEED) {
+                state = b.BATTLE_END;
+                return;
+            }
+            Game.setScrollSpeed(TextHandler.SLOW_SCROLL_SPEED);
+            bt.displayFlavorText("You won!\nYou earned 5 EXP and 1 gold.", true);
+            bt.waitOnText(bt.getFlavorText());
+        }
+        if (!attackCursor.isShowing() &&
+                battleRect.getWidth() > 220
+                && enemies[enemySelected].isAlive()) {
+            battleRect.setX(battleRect.getX() + b.W_BATTLERECTINCREMENT);
+            battleRect.setWidth(battleRect.getWidth() - (2 * b.W_BATTLERECTINCREMENT));
+            battleRect.generateGraphics(b.W_BATTLERECTBORDER, TextHandler.WHITE.getRGB());
+        }
+        if (System.currentTimeMillis() - lastStateSwitch > b.DELAY_DAMAGEDTOCHATBOX
+                && !player.getSpritedObject().isShowing()
+                && enemies[enemySelected].isAlive()) {
+            Game.setScrollSpeed(TextHandler.SLOW_SCROLL_SPEED);
+            textBubble.show();
+            player.setX(b.X_PLAYERBATTLEBOX);
+            player.setY(b.Y_PLAYERBATTLEBOX);
+            player.getSpritedObject().show();
+            Text bubble = bt.getTextBubbles()[0];
+            bubble.setX(textBubble.getX() + b.X_BUBBLEOFFSET);
+            bubble.setY(textBubble.getY() + b.Y_BUBBLEOFFSET);
+            bubble.newMessage("Ribbit, ribbit, ribbit, ribbit");
+            bt.displayTexts(new Text[] {bubble});
+            bt.waitOnText(bubble);
+        }
+        if (textBubble.isShowing() && !isWaitingOnText()
+                && enemies[enemySelected].isAlive()) {
+            textBubble.hide();
+            bt.clear();
+            state = b.ENEMY_TURN;
+            patterns[0].newWhimsunAttack(battleRect);
+            patterns[0].start();
+            patterns[1].newAttack(battleRect);
+            patterns[1].start();
+        }
+        
+    }
+    
+    public void transitionToPlayerTurn( ) {
+        
+        if (battleRect.getWidth() < b.W_BATTLERECT) {
+            battleRect.setX(battleRect.getX() - b.W_BATTLERECTINCREMENT);
+            battleRect.setWidth(battleRect.getWidth() + (2 * b.W_BATTLERECTINCREMENT));
+            battleRect.generateGraphics(b.W_BATTLERECTBORDER, TextHandler.WHITE.getRGB());
+        } else {
+            state = b.SELECTING_BATTLE_BUTTON;
+            player.getSpritedObject().show();
+            player.setX(b.X_PLAYERFIGHTBUTTON);
+            player.setY(b.Y_PLAYERBUTTONS);
+            attackField.setSprite(b.ATTACK_FIELD.getSprite(0, 0));
+            attackCursor.setSprite(b.ATTACK_CURSORS.getSprite(0, 0));
+            attackCursor.setX(b.X_ATTACKCURSOR);
+            attackCursor.getPath().restart();
+            Game.setScrollSpeed(TextHandler.DEFAULT_SCROLL_SPEED);
+            bt.displayFlavorText(b.TEXT_DEFAULTFLAVOR, true);
+            fightButton.switchSprite();
+        }
+        
+    }
+    
+    public void checkBulletCollision( ) {
+        
+        /*Rectangle[] bullets = new Rectangle[patterns[0].getRects().length + 
+                patterns[1].getRects().length + patterns[2].getRects().length];
+        for (int i = 0; i < patterns[0].getRects().length; i++) {
+            bullets[i] = patterns[0].getRects()[i];
+        }*/
+        for (BulletPattern bp : patterns) {
+            if (bp.isMoving() && bp.isComplete()) {
+                patterns[0] = new BulletPattern();
+                patterns[1] = new BulletPattern();
+                patterns[2] = new BulletPattern();
+                player.getSpritedObject().hide();
+                state = b.ENEMY_TURN_FINISHED;
+                return;
+            }
+        }
+        if (!player.isVulnerable()) return;
+        int damage = 0;
+        for (int i = 0; i < patterns.length; i++) {
+            for (int j = 0; j < patterns[i].getRects().length; j++) {
+                if (player.getRect().isColliding(patterns[i].getRects()[j])) {
+                    damage = patterns[i].getDamage(j);
+                    patterns[i].remove(j);
+                    break;
+                }
+            }
+            if (damage != 0) break;
+        }
+        if (damage != 0) {
+            player.takeDamage(damage);
+            bt.updateHP(player);
+        }
+        
+    }
+    
+    /**
+     * Determines if the Text the battle is waiting on is finished scrolling.
+     * @return  True if finished scrolling, false if not.
+     */
+    public boolean checkOnWaitingText( ) {
+        
+        if (bt.getTextWaitingOn() == null) return false;
+        if (bt.getTextWaitingOn().isFinishedScrolling()) return true;
+        return false;
+        
     }
     
     /**
@@ -441,6 +654,9 @@ public class Battle {
      */
     private Text[] getOptions( ) { return bt.getOptions(); }
     
+    /**
+     * Resets the flashing of an Enemy and its brightness.
+     */
     private void resetSelectedEnemy( ) {
         
         enemies[enemySelected].getSpritedObject().stopFlashing();
@@ -557,6 +773,7 @@ public class Battle {
             for (int i = 0; i < enemies.length; i++) {
                 if (i != enemySelected) {
                     enemies[i].getSpritedObject().resetBrightness();
+                    enemies[i].getSpritedObject().stopFlashing();
                     enemies[i].getSpritedObject().toggleBrightness(b.DARKENED);
                 }
             }
@@ -768,6 +985,7 @@ public class Battle {
     private void selectEnemy( int newEnemyIndex ) {
         
         enemies[enemySelected].getSpritedObject().resetBrightness();
+        enemies[enemySelected].getSpritedObject().stopFlashing();
         enemies[enemySelected].getSpritedObject().toggleBrightness(b.DARKEN_FACTOR, b.TIMES_TO_DARKEN);
         enemies[enemySelected].getHPBar().resetBrightness();
         enemies[enemySelected].getHPBar().toggleBrightness(b.DARKEN_FACTOR, b.TIMES_TO_DARKEN);

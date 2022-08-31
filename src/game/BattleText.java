@@ -1,11 +1,12 @@
 package game;
 
 import game.gameObjects.Player;
+import java.awt.Color;
 
 /**
  * BattleText
  * @author Kobe Goodwin
- * @version 4/19/2022
+ * @version 8/31/2022
  * 
  * A helper class that stores and alters the Texts used in a Battle.
  */
@@ -14,7 +15,8 @@ public class BattleText {
     private final Text nameAndLevel, hpLabel, hpFraction, asterisk, flavorText, 
             longSelection1, longSelection2, longSelection3, shortSelection1,
             shortSelection2, shortSelection3, shortSelection4, shortSelection5,
-            shortSelection6, pageNumber;
+            shortSelection6, pageNumber, bubble1, bubble2, bubble3;
+    private Text waiting;
     
     private Text[] textsDisplayed;
     
@@ -45,7 +47,7 @@ public class BattleText {
         this.flavorText = new Text(b.TEXT_DEFAULTFLAVOR, 
                 b.X_FLAVORTEXT, b.Y_OPTIONROW1, 
                 true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
-                TextHandler.DEFAULT_WRAP, true); // scrolls, doubles spaces
+                TextHandler.DEFAULT_WRAP, true, 0); // scrolls, doubles spaces
         this.longSelection1 = b.newLongSelection(1);
         this.longSelection2 = b.newLongSelection(2);
         this.longSelection3 = b.newLongSelection(3);
@@ -58,9 +60,30 @@ public class BattleText {
         this.pageNumber = new Text("", 
                 b.X_PAGENUMBER, b.Y_OPTIONROW3, 
                 false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
-                TextHandler.SHORT_WRAP, true);
+                TextHandler.SHORT_WRAP, true, 0);
+        this.bubble1 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, TextHandler.BUBBLE_WRAP, false, 7);
+        this.bubble2 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, TextHandler.BUBBLE_WRAP, false, 7);
+        this.bubble3 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, TextHandler.BUBBLE_WRAP, false, 7);
+        
+        this.waiting = null;
         
         displayFlavorText(b.TEXT_DEFAULTFLAVOR, true);
+        
+    }
+    
+    public Text getFlavorText( ) { return flavorText; }
+    
+    public Text getTextWaitingOn( ) { return waiting; }
+    
+    public void waitOnText( Text text ) { waiting = text; }
+    
+    /**
+     * Lists text bubbles 1-3.
+     * @return  Three text bubbles
+     */
+    public Text[] getTextBubbles( ) {
+        
+        return new Text[] {bubble1, bubble2, bubble3};
         
     }
     
@@ -168,6 +191,11 @@ public class BattleText {
         
     }
     
+    public void updateHP( Player player ) {
+        hpFraction.newMessage(String.valueOf(player.getHP()) + " / " + 
+                String.valueOf(player.getMaxHP()));
+    }
+    
     /**
      * Clears all Texts from the screen, except for ones used in the UI such
      * as player name and health label.
@@ -200,6 +228,8 @@ public class BattleText {
         textsDisplayed = new Text[] {asterisk, flavorText};
         
     }
+    
+    //public void displayTextBubbles( int )
     
     /**
      * Given a Text array, adds the Page Number Text object to the end of it.

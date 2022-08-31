@@ -1,6 +1,7 @@
 package game.gameObjects;
 
 import game.Game;
+import game.MovingPath;
 import game.RenderHandler;
 import game.Sprite;
 import game.TextHandler;
@@ -9,13 +10,13 @@ import java.awt.Graphics;
 /**
  * Battler
  * @author Kobe Goodwin
- * @version 5/20/2022
+ * @version 8/31/2022
  * 
  * A SpritedObject that has battle statistics, such as health and level.
  */
 public class Battler implements GameObject {
     
-    private SpritedObject sprite;
+    private PathedAnimatedSpritedObject sprite;
     
     private int maxHP, hp, level;
     private boolean isAlive;
@@ -24,22 +25,31 @@ public class Battler implements GameObject {
     
     /**
      * Constructor
-     * @param sprite            Sprite to display
+     * @param sprites
+     * @param path
      * @param xPosition         X Position
+     * @param timePerSwitchMillis
      * @param yPosition         Y Position
      * @param maximumHitPoints  Maximum HP
+     * @param hideWhenFinished
+     * @param loopAnimation
      * @param level             Level
      */
-    public Battler( Sprite sprite, int xPosition, int yPosition,
-            int maximumHitPoints, int level ) {
+    public Battler( Sprite[] sprites, MovingPath path, 
+            int xPosition, int yPosition,
+            int timePerSwitchMillis,
+            int maximumHitPoints, int level,
+            boolean hideWhenFinished, boolean loopAnimation ) {
         
-        this.sprite = new SpritedObject(sprite, xPosition, yPosition);
+        this.sprite = new PathedAnimatedSpritedObject(sprites, path, 
+                timePerSwitchMillis, hideWhenFinished, loopAnimation);
         this.maxHP = maximumHitPoints;
         this.hp = maximumHitPoints;
         this.level = level;
         this.hpBar = new RatioBar(hp, maxHP, TextHandler.YELLOW, 
                 TextHandler.DARK_RED, 277, 400, 26, RenderHandler.HP_BAR_HEIGHT);
-        //hpBar.hide();
+        this.isAlive = true;
+        
     
     }
     
@@ -47,7 +57,7 @@ public class Battler implements GameObject {
      * Accessor for SpritedObject
      * @return  SpritedObject
      */
-    public SpritedObject getSpritedObject( ) {return sprite;}
+    public PathedAnimatedSpritedObject getSpritedObject( ) {return sprite;}
     
     /**
      * Accessor for Max HP
@@ -121,7 +131,7 @@ public class Battler implements GameObject {
     public boolean takeDamage( int damage ) {
         
         setHP(this.hp - damage);
-        isAlive = hp <= 0; 
+        isAlive = hp > 0; 
         return isAlive;
         
     }

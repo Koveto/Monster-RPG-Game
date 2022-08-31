@@ -69,4 +69,9 @@ public interface MovingPath {
      */
     void increment( );
     
+    /**
+     * Restarts from the initial t value.
+     */
+    void restart( );
+    
 }

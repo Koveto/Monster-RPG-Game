@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 /**
  * SpriteSheet
  * @author Kobe Goodwin
- * @version 3/28/2022
+ * @version 8/23/2022
  * 
  * A container for several Sprites loaded from a sheet image.
  */
@@ -85,7 +85,6 @@ public class SpriteSheet {
                 loadedSprites[spriteID] = new Sprite(this, x, y, spriteSizeX, spriteSizeY);
                 spriteID++;
             }
-        
         spritesLoaded = true;
     }
     

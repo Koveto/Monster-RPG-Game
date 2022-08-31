@@ -11,7 +11,7 @@ import java.awt.image.DataBufferInt;
 /**
  * RenderHandler
  * @author Kobe Goodwin
- * @version 3/13/2022
+ * @version 8/28/2022
  * 
  * Handles the rendering of various types of data to the screen.
  */
@@ -71,7 +71,8 @@ public class RenderHandler
                     graphics.setColor(text.getColor());
                 }
                 graphics.drawString(lines[i], text.getX(), 
-                    text.getY() + (i * graphics.getFontMetrics().getHeight()));
+                    text.getY() + (i * graphics.getFontMetrics().getHeight())
+                    + (i * text.getNewLineSpace()));
             }
         }
     }

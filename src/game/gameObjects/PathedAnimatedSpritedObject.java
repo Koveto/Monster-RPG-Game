@@ -8,7 +8,7 @@ import game.Sprite;
 /**
  * PathedAnimatedSpritedObject
  * @author Kobe Goodwin
- * @version 5/27/2022
+ * @version 8/23/2022
  * 
  * An AnimatedSpritedObject that moves along a two dimensional path 
  * parameterized in the form r(t).
@@ -38,6 +38,8 @@ public class PathedAnimatedSpritedObject extends AnimatedSpritedObject {
         path.increment();
         
     }
+    
+    public boolean finishedMoving( ) { return path.isFinished(); }
     
     public void stopMoving( ) { path.stop(); }
     

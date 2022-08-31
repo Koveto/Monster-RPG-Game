@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * TextHandler
  * @author Kobe Goodwin
- * @version 4/15/2022
+ * @version 8/29/2022
  * 
  * Handles the formatting, wrapping, and parsing of Texts.
  */
@@ -21,23 +21,25 @@ public class TextHandler {
     
     public static Font DEFAULT_FONT = new Font("Default", Font.PLAIN, 30);
     public static Font DIALOGUE_FONT;
+    public static Font DOTUMCHE_PIXEL;
     public static Font DIALOGUE_FONT_SMALL;
     public static Font DETERMINATION_MONO;
     public static Font MARS;
     public static Font MARS_SMALL;
     
-    public static Color WHITE = Color.decode("#FFFFFF");
-    public static Color YELLOW = Color.decode("#ffff00");
-    public static Color ORANGE = Color.decode("#fca600");
-    public static Color BLUE = Color.decode("#0000ff");
-    public static Color LIGHT_BLUE = Color.decode("#42fcff");
-    public static Color DARK_BLUE = Color.decode("#003cff");
-    public static Color GREEN = Color.decode("#00ff00");
-    public static Color DARK_GREEN = Color.decode("#00c000");
-    public static Color RED = Color.decode("#ff0000");
-    public static Color DARK_RED = Color.decode("#c00000");
-    public static Color PURPLE = Color.decode("#d535d9");
-    public static Color GRAY = Color.decode("#404040");
+    public static Color WHITE = Color.decode("#FFFFFF"),
+                        BLACK = Color.decode("000000"),
+                        YELLOW = Color.decode("#ffff00"),
+                        ORANGE = Color.decode("#fca600"),
+                        BLUE = Color.decode("#0000ff"),
+                        LIGHT_BLUE = Color.decode("#42fcff"),
+                        DARK_BLUE = Color.decode("#003cff"),
+                        GREEN = Color.decode("#00ff00"),
+                        DARK_GREEN = Color.decode("#00c000"),
+                        RED = Color.decode("#ff0000"),
+                        DARK_RED = Color.decode("#c00000"),
+                        PURPLE = Color.decode("#d535d9"),
+                        GRAY = Color.decode("#404040");
     
     public static String YELLOW_CODE = "/Y";
     public static String BLUE_CODE = "/B";
@@ -49,12 +51,13 @@ public class TextHandler {
     public static String DARK_BLUE_CODE = "/C";
     public static String NEWLINE = "/N";
     
-    public static final int DEFAULT_WRAP = 500;
-    public static final int SHORT_WRAP = 200;
+    public static final int DEFAULT_WRAP = 500,
+                            SHORT_WRAP = 200,
+                            BUBBLE_WRAP = 100;
     
     public static final int DEFAULT_SCROLL_SPEED = 2;
     public static final int FAST_SCROLL_SPEED = 1;
-    public static final int SLOW_SCROLL_SPEED = 3;
+    public static final int SLOW_SCROLL_SPEED = 5;
     
     
     /**
@@ -91,6 +94,7 @@ public class TextHandler {
             DETERMINATION_MONO = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\determinationmonoweb-webfont.ttf")).deriveFont(30f);
             MARS = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\Mars_Needs_Cunnilingus\\Mars_Needs_Cunnilingus.ttf")).deriveFont(26f);
             MARS_SMALL = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\Mars_Needs_Cunnilingus\\Mars_Needs_Cunnilingus.ttf")).deriveFont(19f);
+            DOTUMCHE_PIXEL = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\dotumche-pixel\\dotumche-pixel.ttf")).deriveFont(13f);
         } catch (Exception e) {
             System.out.println("One or more fonts could not be loaded.");
             e.printStackTrace();
@@ -114,7 +118,7 @@ public class TextHandler {
         ArrayList<Text> text = new ArrayList<>();
         Scanner scan = new Scanner(new File(path));
         while (scan.hasNextLine()) {
-            text.add(new Text(scan.nextLine(), 90, 298, true, Color.white, DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true));
+            text.add(new Text(scan.nextLine(), 90, 298, true, Color.white, DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0));
         }
         Text[] arr = new Text[text.size()];
         arr = text.toArray(arr);

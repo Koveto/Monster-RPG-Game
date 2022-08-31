@@ -3,11 +3,11 @@ package game;
 import game.gameObjects.DoublySpritedObject;
 
 /**
- * BattleProperties
+ * BattleHandler
  * @author Kobe Goodwin
- * @version 5/27/2022
+ * @version 8/31/2022
  * 
- * 
+ * Helper class containing constants related to battles.
  */
 public class BattleHandler {
     
@@ -21,11 +21,16 @@ public class BattleHandler {
                                 ATTACK_ANIMATION_PLAYING = 7,
                                 ENEMY_TAKING_DAMAGE = 8,
                                 BETWEEN_TURNS = 9,
+                                ENEMY_TURN = 10,
+                                ENEMY_TURN_FINISHED = 11,
+                                BATTLE_END = 12,
 
                                 FIGHT_BUTTON = 0,
                                 ACT_BUTTON = 1,
                                 ITEM_BUTTON = 2,
                                 MERCY_BUTTON = 3,
+            
+                                PLAYER_SPEED = 3,
 
                                 X_PLAYERFIGHTBUTTON = 39,
                                 X_PLAYERACTBUTTON = 196,
@@ -33,6 +38,7 @@ public class BattleHandler {
                                 X_PLAYERMERCYBUTTON = 505,
                                 X_PLAYEROPTIONCOLUMN1 = 60,
                                 X_PLAYEROPTIONCOLUMN2 = 320,
+                                X_PLAYERBATTLEBOX = 310,
                                 X_BATTLERECT = 32,
                                 X_FIGHTBUTTON = X_BATTLERECT,
                                 X_ACTBUTTON = 188,
@@ -48,11 +54,13 @@ public class BattleHandler {
                                 X_OPTIONCOLUMN1 = 98,
                                 X_OPTIONCOLUMN2 = 350,
                                 X_PAGENUMBER = 379,
+                                X_BUBBLEOFFSET = 22,
 
                                 Y_PLAYERBUTTONS = 444,
                                 Y_PLAYEROPTIONROW1 = 281,
                                 Y_PLAYEROPTIONROW2 = 312,
                                 Y_PLAYEROPTIONROW3 = 340,
+                                Y_PLAYERBATTLEBOX = 310,
                                 Y_BATTLERECT = 249,
                                 Y_BUTTONS = 431,
                                 Y_ATTACKFIELD = Y_BATTLERECT + 14,
@@ -63,6 +71,7 @@ public class BattleHandler {
                                 Y_OPTIONROW1 = 298,
                                 Y_OPTIONROW2 = 329,
                                 Y_OPTIONROW3 = 360,
+                                Y_BUBBLEOFFSET = 78,
             
                                 W_BATTLERECT = 577,
                                 W_BATTLERECTBORDER = 6,
@@ -71,6 +80,9 @@ public class BattleHandler {
                                 W_SHEET_ATTACKFIELD = 546,
                                 W_SHEET_ATTACKCURSORS = 14,
                                 W_SHEET_DAMAGENUMBERS = 31,
+                                W_SHEET_CHATBOXES = 237,
+                                W_SHEET_BULLET = 4,
+                                W_BATTLERECTINCREMENT = 5,
             
                                 H_BATTLERECT = 141,
                                 H_SHEET_BUTTONS = 42,
@@ -78,6 +90,8 @@ public class BattleHandler {
                                 H_SHEET_ATTACKFIELD = 115,
                                 H_SHEET_ATTACKCURSORS = 128,
                                 H_SHEET_DAMAGENUMBERS = 30,
+                                H_SHEET_CHATBOXES = 216,
+                                H_SHEET_BULLET = 4,
 
                                 TIMES_TO_DARKEN = 6,
                                 TIMES_TO_BRIGHTEN = 6,
@@ -85,10 +99,10 @@ public class BattleHandler {
                                 DELAY_ATTACKANIMATION = 100,
                                 DELAY_ATTACKCURSORPATH = 7,
                                 DELAY_ATTACKCURSORANIM = 100,
-                                
                                 DELAY_ATTACKTOTAKINGDAMAGE = 500,
-                                DELAY_TURNENDTOHPFADE = 500,
-                                DELAY_TURNENDTODEATH = 1000,
+                                DELAY_TURNENDTOHPFADE = 520,
+                                DELAY_TURNENDTODEATH = 500,
+                                DELAY_DAMAGEDTOCHATBOX = 500,
 
                                 FADE_OUT_SPEED_NORMAL = 50,
                                 FADE_OUT_SPEED_FAST = 150;
@@ -96,14 +110,18 @@ public class BattleHandler {
     public final float              DARKENED = 0.1F,
                                     DARKEN_FACTOR = 0.7F,
                                     BRIGHTEN_FACTOR = 1.5F,
-                                    BRIGHTEN_TO_DEFAULT_FACTOR = 1.15F;
+                                    BRIGHTEN_TO_DEFAULT_FACTOR = 1.15F,
+                                    DEATH_FADE_OUT_FACTOR = 0.9F,
+                                    ATTACK_FIELD_DARKEN_FACTOR = 0.85F;
     
     public final String         PATH_BACKGROUNDIMAGE = "sprites\\bgd1.png",
                                 PATH_BATTLEBUTTONS = "ss\\buttons.png",
                                 PATH_KNIFEATTACK = "ss\\knifeAttack.png",
-                                PATH_ATTACKFIELD = "ss\\battleBar.png",
+                                PATH_ATTACKFIELD = "ss\\attackFields.png",
                                 PATH_ATTACKCURSORS = "ss\\attackCursors.png",
                                 PATH_DAMAGENUMBERS = "ss\\damageNums.png",
+                                PATH_CHATBOXES = "ss\\chatboxes.png",
+                                PATH_BULLET = "ss\\bullet.png",
             
                                 TEXT_DEFAULTFLAVOR = "Negative b plus or minus the /Bsquare root of b squared/B minus four a c all over two a.";
     
@@ -125,7 +143,15 @@ public class BattleHandler {
                                 
                                         DAMAGE_NUMBERS = new SpriteSheet(
                                 Game.loadImage(PATH_DAMAGENUMBERS),
-                                W_SHEET_DAMAGENUMBERS, H_SHEET_DAMAGENUMBERS);
+                                W_SHEET_DAMAGENUMBERS, H_SHEET_DAMAGENUMBERS),
+            
+                                        TEXT_BUBBLES = new SpriteSheet(
+                                Game.loadImage(PATH_CHATBOXES),
+                                W_SHEET_CHATBOXES, H_SHEET_CHATBOXES),
+            
+                                        BULLET = new SpriteSheet(
+                                Game.loadImage(PATH_BULLET),
+                                W_SHEET_BULLET, H_SHEET_BULLET);
     
     public DoublySpritedObject newButton( int button ) {
         
@@ -144,7 +170,7 @@ public class BattleHandler {
         int[] rows = new int[] {Y_OPTIONROW1, Y_OPTIONROW2, Y_OPTIONROW3};
         return new Text("", X_OPTIONCOLUMN1, rows[number - 1], 
                 false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
-                TextHandler.DEFAULT_WRAP, true);
+                TextHandler.DEFAULT_WRAP, true, 0);
         
     }
     
@@ -164,7 +190,7 @@ public class BattleHandler {
             
         return new Text("", columns[column], rows[row], 
                 false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
-                TextHandler.SHORT_WRAP, true);
+                TextHandler.SHORT_WRAP, true, 0);
     }
     
 }

@@ -15,7 +15,7 @@ import java.text.AttributedCharacterIterator;
 /**
  * Text
  * @author Kobe Goodwin
- * @version 3/17/2022
+ * @version 8/31/2022
  * 
  * A message to be drawn to the screen. 
  */
@@ -23,7 +23,7 @@ public class Text {
 
     private String message;
     private boolean scrollingText, doubleSpaces;
-    private int x, y, scrollIndex, wrap;
+    private int x, y, scrollIndex, wrap, newLineSpace;
     private long timeLastScroll;
     private Color color;
     private Font font;
@@ -47,6 +47,7 @@ public class Text {
         this.color = color;
         this.font = font;
         wrap = TextHandler.DEFAULT_WRAP;
+        this.newLineSpace = 0;
         
     }
     
@@ -61,7 +62,9 @@ public class Text {
      * @param wrapSize          Width of wrap
      * @param doubleSpaces      True to double the spaces
      */
-    public Text( String message, int x, int y, boolean scrollingText, Color color, Font font, int wrapSize, boolean doubleSpaces ) {
+    public Text( String message, int x, int y, boolean scrollingText, 
+            Color color, Font font, int wrapSize, boolean doubleSpaces,
+            int newLineSpace) {
         
         if (doubleSpaces) this.message = TextHandler.multiplyCharacter(message, ' ', 2);
         else this.message = message;
@@ -73,6 +76,7 @@ public class Text {
         this.font = font;
         this.wrap = wrapSize;
         this.doubleSpaces = doubleSpaces;
+        this.newLineSpace = newLineSpace;
         
     }
     
@@ -113,10 +117,28 @@ public class Text {
     }
     
     /**
+     * Accessor for New Line Space
+     * @return  New Line Space
+     */
+    public int getNewLineSpace( ) {
+        return newLineSpace;
+    }
+    
+    /**
      * Accessor for Message
      * @return  Message
      */
     public String getMessage( ) { return message;}
+    
+    /**
+     * Determines if the Text has finished scrolling.
+     * @return  True if finished scrolling.
+     */
+    public boolean isFinishedScrolling( ) {
+        
+        return scrollIndex >= message.length();
+        
+    }
     
     /**
      * Retrieves the message at its current scroll position.
@@ -166,6 +188,12 @@ public class Text {
      * @param wrapSize  New wrap size
      */
     public void setWrap( int wrapSize ) {this.wrap = wrapSize;}
+    
+    /**
+     * Mutator for NewLine Space
+     * @param newLineSpace  NewLine Space
+     */
+    public void setNewLineSpace( int newLineSpace ) {this.newLineSpace = newLineSpace;}
     
     /**
      * Mutator for Text Scroll

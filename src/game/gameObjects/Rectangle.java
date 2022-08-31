@@ -2,6 +2,7 @@ package game.gameObjects;
 
 import game.Game;
 import game.RenderHandler;
+import game.TextHandler;
 import game.gameObjects.GameObject;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -9,7 +10,7 @@ import java.awt.Graphics;
 /**
  * Rectangle
  * @author Kobe Goodwin
- * @version 4/1/2022
+ * @version 8/28/2022
  * 
  * A rectangle with a width, height, x position, and y position to be rendered
  * and updated.
@@ -89,6 +90,49 @@ public class Rectangle implements GameObject {
         this.color = 0xFFFFFFFF;
         generateGraphics(0xFFFFFFFF);
         transparency = 1;
+    }
+    
+    /**
+     * Creates a new Rectangle with dimensions and positions such that it is
+     * inside the border of the Rectangle.
+     * @return  new Rectangle inside border
+     */
+    public Rectangle getInnerRect( ) {
+        
+        return new Rectangle(x + borderWidth, y + borderWidth, w - (2 * borderWidth), h - (2 * borderWidth));
+        
+    }
+    
+    /**
+     * Determines if the Rectangle is inside [largerRect].
+     * @param largerRect    Larger Rectangle to compare to
+     * @return  True if fully inside, false if not
+     */
+    public boolean isInside( Rectangle largerRect ) {
+        
+        if (getX() < largerRect.getX() || getX() + getWidth() >= largerRect.getX() + largerRect.getWidth()
+                || getY() < largerRect.getY() || getY() + (.5 * getHeight()) >= largerRect.getY() + largerRect.getHeight()) {
+            return false;
+        }
+        return true;
+        
+    }
+    
+    /**
+     * Determines if Rectangle is colliding with [rect].
+     * @param rect  Rectangle to compare to
+     * @return  True if colliding, false if not.
+     */
+    public boolean isColliding( Rectangle rect ) {
+        
+        if (getX() < rect.getX() + rect.getWidth() &&
+                getX() + getWidth() > rect.getX() &&
+                getY() < rect.getY() + rect.getHeight() &&
+                getY() + getHeight() > rect.getY()) {
+            return true;
+        }
+        return false;
+        
     }
     
     /**

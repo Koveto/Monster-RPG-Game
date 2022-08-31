@@ -1,6 +1,7 @@
 package game.gameObjects;
 
 import game.Game;
+import game.MovingPath;
 import game.RenderHandler;
 import game.Sprite;
 import game.listeners.KeyboardListener;
@@ -8,7 +9,7 @@ import game.listeners.KeyboardListener;
 /**
  * Player
  * @author Kobe Goodwin
- * @version 3/12/2022
+ * @version 8/31/2022
  * 
  * A Battler with that represents the player character. It responds to keyboard
  * inputs. The camera follows its rectangle collision box. Makes selections on 
@@ -19,7 +20,8 @@ public class Player extends Battler {
     private Rectangle rect;
     private String name;
     private int lastDirection, textCooldown;
-    private int speed = 10;
+    private long invincTime;
+    private boolean invulnerable;
     
     /**
      * Constructor
@@ -30,13 +32,18 @@ public class Player extends Battler {
      * @param maxHP     Maximum HP
      * @param level     Level
      */
-    public Player( String name, Sprite sprite, int xPosition, int yPosition, int maxHP, int level ) {
+    public Player( String name, Sprite[] sprites, MovingPath path, 
+            int xPosition, int yPosition, 
+            int timePerSwitchMillis,
+            int maxHP, int level,
+            boolean hideWhenFinished, boolean loopAnimation ) {
         
-        super(sprite, xPosition, yPosition, maxHP, level);
+        super(sprites, path, xPosition, yPosition, timePerSwitchMillis, maxHP, level, hideWhenFinished, loopAnimation);
         this.name = name;
         this.lastDirection = 0;
         this.textCooldown = 0;
         rect = new Rectangle(32, 16, 16, 32);
+        invulnerable = false;
         
     }
     
@@ -59,6 +66,8 @@ public class Player extends Battler {
      */
     public int getLastDirection( ) {return lastDirection;}
     
+    public boolean isVulnerable( ) {return !invulnerable;}
+    
     /**
      * Mutator for name
      * @param name  New name
@@ -70,6 +79,16 @@ public class Player extends Battler {
      * @param rect  New bounding rectangle
      */
     public void setRect( Rectangle rect ) {this.rect = rect;}
+    
+    public void setX( int x ) {
+        super.setX(x);
+        rect.setX(x);
+    }
+    
+    public void setY( int y ) {
+        super.setY(y);
+        rect.setY(y);
+    }
     
     /**
      * Mutator for last direction
@@ -113,9 +132,33 @@ public class Player extends Battler {
         
         return super.toString() + ":" + getClass().getName() + ":" + this.name
                 + ":" + this.getRect() + ":" + this.lastDirection + ":" + 
-                this.textCooldown + ":" + this.speed;
+                this.textCooldown;
         
     }
     
+    @Override
+    public boolean takeDamage( int damage ) {
+        
+        boolean alive = super.takeDamage(damage);
+        if (alive) {
+            invulnerable = true;
+            invincTime = System.currentTimeMillis();
+            getSpritedObject().animate();
+        }
+        return alive;
+        
+    }
+    
+    @Override
+    public void update(Game game) {
+        super.update(game);
+        if (invulnerable) {
+            if (System.currentTimeMillis() - invincTime >= 600) {
+                invulnerable = false;
+                getSpritedObject().setSprite(getSpritedObject().getSprites()[0]);
+                getSpritedObject().pause();
+            }
+        }
+    }
     
 }

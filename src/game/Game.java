@@ -40,17 +40,20 @@ public class Game extends JFrame implements Runnable {
                             LEFT = 3,
                             RIGHT = 4,
                             CONFIRM = 5,
-                            CANCEL = 6;
+                            CANCEL = 6,
+                            BATTLE = 0,
+                            NO_BATTLE = 1;
     
     private final Canvas canvas = new Canvas();
     
     private final BufferedImage iconImage;
     
     private final SpriteSheet soulSheet;
+    private final SpritedObject ftb;
     
     private Battle battle;
     
-    public static int scrollSpeed;
+    public static int scrollSpeed, mode;
     
     private KeyboardListener keyListener = new KeyboardListener();
     private MouseEventListener mouseListener = new MouseEventListener(this);
@@ -75,12 +78,16 @@ public class Game extends JFrame implements Runnable {
         
         TextHandler.loadFonts();
         scrollSpeed = TextHandler.DEFAULT_SCROLL_SPEED;
+        mode = BATTLE;
         
         // Create our object for our buffer strategy
         canvas.createBufferStrategy(3);
         
         soulSheet = new SpriteSheet(loadImage("ss\\soul.png"), 18, 18);
-        Player player = new Player("CHARA", soulSheet.getSprite(0, 0), 39, 444, 20, 1);
+        Player player = new Player("CHARA", soulSheet.getSprites(), new Path("1", "1", 39, 444, 0, 0, 0.1, true), 39, 444, 100, 20, 1, false, true);
+        
+        ftb = new SpritedObject(new Sprite(Game.loadImage("sprites\\bgd1.png")), 0, 0);
+        ftb.hide();
         
         battle = new Battle(player, Encounter.getWhimsun());
         
@@ -95,6 +102,8 @@ public class Game extends JFrame implements Runnable {
         setIconImage(iconImage);
         
     }
+    
+    public static void setScrollSpeed( int newScrollSpeed ) { scrollSpeed = newScrollSpeed; }
     
     public static int[] addToIntArray( int[] array, int e ) {
         
@@ -141,30 +150,40 @@ public class Game extends JFrame implements Runnable {
     
     public void update( )
     {
-        GameObject[] objects = battle.getObjects();
+        GameObject[] objects = new GameObject[] {};
+        if (mode == BATTLE) objects = battle.getObjects();
         for (GameObject object : objects) {
             object.update(this);
         }
         
+        ftb.update(this);
+        
+        boolean direction = false;
+        
+        if (mode == BATTLE) {
         if (keyListener.noKeys()) {
-            battle.interpretButtonPress(Game.NO_KEYS);
+            if (mode == BATTLE) battle.interpretButtonPress(Game.NO_KEYS);
         }
         if (keyListener.up()) {
-            battle.interpretButtonPress(Game.UP);
+            if (mode == BATTLE) battle.interpretButtonPress(Game.UP);
+            direction = true;
         }
-        else if (keyListener.down()) {
-            battle.interpretButtonPress(Game.DOWN);
+        if (keyListener.down() && (!direction  || battle.isEnemyTurn())) {
+            if (mode == BATTLE) battle.interpretButtonPress(Game.DOWN);
+            direction = true;
         }
-        else if (keyListener.left()) {
-            battle.interpretButtonPress(Game.LEFT);
+        if (keyListener.left() && (!direction  || battle.isEnemyTurn())) {
+            if (mode == BATTLE) battle.interpretButtonPress(Game.LEFT);
+            direction = true;
         }
-        else if (keyListener.right()) {
-            battle.interpretButtonPress(Game.RIGHT);
+        if (keyListener.right() && (!direction  || battle.isEnemyTurn())) {
+            if (mode == BATTLE) battle.interpretButtonPress(Game.RIGHT);
+            direction = true;
         }
-        else if (keyListener.z()) {
+        if (keyListener.z()) {
             battle.interpretButtonPress(Game.CONFIRM);
         }
-        else if (keyListener.x()) {
+        if (keyListener.x()) {
             battle.interpretButtonPress(Game.CANCEL);
         }
         
@@ -174,8 +193,22 @@ public class Game extends JFrame implements Runnable {
             battle.checkIfDamageNumberFinished();
         } else if (battle.isBetweenTurns()) {
             battle.checkTimeBetweenTurns();
+        } else if (battle.isEnemyTurn()) {
+            battle.checkBulletCollision();
+        } else if (battle.isTransitioningToPlayerTurn()) {
+            battle.transitionToPlayerTurn();
+        } else if (battle.isEnded() && !ftb.isShowing()) {
+            ftb.show();
+            ftb.fadeIn(25);
+            //ftb.setTransparency(0.5);
+            //ftb.show();
         }
-        
+        }
+        if (ftb.isShowing() && !ftb.isFadingIn()
+                && !ftb.isFadingOut()) {
+            mode = NO_BATTLE;
+            //ftb.fadeOut(25);
+        }
     }
 
     public void render( )
@@ -186,19 +219,22 @@ public class Game extends JFrame implements Runnable {
         graphics.setColor(Color.black);
         graphics.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
         
+        if (mode == BATTLE){
         for (GameObject o : battle.getOpaqueObjects()) {
             o.render();
-        }
+        }}
         
         RenderHandler.render(graphics);
         
+        if (mode == BATTLE) {
         for (Text t : battle.getText()) {
             RenderHandler.renderText(graphics, t);
         }
         
         for (GameObject o : battle.getTransparentObjects()) {
             o.render(graphics);
-        }
+        }}
+        ftb.render(graphics);
         
         graphics.dispose();
         bufferStrategy.show(); // Switches buffers

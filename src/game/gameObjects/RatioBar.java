@@ -8,7 +8,7 @@ import java.awt.Color;
 /**
  * RatioBar
  * @author Kobe Goodwin
- * @version 4/13/2022
+ * @version 8/31/2022
  * 
  * A rectangular health or mana bar to be rendered to the screen.
  */
@@ -69,6 +69,7 @@ public class RatioBar extends SpritedObject {
             decreaseRatioWidthBy = 2;
         isSliding = true;
         this.numerator = numerator;
+        slidingRatioWidthDecrement = 0;
         
     }
     
@@ -82,7 +83,7 @@ public class RatioBar extends SpritedObject {
     }
     
     /**
-     * Creates a new Sprite depending on how far the bar has slided.
+     * Creates a new Sprite depending on how far the bar has slid.
      */
     private void updateSpriteToSlide( ) {
         
