@@ -86,8 +86,8 @@ public class Map implements GameObject {
      * Renders each tile on the map.
      */
     public void render( ) {
-        int tileWidth = 16;
-        int tileHeight = 16;
+        int tileWidth = 20;
+        int tileHeight = 20;
         
         if (fillTileID >= 0) {
             Rectangle camera = RenderHandler.getCamera();
@@ -102,7 +102,7 @@ public class Map implements GameObject {
             MappedTile mappedTile = mappedTiles.get(tileIndex);
             int x = mappedTile.x * tileWidth;
             int y = mappedTile.y * tileHeight;
-            System.out.println("Placed at " + x + ", " + y);
+            //System.out.println("Placed at " + x + ", " + y);
             tileSet.renderTile(mappedTile.id, mappedTile.x * tileWidth, mappedTile.y * tileHeight);
         }
     }

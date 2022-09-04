@@ -11,7 +11,7 @@ import java.awt.image.DataBufferInt;
 /**
  * RenderHandler
  * @author Kobe Goodwin
- * @version 8/28/2022
+ * @version 9/4/2022
  * 
  * Handles the rendering of various types of data to the screen.
  */
@@ -126,6 +126,26 @@ public class RenderHandler
     }
     
     /**
+     * Renders an array of pixels to the screen.
+     * @param renderPixels  Array of colors to be rendered
+     * @param renderWidth   Width of array
+     * @param renderHeight  Height of array
+     * @param xPosition     X Position
+     * @param yPosition     Y Position
+     */
+    public static void renderArray( int[] renderPixels, int renderWidth, int renderHeight, int xPosition, int yPosition, int xZoom, int yZoom )
+    {
+        for (int y = 0; y < renderHeight; y++)
+            for (int x = 0; x < renderWidth; x++) {
+                for (int yZoomPosition = 0; yZoomPosition < yZoom; yZoomPosition++)
+                    for (int xZoomPosition = 0; xZoomPosition < xZoom; xZoomPosition++)
+                        setPixel(renderPixels[x + y * renderWidth], (x * xZoom) + xPosition + xZoomPosition, (y * yZoom) + yZoomPosition + yPosition);
+            }
+                
+
+    }
+    
+    /**
      * Renders a Rectangle to the screen.
      * @param rectangle Rectangle to draw to the screen.
      */
@@ -163,6 +183,12 @@ public class RenderHandler
     public static void renderSprite( Sprite sprite, int xPosition, int yPosition)
     {
         renderArray(sprite.getPixels(), sprite.getWidth(), sprite.getHeight(), xPosition, yPosition);
+    }
+    
+    public static void renderSprite( Sprite sprite, int xPosition, int yPosition, int xZoom, int yZoom ) {
+        
+        renderArray(sprite.getPixels(), sprite.getWidth(), sprite.getHeight(), xPosition, yPosition, xZoom, yZoom);
+        
     }
     
     /**
