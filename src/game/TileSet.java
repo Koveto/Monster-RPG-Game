@@ -8,7 +8,7 @@ import java.util.Scanner;
 /**
  * TileSet
  * @author Kobe Goodwin
- * @version 2/26/2022
+ * @version 9/2/2022
  * 
  * A group of tiles interpreted from a file. Each has a name and a sprite,
  * identified by an ID number.
@@ -35,6 +35,7 @@ public class TileSet {
             Scanner scan = new Scanner(tilesFile);
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
+                if (line.contains("//")) continue;
                 String[] array = line.split("-");
                 int x = Integer.parseInt(array[1]);
                 int y = Integer.parseInt(array[2]);
@@ -56,7 +57,7 @@ public class TileSet {
     public void renderTile( int tileID, int x, int y ) {
         
         if (tileID >= 0 && tiles.size() > tileID) {
-            RenderHandler.renderSprite(tiles.get(tileID).sprite, x, y);
+            RenderHandler.renderSprite(tiles.get(tileID).sprite, x * 2, y * 2, 2, 2);
         }
         else {
             System.out.println("Tile ID " + tileID + " out of range " + tiles.size());

@@ -52,6 +52,7 @@ public class Game extends JFrame implements Runnable {
     private final SpritedObject ftb;
     
     private Battle battle;
+    private Room room;
     
     public static int scrollSpeed, mode;
     
@@ -78,7 +79,7 @@ public class Game extends JFrame implements Runnable {
         
         TextHandler.loadFonts();
         scrollSpeed = TextHandler.DEFAULT_SCROLL_SPEED;
-        mode = BATTLE;
+        mode = NO_BATTLE;
         
         // Create our object for our buffer strategy
         canvas.createBufferStrategy(3);
@@ -90,6 +91,11 @@ public class Game extends JFrame implements Runnable {
         ftb.hide();
         
         battle = new Battle(player, Encounter.getWhimsun());
+        room = new Room(player,
+                        new TileSet(new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\tiles.txt\\"), 
+                                        new SpriteSheet(Game.loadImage("ss\\ruins.png"), 20, 20)),
+                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map.txt\\",
+                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map1.txt\\");
         
         iconImage = loadImage("ss\\Icon.png");
         
@@ -152,6 +158,7 @@ public class Game extends JFrame implements Runnable {
     {
         GameObject[] objects = new GameObject[] {};
         if (mode == BATTLE) objects = battle.getObjects();
+        if (mode == NO_BATTLE) objects = room.getObjects();
         for (GameObject object : objects) {
             object.update(this);
         }
@@ -207,7 +214,7 @@ public class Game extends JFrame implements Runnable {
         if (ftb.isShowing() && !ftb.isFadingIn()
                 && !ftb.isFadingOut()) {
             mode = NO_BATTLE;
-            //ftb.fadeOut(25);
+            ftb.fadeOut(25);
         }
     }
 
@@ -223,6 +230,11 @@ public class Game extends JFrame implements Runnable {
         for (GameObject o : battle.getOpaqueObjects()) {
             o.render();
         }}
+        if (mode == NO_BATTLE) {
+            for (GameObject o : room.getObjects()) {
+                o.render();
+            }
+        }
         
         RenderHandler.render(graphics);
         
