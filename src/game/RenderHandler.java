@@ -18,7 +18,7 @@ import java.awt.image.DataBufferInt;
 public class RenderHandler 
 {
     private static BufferedImage view = new BufferedImage(Game.WIDTH, Game.HEIGHT, BufferedImage.TYPE_INT_RGB);
-    private static Rectangle camera = new Rectangle(0, 0, Game.WIDTH, Game.HEIGHT);
+    private static Rectangle camera = new Rectangle(-50, 0, Game.WIDTH, Game.HEIGHT);
     private static int[] pixels = ((DataBufferInt) view.getRaster().getDataBuffer()).getData();
     
     public static final int HP_BAR_HEIGHT = 21;

@@ -16,7 +16,7 @@ import java.awt.Color;
  */
 public class AnimatedSpritedObject extends SpritedObject {
     
-    private final Sprite[] SPRITES;
+    private Sprite[] sprites;
     private final int MILLIS_PER_SWITCH;
     private final boolean HIDE_WHEN_FINISHED, LOOP;
     
@@ -35,7 +35,7 @@ public class AnimatedSpritedObject extends SpritedObject {
     public AnimatedSpritedObject( Sprite[] sprites, int x, int y, int timePerSwitchMillis ) {
         
         super(sprites[0], x, y);
-        this.SPRITES = sprites;
+        this.sprites = sprites;
         this.index = 0;
         this.timeLastSwitch = System.currentTimeMillis();
         this.MILLIS_PER_SWITCH = timePerSwitchMillis;
@@ -60,7 +60,7 @@ public class AnimatedSpritedObject extends SpritedObject {
             boolean hideWhenFinished, boolean loop ) {
         
         super(sprites[0], x, y);
-        this.SPRITES = sprites;
+        this.sprites = sprites;
         this.index = 0;
         this.timeLastSwitch = System.currentTimeMillis();
         this.MILLIS_PER_SWITCH = timePerSwitchMillis;
@@ -73,7 +73,7 @@ public class AnimatedSpritedObject extends SpritedObject {
      * Accessor for Sprite array to be animated.
      * @return  Sprite array to be animated.
      */
-    public Sprite[] getSprites( ) { return SPRITES; }
+    public Sprite[] getSprites( ) { return sprites; }
     
     /**
      * Accessor for time for each Sprite to be displayed during animation.
@@ -118,12 +118,22 @@ public class AnimatedSpritedObject extends SpritedObject {
     public boolean finishedAnimating( ) { return finished; }
     
     /**
+     *  Changes the sprites used for animation.
+     */
+    public void setSprites( Sprite[] sprites ) { 
+        
+        this.sprites = sprites; 
+        index = 0;
+        
+    }
+    
+    /**
      * Determines the next valid index of a Sprite in SPRITES.
      * @return  next available index in SPRITES
      */
     private int nextSpriteIndex( ) {
         
-        if (index + 1 >= SPRITES.length) {
+        if (index + 1 >= sprites.length) {
             if (!LOOP) finished = true;
             else {
                 index = 0;
@@ -150,7 +160,7 @@ public class AnimatedSpritedObject extends SpritedObject {
         if (animating && !finished && 
                 System.currentTimeMillis() - timeLastSwitch > MILLIS_PER_SWITCH) {
             int nsi = nextSpriteIndex();
-            setSprite(SPRITES[nsi]);
+            setSprite(sprites[nsi]);
             setDefaultPixels(getSprite().getPixels());
             timeLastSwitch = System.currentTimeMillis();
         }

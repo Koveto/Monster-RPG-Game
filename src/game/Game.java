@@ -6,6 +6,7 @@ import game.gameObjects.SpritedObject;
 import game.gameObjects.Player;
 import game.gameObjects.DoublySpritedObject;
 import game.gameObjects.GameObject;
+import game.gameObjects.Rectangle;
 import game.listeners.MouseEventListener;
 import game.listeners.KeyboardListener;
 import java.awt.AlphaComposite;
@@ -51,12 +52,13 @@ public class Game extends JFrame implements Runnable {
     private final SpriteSheet soulSheet;
     private final SpritedObject ftb;
     
+    private Overworld overworld;
     private Battle battle;
     private Room room;
     
     public static int scrollSpeed, mode;
     
-    private KeyboardListener keyListener = new KeyboardListener();
+    private static KeyboardListener keyListener = new KeyboardListener();
     private MouseEventListener mouseListener = new MouseEventListener(this);
     
     public Game( )
@@ -79,23 +81,25 @@ public class Game extends JFrame implements Runnable {
         
         TextHandler.loadFonts();
         scrollSpeed = TextHandler.DEFAULT_SCROLL_SPEED;
-        mode = NO_BATTLE;
-        
+        mode = NO_BATTLE;        
         // Create our object for our buffer strategy
         canvas.createBufferStrategy(3);
         
         soulSheet = new SpriteSheet(loadImage("ss\\soul.png"), 18, 18);
-        Player player = new Player("CHARA", soulSheet.getSprites(), new Path("1", "1", 39, 444, 0, 0, 0.1, true), 39, 444, 100, 20, 1, false, true);
+        SpriteSheet friskSheet = new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29);
+        Player player = new Player("CHARA", friskSheet.getSprites(), new Path("1", "1", 200, 200, 0, 0, 0.1, true), 200, 200, 100, 20, 1, false, true);
         
         ftb = new SpritedObject(new Sprite(Game.loadImage("sprites\\bgd1.png")), 0, 0);
         ftb.hide();
         
-        battle = new Battle(player, Encounter.getWhimsun());
-        room = new Room(player,
-                        new TileSet(new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\tiles.txt\\"), 
+        battle = null;
+        room = new Room(new TileSet(new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\tiles.txt\\"), 
                                         new SpriteSheet(Game.loadImage("ss\\ruins.png"), 20, 20)),
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map.txt\\",
-                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map1.txt\\");
+                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map1.txt\\",
+                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\walls.txt\\");
+        overworld = new Overworld(player, room);
+        
         
         iconImage = loadImage("ss\\Icon.png");
         
@@ -110,6 +114,7 @@ public class Game extends JFrame implements Runnable {
     }
     
     public static void setScrollSpeed( int newScrollSpeed ) { scrollSpeed = newScrollSpeed; }
+    public static boolean isBattle( ) { return mode == BATTLE; }
     
     public static int[] addToIntArray( int[] array, int e ) {
         
@@ -158,7 +163,7 @@ public class Game extends JFrame implements Runnable {
     {
         GameObject[] objects = new GameObject[] {};
         if (mode == BATTLE) objects = battle.getObjects();
-        if (mode == NO_BATTLE) objects = room.getObjects();
+        if (mode == NO_BATTLE) objects = overworld.getObjects();
         for (GameObject object : objects) {
             object.update(this);
         }
@@ -167,53 +172,76 @@ public class Game extends JFrame implements Runnable {
         
         boolean direction = false;
         
-        if (mode == BATTLE) {
         if (keyListener.noKeys()) {
             if (mode == BATTLE) battle.interpretButtonPress(Game.NO_KEYS);
+            else overworld.interpretButtonPress(Game.NO_KEYS);
         }
         if (keyListener.up()) {
             if (mode == BATTLE) battle.interpretButtonPress(Game.UP);
+            else overworld.interpretButtonPress(Game.UP);
             direction = true;
         }
-        if (keyListener.down() && (!direction  || battle.isEnemyTurn())) {
-            if (mode == BATTLE) battle.interpretButtonPress(Game.DOWN);
+        if (keyListener.down()) {
+            if (mode == BATTLE) {
+                if (!direction || battle.isEnemyTurn()) battle.interpretButtonPress(Game.DOWN);
+            }
+            else overworld.interpretButtonPress(Game.DOWN);
+            direction = true;
+            /*battle = new Battle(overworld.getPlayer(), Encounter.getWhimsun());
+            overworld.getPlayer().switchToSoul();
+            overworld.getPlayer().setX(39);
+            overworld.getPlayer().setY(444);
+            mode = BATTLE;*/
+        }
+        if (keyListener.left()) {
+            if (mode == BATTLE) {
+                if (!direction || battle.isEnemyTurn()) battle.interpretButtonPress(Game.LEFT);
+            }
+            else overworld.interpretButtonPress(Game.LEFT);
             direction = true;
         }
-        if (keyListener.left() && (!direction  || battle.isEnemyTurn())) {
-            if (mode == BATTLE) battle.interpretButtonPress(Game.LEFT);
-            direction = true;
-        }
-        if (keyListener.right() && (!direction  || battle.isEnemyTurn())) {
-            if (mode == BATTLE) battle.interpretButtonPress(Game.RIGHT);
+        if (keyListener.right()) {
+            if (mode == BATTLE) {
+                if (!direction || battle.isEnemyTurn()) battle.interpretButtonPress(Game.RIGHT);
+            }
+            else overworld.interpretButtonPress(Game.RIGHT);
             direction = true;
         }
         if (keyListener.z()) {
-            battle.interpretButtonPress(Game.CONFIRM);
+            if (mode == BATTLE) battle.interpretButtonPress(Game.CONFIRM);
+            else overworld.interpretButtonPress(Game.CONFIRM);
         }
         if (keyListener.x()) {
-            battle.interpretButtonPress(Game.CANCEL);
+            if (mode == BATTLE) battle.interpretButtonPress(Game.CANCEL);
+            else overworld.interpretButtonPress(Game.CANCEL);
         }
         
-        if (battle.isAttackAnimationPlaying() ) {
-            battle.checkIfAttackAnimationIsFinished();
-        } else if (battle.isEnemyTakingDamage()) {
-            battle.checkIfDamageNumberFinished();
-        } else if (battle.isBetweenTurns()) {
-            battle.checkTimeBetweenTurns();
-        } else if (battle.isEnemyTurn()) {
-            battle.checkBulletCollision();
-        } else if (battle.isTransitioningToPlayerTurn()) {
-            battle.transitionToPlayerTurn();
-        } else if (battle.isEnded() && !ftb.isShowing()) {
-            ftb.show();
-            ftb.fadeIn(25);
-            //ftb.setTransparency(0.5);
-            //ftb.show();
+        if (battle != null) {
+            if (battle.isAttackAnimationPlaying() ) {
+                battle.checkIfAttackAnimationIsFinished();
+            } else if (battle.isEnemyTakingDamage()) {
+                battle.checkIfDamageNumberFinished();
+            } else if (battle.isBetweenTurns()) {
+                battle.checkTimeBetweenTurns();
+            } else if (battle.isEnemyTurn()) {
+                battle.checkBulletCollision();
+            } else if (battle.isTransitioningToPlayerTurn()) {
+                battle.transitionToPlayerTurn();
+            } else if (battle.isEnded() && !ftb.isShowing()) {
+                ftb.show();
+                ftb.fadeIn(25);
+            }
         }
-        }
+        
         if (ftb.isShowing() && !ftb.isFadingIn()
                 && !ftb.isFadingOut()) {
             mode = NO_BATTLE;
+            battle.getPlayer().getSpritedObject().show();
+            battle.getPlayer().switchToOverworld();
+            //battle.getPlayer().getSpritedObject().setSprites(new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29).getSprites());
+            battle.getPlayer().setX(200);
+            battle.getPlayer().setY(200);
+            battle = null;
             ftb.fadeOut(25);
         }
     }
@@ -231,7 +259,7 @@ public class Game extends JFrame implements Runnable {
             o.render();
         }}
         if (mode == NO_BATTLE) {
-            for (GameObject o : room.getObjects()) {
+            for (GameObject o : overworld.getObjects()) {
                 o.render();
             }
         }
@@ -252,7 +280,7 @@ public class Game extends JFrame implements Runnable {
         bufferStrategy.show(); // Switches buffers
     }
     
-    public KeyboardListener getKeyListener() {return keyListener;}
+    public static KeyboardListener getKeyListener() {return keyListener;}
     public MouseEventListener getMouseEventListener() {return mouseListener;}
 
     

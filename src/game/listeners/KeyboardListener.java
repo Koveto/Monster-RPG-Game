@@ -46,13 +46,23 @@ public class KeyboardListener implements KeyListener, FocusListener {
         }
     }
     
-    public boolean z() {return keys[KeyEvent.VK_Z];}
-    public boolean x() {return keys[KeyEvent.VK_X];}
+    public boolean z() {return keys[KeyEvent.VK_Z] || keys[KeyEvent.VK_ENTER];}
+    public boolean x() {return keys[KeyEvent.VK_X] || keys[KeyEvent.VK_SHIFT];}
     
     public boolean up() {return keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];}
     public boolean down() {return keys[KeyEvent.VK_DOWN] || keys[KeyEvent.VK_S];}
     public boolean left() {return keys[KeyEvent.VK_LEFT] || keys[KeyEvent.VK_A];}
     public boolean right() {return keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D];}
+    
+    public boolean upAndLeft() {return up() && left();}
+    public boolean upAndRight() {return up() && right();}
+    public boolean downAndLeft() {return down() && left();}
+    public boolean downAndRight() {return down() && right();}
+    
+    public boolean onlyUp() {return up() && !down() && !left() && !right();}
+    public boolean onlyDown() {return !up() && down() && !left() && !right();}
+    public boolean onlyLeft() {return !up() && !down() && left() && !right();}
+    public boolean onlyRight() {return !up() && !down() && !left() && right();}
     
     public boolean noArrowKeys() {return !(up() || down() || left() || right());}
     public boolean noKeys() {return !(up() || down() || left() || right() || z() || x());}

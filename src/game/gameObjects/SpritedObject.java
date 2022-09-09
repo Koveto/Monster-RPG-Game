@@ -445,7 +445,7 @@ public class SpritedObject implements GameObject {
      */
     @Override
     public void render( ) {
-        if (show) RenderHandler.renderSprite(sprite, x, y);
+        if (show) RenderHandler.renderSprite(sprite, x, y, (Game.isBattle()) ? 1 : 2, (Game.isBattle()) ? 1 : 2);
     }
     
     /**
