@@ -1,15 +1,17 @@
 package game.gameObjects;
 
 import game.Game;
+import static game.Game.loadImage;
 import game.MovingPath;
 import game.RenderHandler;
 import game.Sprite;
+import game.SpriteSheet;
 import game.listeners.KeyboardListener;
 
 /**
  * Player
  * @author Kobe Goodwin
- * @version 8/31/2022
+ * @version 9/6/2022
  * 
  * A Battler with that represents the player character. It responds to keyboard
  * inputs. The camera follows its rectangle collision box. Makes selections on 
@@ -17,9 +19,11 @@ import game.listeners.KeyboardListener;
  */
 public class Player extends Battler {
     
+    private final int STEP_SWITCH1 = 10, STEP_SWITCH2 = 20, STEP_SWITCH3 = 30, STEP_SWITCH4 = 40;
+    
     private Rectangle rect;
     private String name;
-    private int lastDirection, textCooldown;
+    private int lastDirection, textCooldown, facing, stepCount;
     private long invincTime;
     private boolean invulnerable;
     
@@ -42,8 +46,10 @@ public class Player extends Battler {
         this.name = name;
         this.lastDirection = 0;
         this.textCooldown = 0;
-        rect = new Rectangle(32, 16, 16, 32);
+        rect = new Rectangle(xPosition, yPosition, 19 * 2, 29 * 2);
         invulnerable = false;
+        facing = 1;
+        stepCount = 0;
         
     }
     
@@ -80,6 +86,27 @@ public class Player extends Battler {
      */
     public void setRect( Rectangle rect ) {this.rect = rect;}
     
+    public void switchToSoul( ) {
+        
+        SpriteSheet soulSheet = new SpriteSheet(loadImage("ss\\soul.png"), 18, 18);
+        getSpritedObject().setSprites(soulSheet.getSprites());
+        getSpritedObject().setSprite(soulSheet.getSprites()[0]);
+        rect.setWidth(18);
+        rect.setHeight(18);
+        
+    }
+    
+    public void switchToOverworld( ) {
+        
+        SpriteSheet friskSheet = new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29);
+        getSpritedObject().setSprites(friskSheet.getSprites());
+        getSpritedObject().setSprite(friskSheet.getSprites()[0]);
+        rect.setWidth(38);
+        rect.setHeight(58);
+        
+        
+    }
+    
     public void setX( int x ) {
         super.setX(x);
         rect.setX(x);
@@ -88,6 +115,47 @@ public class Player extends Battler {
     public void setY( int y ) {
         super.setY(y);
         rect.setY(y);
+    }
+    
+    public void startStepping( ) {
+        if (stepCount == 0) stepCount++;
+    }
+    
+    public void stopStepping( ) {
+        stepCount = 0;
+        if (facing == Game.UP)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[7]);
+        else if (facing == Game.DOWN)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[0]);
+        else if (facing == Game.LEFT)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[3]);
+        else if (facing == Game.RIGHT)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[5]);
+    }
+    
+    private void step( ) {
+        
+        if (facing == Game.UP && (stepCount == STEP_SWITCH1 || stepCount == STEP_SWITCH3))
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[7]);
+        if (facing == Game.UP && stepCount == STEP_SWITCH2)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[9]);
+        if (facing == Game.UP && stepCount == STEP_SWITCH4)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[8]);
+        if (facing == Game.DOWN && (stepCount == STEP_SWITCH1 || stepCount == STEP_SWITCH3))
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[0]);
+        if (facing == Game.DOWN && stepCount == STEP_SWITCH2)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[2]);
+        if (facing == Game.DOWN && stepCount == STEP_SWITCH4)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[1]);
+        if (facing == Game.LEFT && (stepCount == STEP_SWITCH1 || stepCount == STEP_SWITCH3))
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[3]);
+        if (facing == Game.LEFT && (stepCount == STEP_SWITCH2 || stepCount == STEP_SWITCH4))
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[4]);
+        if (facing == Game.RIGHT && (stepCount == STEP_SWITCH1 || stepCount == STEP_SWITCH3))
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[5]);
+        if (facing == Game.RIGHT && (stepCount == STEP_SWITCH2 || stepCount == STEP_SWITCH4))
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[6]);
+        if (stepCount == STEP_SWITCH4) stepCount = 1;
     }
     
     /**
@@ -136,6 +204,21 @@ public class Player extends Battler {
         
     }
     
+    public void turnDirection( int direction ) {
+        
+        if (facing == direction) return;
+        facing = direction;
+        if (direction == Game.UP)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[8]);
+        else if (direction == Game.DOWN)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[1]);
+        else if (direction == Game.LEFT)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[4]);
+        else if (direction == Game.RIGHT)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[6]);
+        
+    }
+    
     @Override
     public boolean takeDamage( int damage ) {
         
@@ -158,6 +241,12 @@ public class Player extends Battler {
                 getSpritedObject().setSprite(getSpritedObject().getSprites()[0]);
                 getSpritedObject().pause();
             }
+        }
+        if (!Game.isBattle()) {
+            if (stepCount != 0) stepCount++;
+            if (stepCount == STEP_SWITCH1 || stepCount == STEP_SWITCH2
+                    || stepCount == STEP_SWITCH3
+                    || stepCount == STEP_SWITCH4) step();
         }
     }
     
