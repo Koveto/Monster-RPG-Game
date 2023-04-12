@@ -12,6 +12,7 @@ import java.awt.event.FocusListener;
 public class KeyboardListener implements KeyListener, FocusListener {
 
     public boolean[] keys = new boolean[120];
+    public boolean prevZ, prevX, prevUp, prevDown, prevLeft, prevRight;
     
     @Override
     public void keyTyped(KeyEvent e) {
