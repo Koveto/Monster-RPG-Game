@@ -113,7 +113,16 @@ public class Game extends JFrame implements Runnable {
         
     }
     
+    /**
+     * Mutator for scrollSpeed. Speeds documented in TextHandler.
+     * @param newScrollSpeed    scrollSpeed to change to.
+     */
     public static void setScrollSpeed( int newScrollSpeed ) { scrollSpeed = newScrollSpeed; }
+    
+    /**
+     * Determines if a battle is initiated.
+     * @return  True if battling, false if not.
+     */
     public static boolean isBattle( ) { return mode == BATTLE; }
     
     /**
@@ -171,6 +180,14 @@ public class Game extends JFrame implements Runnable {
         }
     }
     
+    /**
+     * Operations performed each deltaSecond in run(). First calls the update()
+     * method on each GameObject in the BATTLE or NO_BATTLE mode. Then the
+     * update() method on Game objects such as the fade to black. Determines
+     * if a battle is beginning and handles the mode change. Handles keyboard
+     * inputs for each respective mode. Calls method in battle appropriate for
+     * its state. Handles fade to black between modes.
+     */
     public void update( )
     {
         GameObject[] objects = new GameObject[] {};
@@ -274,6 +291,13 @@ public class Game extends JFrame implements Runnable {
         }
     }
 
+    /**
+     * Operations performed every deltaSeccond in run() after update(). Creates
+     * a BufferStrategy to handle lag. Fills the display with black then calls
+     * the render() method in each mode's GameObjects. Renders objects visible
+     * in RenderHandler's view. Renders Text objects in each mode. Calls render()
+     * method on semitransparent objects. Switches graphics buffers.
+     */
     public void render( )
     {
         BufferStrategy bufferStrategy = canvas.getBufferStrategy();
@@ -315,13 +339,23 @@ public class Game extends JFrame implements Runnable {
         bufferStrategy.show(); // Switches buffers
     }
     
+    /**
+     * Accessor for keyListener. Listens to keyboard inputs. 
+     * @return  KeyboardListener used in Game.
+     */
     public static KeyboardListener getKeyListener() {return keyListener;}
+    
+    /**
+     * Accessor for mouseListener. Listens to mouse inputs.
+     * @return  MouseEventListener used in Game.
+     */
     public MouseEventListener getMouseEventListener() {return mouseListener;}
 
     
-    /*
-    Implemented Runnable Method
-    */
+    /**
+     * Implemented Runnable method. Updates game time and calls update() then
+     * render().
+     */
     @Override
     public void run( )
     {
@@ -350,6 +384,10 @@ public class Game extends JFrame implements Runnable {
         }
     }
     
+    /**
+     * Creates a new Game and Thread.
+     * @param args 
+     */
     public static void main( String[] args ) 
     {
         Game game = new Game();
