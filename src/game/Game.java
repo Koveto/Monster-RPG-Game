@@ -260,21 +260,11 @@ public class Game extends JFrame implements Runnable {
         
         
         
-        if (battle != null) {
-            if (battle.isAttackAnimationPlaying() ) {
-                battle.checkIfAttackAnimationIsFinished();
-            } else if (battle.isEnemyTakingDamage()) {
-                battle.checkIfDamageNumberFinished();
-            } else if (battle.isBetweenTurns()) {
-                battle.checkTimeBetweenTurns();
-            } else if (battle.isEnemyTurn()) {
-                battle.checkBulletCollision();
-            } else if (battle.isTransitioningToPlayerTurn()) {
-                battle.transitionToPlayerTurn();
-            } else if (battle.isEnded() && !ftb.isShowing()) {
+        if (battle != null) { 
+            if (battle.update() && !ftb.isShowing()) {
                 ftb.show();
                 ftb.fadeIn(25);
-            }
+            } 
         }
         
         if (ftb.isShowing() && !ftb.isFadingIn()

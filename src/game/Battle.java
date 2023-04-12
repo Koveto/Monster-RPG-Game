@@ -15,7 +15,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 9/21/2022
+ * @version 4/12/2023
  * 
  * Handles the properties of a battle.
  */
@@ -178,6 +178,27 @@ public class Battle {
      * @return  Array of Texts
      */
     public Text[] getText( ) { return bt.getText(); }
+    
+    /**
+     * Updates processes and Objects in Battle depending on its state.
+     * @return  True if the Battle is ended, False if not.
+     */
+    public boolean update( ) {
+        
+        if (isAttackAnimationPlaying() ) {
+            checkIfAttackAnimationIsFinished();
+        } else if (isEnemyTakingDamage()) {
+            checkIfDamageNumberFinished();
+        } else if (isBetweenTurns()) {
+            checkTimeBetweenTurns();
+        } else if (isEnemyTurn()) {
+            checkBulletCollision();
+        } else if (isTransitioningToPlayerTurn()) {
+            transitionToPlayerTurn();
+        } else if (isEnded()) { return true; }
+        
+        return false;
+    }
     
     public void interpretButtonPress( int button ) {
         
