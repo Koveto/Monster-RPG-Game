@@ -116,6 +116,12 @@ public class Game extends JFrame implements Runnable {
     public static void setScrollSpeed( int newScrollSpeed ) { scrollSpeed = newScrollSpeed; }
     public static boolean isBattle( ) { return mode == BATTLE; }
     
+    /**
+     * Appends  integer to an integer array.
+     * @param array Array or integers to append to
+     * @param e     New integer to append
+     * @return  Integer array with e appended
+     */
     public static int[] addToIntArray( int[] array, int e ) {
         
         int[] temp = new int[array.length + 1];
@@ -170,6 +176,16 @@ public class Game extends JFrame implements Runnable {
         
         ftb.update(this);
         
+        if (mode == NO_BATTLE) {
+            overworld.checkDialogueTrigger();
+        }
+        
+        if (overworld != null && overworld.activatingBattle()) {
+            mode = BATTLE;
+            battle = new Battle(overworld.getPlayer(), Encounter.getWhimsun());
+            overworld = null;
+        }
+        
         boolean direction = false;
         
         if (keyListener.noKeys()) {
@@ -212,9 +228,14 @@ public class Game extends JFrame implements Runnable {
             else overworld.interpretButtonPress(Game.CONFIRM);
         }
         if (keyListener.x()) {
+            Game.setScrollSpeed(TextHandler.SKIP_SCROLL_SPEED);
             if (mode == BATTLE) battle.interpretButtonPress(Game.CANCEL);
             else overworld.interpretButtonPress(Game.CANCEL);
+        } else {
+            Game.setScrollSpeed(TextHandler.DEFAULT_SCROLL_SPEED);
         }
+        
+        
         
         if (battle != null) {
             if (battle.isAttackAnimationPlaying() ) {
@@ -241,6 +262,7 @@ public class Game extends JFrame implements Runnable {
             //battle.getPlayer().getSpritedObject().setSprites(new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29).getSprites());
             battle.getPlayer().setX(200);
             battle.getPlayer().setY(200);
+            overworld = new Overworld(battle.getPlayer(), room);
             battle = null;
             ftb.fadeOut(25);
         }
@@ -270,7 +292,14 @@ public class Game extends JFrame implements Runnable {
         for (Text t : battle.getText()) {
             RenderHandler.renderText(graphics, t);
         }
+        }
+        if (mode == NO_BATTLE) {
+            for (Text t : overworld.getText()) {
+                RenderHandler.renderText(graphics, t);
+            }
+        }
         
+        if (mode == BATTLE) {
         for (GameObject o : battle.getTransparentObjects()) {
             o.render(graphics);
         }}

@@ -11,7 +11,7 @@ import game.listeners.KeyboardListener;
 /**
  * Player
  * @author Kobe Goodwin
- * @version 9/6/2022
+ * @version 9/21/2022
  * 
  * A Battler with that represents the player character. It responds to keyboard
  * inputs. The camera follows its rectangle collision box. Makes selections on 
@@ -74,6 +74,11 @@ public class Player extends Battler {
     
     public boolean isVulnerable( ) {return !invulnerable;}
     
+    public boolean isFacingUp( ) { return facing == Game.UP; }
+    public boolean isFacingDown( ) { return facing == Game.DOWN; }
+    public boolean isFacingLeft( ) { return facing == Game.LEFT; }
+    public boolean isFacingRight( ) { return facing == Game.RIGHT; }
+     
     /**
      * Mutator for name
      * @param name  New name

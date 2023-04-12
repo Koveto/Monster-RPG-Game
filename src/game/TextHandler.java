@@ -19,13 +19,13 @@ import java.util.Scanner;
  */
 public class TextHandler {
     
-    public static Font DEFAULT_FONT = new Font("Default", Font.PLAIN, 30);
-    public static Font DIALOGUE_FONT;
-    public static Font DOTUMCHE_PIXEL;
-    public static Font DIALOGUE_FONT_SMALL;
-    public static Font DETERMINATION_MONO;
-    public static Font MARS;
-    public static Font MARS_SMALL;
+    public static Font  DEFAULT_FONT = new Font("Default", Font.PLAIN, 30),
+                        DIALOGUE_FONT,
+                        DOTUMCHE_PIXEL,
+                        DIALOGUE_FONT_SMALL,
+                        DETERMINATION_MONO,
+                        MARS,
+                        MARS_SMALL;
     
     public static Color WHITE = Color.decode("#FFFFFF"),
                         BLACK = Color.decode("000000"),
@@ -41,23 +41,24 @@ public class TextHandler {
                         PURPLE = Color.decode("#d535d9"),
                         GRAY = Color.decode("#404040");
     
-    public static String YELLOW_CODE = "/Y";
-    public static String BLUE_CODE = "/B";
-    public static String RED_CODE = "/R";
-    public static String ORANGE_CODE = "/O";
-    public static String GREEN_CODE = "/G";
-    public static String PURPLE_CODE = "/P";
-    public static String LIGHT_BLUE_CODE = "/A";
-    public static String DARK_BLUE_CODE = "/C";
-    public static String NEWLINE = "/N";
+    public static String    YELLOW_CODE = "/Y",
+                            BLUE_CODE = "/B",
+                            RED_CODE = "/R",
+                            ORANGE_CODE = "/O",
+                            GREEN_CODE = "/G",
+                            PURPLE_CODE = "/P",
+                            LIGHT_BLUE_CODE = "/A",
+                            DARK_BLUE_CODE = "/C",
+                            NEWLINE = "/N";
     
     public static final int DEFAULT_WRAP = 500,
                             SHORT_WRAP = 200,
                             BUBBLE_WRAP = 100;
     
-    public static final int DEFAULT_SCROLL_SPEED = 2;
-    public static final int FAST_SCROLL_SPEED = 1;
-    public static final int SLOW_SCROLL_SPEED = 5;
+    public static final int DEFAULT_SCROLL_SPEED = 2,
+                            FAST_SCROLL_SPEED = 1,
+                            SKIP_SCROLL_SPEED = 0,
+                            SLOW_SCROLL_SPEED = 5;
     
     
     /**

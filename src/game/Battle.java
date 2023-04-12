@@ -15,7 +15,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 8/31/2022
+ * @version 9/21/2022
  * 
  * Handles the properties of a battle.
  */
@@ -535,7 +535,7 @@ public class Battle {
         }
         if (!attackField.isShowing() && !enemies[enemySelected].isAlive()
                 && bt.getTextWaitingOn() == null) {
-            if (Game.scrollSpeed == TextHandler.SLOW_SCROLL_SPEED) {
+            if (bt.getFlavorText().getMessage().equals("You  won!\nYou  earned  5  EXP  and  1  gold.")) {
                 state = b.BATTLE_END;
                 return;
             }

@@ -1,5 +1,6 @@
 package game;
 
+import game.gameObjects.Player;
 import game.gameObjects.Rectangle;
 
 /**
@@ -10,14 +11,16 @@ import game.gameObjects.Rectangle;
 public class DialogueTrigger {
     
     private Rectangle interactBox;
-    private boolean inputRequired;
-    private int interactedNTimes;
     
-    public DialogueTrigger( Rectangle interactBox, boolean inputRequired ) {
+    public DialogueTrigger( Rectangle interactBox ) {
         
         this.interactBox = interactBox;
-        this.inputRequired = inputRequired;
-        interactedNTimes = 0;
+        
+    }
+    
+    public boolean isColliding( Player player ) {
+        
+        return player.getRect().isColliding(interactBox);
         
     }
     
