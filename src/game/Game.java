@@ -133,6 +133,12 @@ public class Game extends JFrame implements Runnable {
         
     }
     
+    /**
+     * Appends Text to Text array
+     * @param array     Text array to append to
+     * @param e         Text to be appended
+     * @return      Text array with e appended
+     */
     public static Text[] addToTextArray( Text[] array, Text e ) {
         
         Text[] temp = new Text[array.length + 1];
