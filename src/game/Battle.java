@@ -341,7 +341,8 @@ public class Battle {
             
         }
         
-        player.setLastDirection(button);
+        if (!(state == b.SELECTING_BATTLE_BUTTON && button == Game.CANCEL)) 
+            player.setLastDirection(button);
         
     }
     

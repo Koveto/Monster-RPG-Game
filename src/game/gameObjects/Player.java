@@ -11,7 +11,7 @@ import game.listeners.KeyboardListener;
 /**
  * Player
  * @author Kobe Goodwin
- * @version 9/21/2022
+ * @version 4/12/2023
  * 
  * A Battler with that represents the player character. It responds to keyboard
  * inputs. The camera follows its rectangle collision box. Makes selections on 
