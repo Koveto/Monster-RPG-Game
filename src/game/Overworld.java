@@ -140,9 +140,12 @@ public class Overworld {
             player.switchToSoul();
         }*/
         
-        if (confirmDelay == 0 && room.getDialogueTrigger().isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.isFacingUp()) {
-            dialogueBox.displayMessage(room.getDialogue());
-            player.stopStepping();
+        for (DialogueTrigger dt : room.getDialogueTriggers()) {
+            if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
+                dialogueBox.displayMessage(dt.getText());
+                player.stopStepping();
+                break;
+            }
         }
         
     }

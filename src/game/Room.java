@@ -16,8 +16,7 @@ public class Room {
     private TileSet tiles;
     private Map map1, map2;
     private Rectangle[] walls;
-    private DialogueTrigger dt;
-    private String dialogue;
+    private ArrayList<DialogueTrigger> dt;
     
     public Room( TileSet tiles, String map1Path, String map2Path, String wallPath,
             String dialoguePath ) {
@@ -26,8 +25,7 @@ public class Room {
         this.walls = walls;
         map1 = new Map(new File(map1Path), tiles);
         map2 = new Map(new File(map2Path), tiles);
-        dt = new DialogueTrigger(null);
-        dialogue = "hi";
+        dt = new ArrayList<DialogueTrigger>();
         
         try {
             ArrayList<Rectangle> rects = new ArrayList();
@@ -56,30 +54,26 @@ public class Room {
                 String line = scan.nextLine();
                 if (line.contains("//")) continue;
                 String[] splitString = line.split(",");
-                dt = new DialogueTrigger(new Rectangle(
+                dt.add(new DialogueTrigger(new Rectangle(
                                     Integer.parseInt(splitString[0]),
                                     Integer.parseInt(splitString[1]),
                                     Integer.parseInt(splitString[2]),
-                                    Integer.parseInt(splitString[3]))
-                );   
-                dialogue = splitString[4];
+                                    Integer.parseInt(splitString[3])),
+                                    splitString[4], Game.UP)
+                );
             }
         } catch (FileNotFoundException fnfe) {
             System.out.println("Dialogue path not found.");
-            dt = new DialogueTrigger(new Rectangle());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Dialogue path incorrectly composed.");
-            dt = new DialogueTrigger(new Rectangle());
         }
     
     }
     
     public Rectangle[] getWalls( ) { return walls; }
     
-    public String getDialogue( ) { return dialogue; }
-    
-    public DialogueTrigger getDialogueTrigger( ) { return dt; }
+    public ArrayList<DialogueTrigger> getDialogueTriggers( ) {return dt;}
     
     public GameObject[] getObjects( ) {
         
