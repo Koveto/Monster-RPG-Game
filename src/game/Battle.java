@@ -15,7 +15,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 9/21/2022
+ * @version 4/12/2023
  * 
  * Handles the properties of a battle.
  */
@@ -129,31 +129,31 @@ public class Battle {
      * Evaluates if attack animation is playing
      * @return  True if attack animation is playing
      */
-    public boolean isAttackAnimationPlaying( ) { return state == b.ATTACK_ANIMATION_PLAYING; }
+    private boolean isAttackAnimationPlaying( ) { return state == b.ATTACK_ANIMATION_PLAYING; }
     
     /**
      * Evaluates if enemy hp bar is sliding down
      * @return  True if enemy is taking damage
      */
-    public boolean isEnemyTakingDamage( ) { return state == b.ENEMY_TAKING_DAMAGE; }
+    private boolean isEnemyTakingDamage( ) { return state == b.ENEMY_TAKING_DAMAGE; }
     
     /**
      * Evaluates if battle is between player's turn and enemy's turn
      * @return  True if battle is between turns
      */
-    public boolean isBetweenTurns( ) { return state == b.BETWEEN_TURNS; }
+    private boolean isBetweenTurns( ) { return state == b.BETWEEN_TURNS; }
     
     /**
      * Evaluates if battle is between enemy's turn and player's turn
      * @return  True if battle is between turns
      */
-    public boolean isTransitioningToPlayerTurn( ) { return state == b.ENEMY_TURN_FINISHED; }
+    private boolean isTransitioningToPlayerTurn( ) { return state == b.ENEMY_TURN_FINISHED; }
     
     /**
      * Determines if the battle is waiting to progress on the scroll of a Text.
      * @return  True if waiting on a Text
      */
-    public boolean isWaitingOnText( ) { return bt.getTextWaitingOn() != null; }
+    private boolean isWaitingOnText( ) { return bt.getTextWaitingOn() != null; }
     
     /**
      * Determines if the enemies' turn is in progress.
@@ -179,6 +179,32 @@ public class Battle {
      */
     public Text[] getText( ) { return bt.getText(); }
     
+    /**
+     * Updates processes and Objects in Battle depending on its state.
+     * @return  True if the Battle is ended, False if not.
+     */
+    public boolean update( ) {
+        
+        if (isAttackAnimationPlaying() ) {
+            checkIfAttackAnimationIsFinished();
+        } else if (isEnemyTakingDamage()) {
+            checkIfDamageNumberFinished();
+        } else if (isBetweenTurns()) {
+            checkTimeBetweenTurns();
+        } else if (isEnemyTurn()) {
+            checkBulletCollision();
+        } else if (isTransitioningToPlayerTurn()) {
+            transitionToPlayerTurn();
+        } else if (isEnded()) { return true; }
+        
+        return false;
+    }
+    
+    /**
+     * Handles keyboard input during a Battle. Called in Game.update(). Depends
+     * on state of battle and button being pressed.
+     * @param button    Button being pressed. Clarified in Game.
+     */
     public void interpretButtonPress( int button ) {
         
         if (player.getLastDirection() == button && state != b.ENEMY_TURN) {
@@ -315,7 +341,8 @@ public class Battle {
             
         }
         
-        player.setLastDirection(button);
+        if (!(state == b.SELECTING_BATTLE_BUTTON && button == Game.CANCEL)) 
+            player.setLastDirection(button);
         
     }
     
@@ -470,7 +497,12 @@ public class Battle {
         
     }
     
-    public void checkIfAttackAnimationIsFinished( ) {
+    /**
+     * Progresses Battle after the attack animation plays. Changes state to
+     * ENEMY_TAKING_DAMAGE. Slides HP bar by damage, calls hurt animation,
+     * updates enemy health, begins damageNumber Path.
+     */
+    private void checkIfAttackAnimationIsFinished( ) {
         
         if (attackAnimation.finishedAnimating() && System.currentTimeMillis() - 
                 lastStateSwitch >= b.DELAY_ATTACKTOTAKINGDAMAGE) {
@@ -501,7 +533,10 @@ public class Battle {
         
     }
     
-    public void checkIfDamageNumberFinished( ) {
+    /**
+     * Updates state to BETWEEN_TURNS if damageNumber completed Path.
+     */
+    private void checkIfDamageNumberFinished( ) {
         
         if (damageNumber.getPath().isFinished()) {
             state = b.BETWEEN_TURNS;
@@ -510,9 +545,22 @@ public class Battle {
         
     }
     
-    public boolean isEnded( ) { return state == b.BATTLE_END; }
+    /**
+     * Determines if Battle ended.
+     * @return  True if ended, False if not.
+     */
+    private boolean isEnded( ) { return state == b.BATTLE_END; }
     
-    public void checkTimeBetweenTurns( ) {
+    /**
+     * Handles Battle between turns. Hides damage number and HP bar after
+     * DELAY_TURNENDTOHPFADE. Darkens Enemy if defeated after 500 ms. Changes 
+     * state to BATTLE_END when Enemy finished moving. Hides attackCursor and
+     * shrinks attackField. If Enemy is alive, resumes its animation. If not,
+     * displays victory text and shrinks battle box. Creates text bubbles for
+     * surviving enemies. After dialogue progressed, state is changed to 
+     * ENEMY_TURN and BulletPattern is initiated.
+     */
+    private void checkTimeBetweenTurns( ) {
         
         if (System.currentTimeMillis() - lastStateSwitch > b.DELAY_TURNENDTOHPFADE
                 && damageNumber.isShowing()) {
@@ -578,7 +626,10 @@ public class Battle {
         
     }
     
-    public void transitionToPlayerTurn( ) {
+    /**
+     * Widens battleRect and returns to SELECTING_BATTLE_BUTTON after enemy turn.
+     */
+    private void transitionToPlayerTurn( ) {
         
         if (battleRect.getWidth() < b.W_BATTLERECT) {
             battleRect.setX(battleRect.getX() - b.W_BATTLERECTINCREMENT);
@@ -600,7 +651,11 @@ public class Battle {
         
     }
     
-    public void checkBulletCollision( ) {
+    /**
+     * Handles bullet collision during enemy turn. Hides player and bullets
+     * when attack is complete. Removes collided bullet and damages player.
+     */
+    private void checkBulletCollision( ) {
         
         /*Rectangle[] bullets = new Rectangle[patterns[0].getRects().length + 
                 patterns[1].getRects().length + patterns[2].getRects().length];
@@ -640,7 +695,7 @@ public class Battle {
      * Determines if the Text the battle is waiting on is finished scrolling.
      * @return  True if finished scrolling, false if not.
      */
-    public boolean checkOnWaitingText( ) {
+    private boolean checkOnWaitingText( ) {
         
         if (bt.getTextWaitingOn() == null) return false;
         if (bt.getTextWaitingOn().isFinishedScrolling()) return true;
@@ -682,6 +737,11 @@ public class Battle {
         
     }
     
+    /**
+     * Creates a Sprite of a damage number which includes "1". Handled specially
+     * because of spacing ("1" is less wide). Called in getDamageNumberSprite.
+     * @return  Sprite representing "1".
+     */
     private Sprite getNumberOneSprite( ) {
         int[] pixels = b.DAMAGE_NUMBERS.getSprite(1, 0).getPixels();
         int[] newPixels = new int[570];
@@ -697,6 +757,11 @@ public class Battle {
         return new Sprite(newPixels, 19, 30);
     }
     
+    /**
+     * Creates a Sprite representing the number of damage dealt. 
+     * @param damage    Damage dealt.
+     * @return      Sprite representing damage.
+     */
     private Sprite getDamageNumberSprite( int damage ) {
         
         if (damage < 10) {
@@ -737,6 +802,11 @@ public class Battle {
         */
     }
     
+    /**
+     * Handles Battle during SELECTING_TARGET state. Selected Enemy flashes and
+     * nonselected enemies darken.
+     * @param returning     True if canceled an ACT, False if from FIGHT/ACT.
+     */
     private void selectTarget( boolean returning ) {
         
         player.getSpritedObject().hide();
@@ -785,6 +855,9 @@ public class Battle {
         
     }
     
+    /**
+     * Brightens selected Enemy and stops flashing.
+     */
     private void highlightSelectedEnemy( ) {
         
         enemies[enemySelected].getSpritedObject().brightenToDefault(b.BRIGHTEN_TO_DEFAULT_FACTOR);
@@ -792,6 +865,12 @@ public class Battle {
         
     }
     
+    /**
+     * Lists Text selections to display and alters them by color code. Handles
+     * multiple pages. Moves player to appropriate selection.
+     * @param options       String array of formatted Text options.
+     * @param returning     True if returning from selecting target.
+     */
     private void listOptions( String[] options, boolean returning ) {
         
         player.getSpritedObject().show();
@@ -863,7 +942,9 @@ public class Battle {
     }
     
     /**
-     * When pressing Z on one of the Battle Buttons
+     * Handles a CONFIRM input while selecting a battle button. Changes depending
+     * on button pressed: FIGHT changes state to SELECTING_SKILL, ACT to
+     * SELECTING_TARGET, ITEM to SELECTING_ITEM, MERCY to SELECTING_MERCY.
      */
     private void pressBattleButton( ) {
         
@@ -896,7 +977,7 @@ public class Battle {
     }
     
     /**
-     * When pressing X while choosing a target to fight
+     * Handles a CANCEL input while choosing a skill. Clears battle text.
      */
     private void backToButtonSelect( ) {
         
@@ -918,12 +999,19 @@ public class Battle {
         
     }
     
+    /**
+     * Resets effects of all enemies.
+     */
     private void resetEnemyEffects( ) {
         
         resetEnemyEffects( -1 );
         
     }
     
+    /**
+     * Resets effects of all enemies except for the one occupying the ignoreIndex.
+     * @param ignoreIndex   Index of Enemy to ignore.
+     */
     private void resetEnemyEffects( int ignoreIndex ) {
         
         for (int i = 0; i < enemies.length; i++) {
@@ -939,6 +1027,11 @@ public class Battle {
         
     }
     
+    /**
+     * Determines if the current getOptions() return array is the same as options.
+     * @param options   Options to compare to.
+     * @return      True if getOptions and options are the same.
+     */
     private boolean optionsEqual( String[] options ) {
         
         if (options.length == 0) return false;
@@ -953,6 +1046,10 @@ public class Battle {
         
     }
     
+    /**
+     * Sets player's position to the appropriate option.
+     * @param optionSelected    Index of option to move Player to.
+     */
     private void movePlayerToSelection( int optionSelected ) {
         
         int[] columns = new int[] {b.X_PLAYEROPTIONCOLUMN1, b.X_PLAYEROPTIONCOLUMN2};
@@ -982,6 +1079,11 @@ public class Battle {
         
     }
     
+    /**
+     * Selects new enemy and deselects previous enemy. Previous stops flashing
+     * and darkens. New enemy flashes and brightens.
+     * @param newEnemyIndex     Index of Enemy to select.
+     */
     private void selectEnemy( int newEnemyIndex ) {
         
         enemies[enemySelected].getSpritedObject().resetBrightness();
@@ -1000,7 +1102,11 @@ public class Battle {
     }
     
     
-    
+    /**
+     * Retrieves options and moves player to highlight the one indicated by
+     * the direction pressed.
+     * @param direction     Direction pressed
+     */
     private void selectOption( int direction ) {
         
         Text[] options = getOptions();
