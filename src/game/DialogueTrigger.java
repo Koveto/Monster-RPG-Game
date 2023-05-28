@@ -6,18 +6,18 @@ import game.gameObjects.Rectangle;
 /**
  * DialogueTrigger
  * @author Kobe Goodwin
- * @version 4/13/2023
+ * @version 5/28/2023
  */
 public class DialogueTrigger {
     
     private Rectangle interactBox;
-    private String text;
+    private String[] texts;
     private int direction;
     
-    public DialogueTrigger( Rectangle interactBox, String text, int direction ) {
+    public DialogueTrigger( Rectangle interactBox, String[] texts, int direction ) {
         
         this.interactBox = interactBox;
-        this.text = text;
+        this.texts = texts;
         this.direction = direction;
         
     }
@@ -28,7 +28,7 @@ public class DialogueTrigger {
         
     }
     
-    public String getText( ) { return text; }
+    public String getText( ) { return texts[0]; }
     
     public int getDirection( ) { return direction; }
     

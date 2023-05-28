@@ -1,4 +1,8 @@
 // Dialogue
-// x, y, w, h, txt
-123,148,19,10,Only the fearless may proceed. Brave ones. Foolish ones. Both walk not the middle road.
-200,148,19,10,Only the fearless may proceed. Brave ones. Foolish ones. Both walk not the middle road.
+// # x, y, w, h, direction
+// txt
+# 123,148,19,10,1
+* Only the fearless may proceed. @* Brave ones. Foolish ones. @* Both walk not the middle road.
+# 200,148,19,10,1
+Only the fearless may proceed. Brave ones. Foolish ones. Both walk not the middle road.
+# 0,0,0,0,0

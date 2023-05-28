@@ -7,33 +7,47 @@ import java.awt.Color;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 9/12/2022
+ * @version 5/28/2023
  */
 public class DialogueBox {
     
     private Rectangle inner, outer;
-    private Text asterisk, text;
+    private Text[] texts;
     private boolean show;
     
     public DialogueBox( ) {
         
         outer = new Rectangle(33, 320, 577, 153, TextHandler.WHITE.getRGB(), 6);
         inner = new Rectangle(33 + 6, 320 + 6, 577 - 12, 153 - 12, TextHandler.BLACK.getRGB());
-        asterisk = new Text("*", 59, 375, false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.SHORT_WRAP, false, 0);
-        text = new Text("Default flavor text", 90, 375, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0);
+        texts = new Text[] {
+            new Text("Default flavor text", 59, 370, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
+            new Text("Default flavor text", 59, 407, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
+            new Text("Default flavor text", 59, 446, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0)};
         show = false;
         
     }
     
     public boolean isShowing( ) { return show; }
     
-    public boolean finishedScrolling( ) { return text.isFinishedScrolling(); }
+    public boolean finishedScrolling( ) { return texts[2].isFinishedScrolling(); }
     
     public void hide( ) { show = false; }
     
     public void displayMessage( String message ) {
         
-        text.newMessage(message);
+        String[] lines = message.split("@");
+        if (lines.length == 1) displayMessages( message, "", "");
+        else if (lines.length == 2) displayMessages( lines[0], lines[1], "");
+        else displayMessages(lines[0], lines[1], lines[2]);
+    }
+    
+    public void displayMessages( String message1, String message2, String message3) {
+        
+        texts[0].newMessage(message1);
+        texts[1].newMessage(message2);
+        texts[2].newMessage(message3);
+        texts[1].setScroll(false);
+        texts[2].setScroll(false);
         show = true;
         
     }
@@ -47,7 +61,18 @@ public class DialogueBox {
     
     public Text[] getText( ) {
         
-        if (show) return new Text[] {asterisk, text};
+        if (show) {
+            if (texts[1].isFinishedScrolling()) {
+                texts[2].setScroll(true);
+                return texts;
+            }
+            if (texts[0].isFinishedScrolling()) {
+                texts[1].setScroll(true);
+                return new Text[] {texts[0], texts[1]};
+            } 
+            return new Text[] {texts[0]};
+            
+        }
         else return new Text[] {};
         
     }

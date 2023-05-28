@@ -15,7 +15,7 @@ import java.text.AttributedCharacterIterator;
 /**
  * Text
  * @author Kobe Goodwin
- * @version 8/31/2022
+ * @version 5/28/2023
  * 
  * A message to be drawn to the screen. 
  */
@@ -207,7 +207,7 @@ public class Text {
      */
     public void newMessage( String message ) {
         
-        if (this.doubleSpaces) this.message = TextHandler.multiplyCharacter(message, ' ', 2);
+        if (this.doubleSpaces) this.message = TextHandler.multiplyCharacter(message, ' ', 3);
         else this.message = message;
         scrollIndex = 0;
         timeLastScroll = System.nanoTime();

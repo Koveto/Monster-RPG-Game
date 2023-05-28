@@ -144,6 +144,23 @@ public class Game extends JFrame implements Runnable {
     }
     
     /**
+     * Appends String to a String array.
+     * @param array Array or Strings to append to
+     * @param e     New String to append
+     * @return  String array with e appended
+     */
+    public static String[] addToStringArray( String[] array, String e ) {
+        
+        String[] temp = new String[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        temp[array.length] = e;
+        return temp;
+        
+    }
+    
+    /**
      * Appends Text to Text array
      * @param array     Text array to append to
      * @param e         Text to be appended

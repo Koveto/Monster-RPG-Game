@@ -9,7 +9,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 4/13/2023
+ * @version 5/28/2023
  */
 public class Room {
     
@@ -50,17 +50,26 @@ public class Room {
         
         try {
             Scanner scan = new Scanner(new File(dialoguePath));
+            int[] xywhd = new int[5];
+            String[] texts = new String[0];
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 if (line.contains("//")) continue;
-                String[] splitString = line.split(",");
-                dt.add(new DialogueTrigger(new Rectangle(
-                                    Integer.parseInt(splitString[0]),
-                                    Integer.parseInt(splitString[1]),
-                                    Integer.parseInt(splitString[2]),
-                                    Integer.parseInt(splitString[3])),
-                                    splitString[4], Game.UP)
-                );
+                
+                if (line.charAt(0) == '#') {
+                    if (texts.length != 0) {
+                        dt.add(new DialogueTrigger(new Rectangle(
+                            xywhd[0], xywhd[1], xywhd[2], xywhd[3]),
+                            texts, xywhd[4]));
+                    }
+                    String[] splitString = line.substring(2).split(",");
+                    for (int i = 0; i < splitString.length; i++) {
+                        xywhd[i] = Integer.parseInt(splitString[i]);
+                    }
+                    texts = new String[0];
+                } else {
+                    texts = Game.addToStringArray(texts, line);
+                }
             }
         } catch (FileNotFoundException fnfe) {
             System.out.println("Dialogue path not found.");
