@@ -1,5 +1,6 @@
 package game;
 
+import game.gameObjects.AnimatedSpritedObject;
 import game.gameObjects.GameObject;
 import game.gameObjects.Rectangle;
 import java.awt.Color;
@@ -7,18 +8,22 @@ import java.awt.Color;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 5/28/2023
+ * @version 6/23/2023
  */
 public class DialogueBox {
     
+    private AnimatedSpritedObject face;
     private Rectangle inner, outer;
     private Text[] texts;
     private boolean show;
     
     public DialogueBox( ) {
         
+        SpriteSheet TORIEL_TALKING = new SpriteSheet(Game.loadImage("ss\\torieltalking.png"), 50, 36);
         outer = new Rectangle(33, 320, 577, 153, TextHandler.WHITE.getRGB(), 6);
         inner = new Rectangle(33 + 6, 320 + 6, 577 - 12, 153 - 12, TextHandler.BLACK.getRGB());
+        face = new AnimatedSpritedObject(TORIEL_TALKING.getSprites(), 59, 370, 500, false, true);
+        face.animate();
         texts = new Text[] {
             new Text("Default flavor text", 59, 370, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
             new Text("Default flavor text", 59, 407, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
@@ -54,7 +59,7 @@ public class DialogueBox {
     
     public GameObject[] getObjects( ) {
         
-        if (show) return new GameObject[] {inner, outer};
+        if (show) return new GameObject[] {inner, outer, face};
         else return new GameObject[] {};
         
     }
