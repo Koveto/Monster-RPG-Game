@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 5/28/2023
+ * @version 6/23/2023
  */
 public class Overworld {
     
@@ -142,6 +142,7 @@ public class Overworld {
         
         for (DialogueTrigger dt : room.getDialogueTriggers()) {
             if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
+                System.out.println(dt.getText());
                 dialogueBox.displayMessage(dt.getText());
                 player.stopStepping();
                 break;

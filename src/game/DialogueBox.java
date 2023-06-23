@@ -22,12 +22,18 @@ public class DialogueBox {
         SpriteSheet TORIEL_TALKING = new SpriteSheet(Game.loadImage("ss\\torieltalking.png"), 50, 36);
         outer = new Rectangle(33, 320, 577, 153, TextHandler.WHITE.getRGB(), 6);
         inner = new Rectangle(33 + 6, 320 + 6, 577 - 12, 153 - 12, TextHandler.BLACK.getRGB());
-        face = new AnimatedSpritedObject(TORIEL_TALKING.getSprites(), 59, 370, 500, false, true);
+        face = new AnimatedSpritedObject(TORIEL_TALKING.getSprites(), 59, 350, 500, false, true);
         face.animate();
-        texts = new Text[] {
+        /*texts = new Text[] {
             new Text("Default flavor text", 59, 370, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
             new Text("Default flavor text", 59, 407, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
             new Text("Default flavor text", 59, 446, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0)};
+        */
+        texts = new Text[] {
+            new Text("Default flavor text", 200, 370, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 400, true, 0),
+            new Text("Default flavor text", 200, 407, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 400, true, 0),
+            new Text("Default flavor text", 200, 446, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 400, true, 0)};
+        
         show = false;
         
     }
@@ -48,9 +54,17 @@ public class DialogueBox {
     
     public void displayMessages( String message1, String message2, String message3) {
         
-        texts[0].newMessage(message1);
-        texts[1].newMessage(message2);
-        texts[2].newMessage(message3);
+        int temp = 0;
+        for (String s : new String[] {message1, message2, message3}) {
+            if (s.contains(">")) {
+                texts[temp].newMessage(s.substring(1));
+                texts[temp].setX(236);
+            } else {
+                texts[temp].newMessage(s);
+                texts[temp].setX(200);
+            }
+            temp++;
+        }
         texts[1].setScroll(false);
         texts[2].setScroll(false);
         show = true;

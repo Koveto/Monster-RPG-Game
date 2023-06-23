@@ -127,9 +127,6 @@ public class SpriteSheet {
                 temp++;
             }
         }
-        for (Sprite s : sprites) {
-            System.out.println(s);
-        }
         return sprites;
         
     }
