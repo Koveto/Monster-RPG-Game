@@ -4,11 +4,12 @@ import game.gameObjects.AnimatedSpritedObject;
 import game.gameObjects.GameObject;
 import game.gameObjects.Rectangle;
 import java.awt.Color;
+import java.util.Random;
 
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 6/23/2023
+ * @version 6/24/2023
  */
 public class DialogueBox {
     
@@ -16,8 +17,9 @@ public class DialogueBox {
     private Rectangle inner, outer;
     private Text[] texts;
     private String[] dialogue, faces;
-    private boolean show, usingFace;
-    private int textIndex;
+    private String blinkChar;
+    private boolean show, usingFace, blinking;
+    private int textIndex, blinkCount, blinkTime;
     
     public DialogueBox( ) {
         
@@ -65,6 +67,8 @@ public class DialogueBox {
         this.dialogue = dialogue;
         this.faces = faces;
         textIndex = 0;
+        blinking = false;
+        blinkCount = 0;
         displayMessage( dialogue[0], faces[0] );
         
     }
@@ -79,6 +83,13 @@ public class DialogueBox {
             face.hide();
             face.pause();
         } else {
+            blinkChar = newFace;
+            if (blinkChar.equals("Toriel_Neutral") || blinkChar.equals("Toriel_Smile") 
+                    || blinkChar.equals("Toriel_Thought")) {
+                blinking = true;
+                Random r = new Random();
+                blinkTime = r.nextInt(DialogueHandler.DELAY_RANDOMBLINK) + DialogueHandler.DELAY_BLINK;
+            }
             for (Text t : texts) {
                 t.setX(DialogueHandler.X_FACE);
                 t.setWrap(TextHandler.INDENT_WRAP);
@@ -112,8 +123,25 @@ public class DialogueBox {
         
     }
     
+    public void blink( ) {
+        
+        blinkCount++;
+        if (blinkCount == blinkTime) {
+            face.setSprites(DialogueHandler.getFaceGraphic(blinkChar.concat("_Blink")));
+        } else if (blinkCount >= blinkTime + DialogueHandler.DELAY_BLINKINCREMENT) {
+            if (face.getSpriteIndex() == 2) {
+                Random r = new Random();
+                blinkTime = r.nextInt(DialogueHandler.DELAY_RANDOMBLINK) + DialogueHandler.DELAY_BLINK;
+                blinkCount = 0;
+                face.setSprites(DialogueHandler.getFaceGraphic(blinkChar));
+            }
+        }
+        
+    }
+    
     public GameObject[] getObjects( ) {
         
+        if (blinking) blink();
         if (show) return new GameObject[] {inner, outer, face};
         else return new GameObject[] {};
         

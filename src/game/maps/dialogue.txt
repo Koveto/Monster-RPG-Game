@@ -2,8 +2,6 @@
 // # x, y, w, h, direction (up, down, left, right)
 // txt
 # 123,148,19,10,1
-> None
-* Only the fearless may proceed.@* Brave ones. Foolish ones.@* Both walk not the middle road.
 > Toriel_Smile
 * This way.
 # 0,0,0,0,0
