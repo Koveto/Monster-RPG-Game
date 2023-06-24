@@ -5,14 +5,13 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 9/21/2022
+ * @version 6/23/2023
  */
 public class Overworld {
     
     private Player player;
     private Room room;
     private DialogueBox dialogueBox;
-    private DialogueTrigger dt;
     private int confirmDelay;
     private boolean holdingUpOrDown, holdingRightOrLeft, isActivatingBattle;
     
@@ -21,7 +20,6 @@ public class Overworld {
         this.player = player;
         this.room = room;
         this.dialogueBox = new DialogueBox();
-        dt = new DialogueTrigger(new Rectangle(123, 148, 19, 10));
         holdingUpOrDown = false;
         isActivatingBattle = false;
         
@@ -36,7 +34,8 @@ public class Overworld {
         }*/
         if (confirmDelay > 0) confirmDelay--;
         if (confirmDelay == 0 && button == Game.CONFIRM && dialogueBox.finishedScrolling()) {
-            dialogueBox.hide();
+            if (!dialogueBox.progress())
+                dialogueBox.hide();
         }
         if (button == Game.CONFIRM && confirmDelay == 0) confirmDelay = 10;
         if (dialogueBox.isShowing()) return;
@@ -135,17 +134,20 @@ public class Overworld {
     
     public void checkDialogueTrigger( ) {
         
-        if (dt.isColliding(player) && Game.getKeyListener().z()) {
+        /*if (room.getDialogueTrigger().isColliding(player) && Game.getKeyListener().z()) {
             isActivatingBattle = true;
             player.setX(39);
             player.setY(444);
             player.switchToSoul();
-        }
-        
-        /*if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.isFacingUp()) {
-            dialogueBox.displayMessage("Only the fearless may proceed. Brave ones. Foolish ones. Both walk not the middle road.");
-            player.stopStepping();
         }*/
+        
+        for (DialogueTrigger dt : room.getDialogueTriggers()) {
+            if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
+                dialogueBox.newMessage(dt.getTexts(), dt.getFaces());
+                player.stopStepping();
+                break;
+            }
+        }
         
     }
     

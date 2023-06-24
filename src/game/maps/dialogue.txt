@@ -1,0 +1,7 @@
+// Dialogue
+// # x, y, w, h, direction (up, down, left, right)
+// txt
+# 123,148,19,10,1
+> Toriel_Smile
+* This way.
+# 0,0,0,0,0

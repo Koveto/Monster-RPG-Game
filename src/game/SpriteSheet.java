@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.image.BufferedImage;
+import java.time.Clock;
 
 /**
  * SpriteSheet
@@ -119,9 +120,11 @@ public class SpriteSheet {
         
         int numberOfSprites = (SIZE_X / SPRITE_SIZE_X) * (SIZE_Y / SPRITE_SIZE_Y);
         Sprite[] sprites = new Sprite[numberOfSprites];
-        for (int i = 0; i < (SIZE_X / SPRITE_SIZE_X); i++) {
-            for (int j = 0; j < (SIZE_Y / SPRITE_SIZE_Y); j++) {
-                sprites[i + j] = getSprite(i, j);
+        int temp = 0;
+        for (int y = 0; y < (SIZE_Y / SPRITE_SIZE_Y); y++) {
+            for (int x = 0; x < (SIZE_X / SPRITE_SIZE_X); x++) {
+                sprites[temp] = getSprite(x, y);
+                temp++;
             }
         }
         return sprites;

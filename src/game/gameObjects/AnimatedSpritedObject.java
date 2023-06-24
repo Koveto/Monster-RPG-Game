@@ -128,6 +128,12 @@ public class AnimatedSpritedObject extends SpritedObject {
     }
     
     /**
+     * Retrieves index of currently shown Sprite in its list of sprites.
+     * @return Sprite index.
+     */
+    public int getSpriteIndex( ) { return index; }
+    
+    /**
      * Determines the next valid index of a Sprite in SPRITES.
      * @return  next available index in SPRITES
      */

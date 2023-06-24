@@ -97,7 +97,8 @@ public class Game extends JFrame implements Runnable {
                                         new SpriteSheet(Game.loadImage("ss\\ruins.png"), 20, 20)),
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map.txt\\",
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map1.txt\\",
-                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\walls.txt\\");
+                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\walls.txt\\",
+                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\dialogue.txt\\");
         overworld = new Overworld(player, room);
         
         
@@ -134,6 +135,23 @@ public class Game extends JFrame implements Runnable {
     public static int[] addToIntArray( int[] array, int e ) {
         
         int[] temp = new int[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        temp[array.length] = e;
+        return temp;
+        
+    }
+    
+    /**
+     * Appends String to a String array.
+     * @param array Array or Strings to append to
+     * @param e     New String to append
+     * @return  String array with e appended
+     */
+    public static String[] addToStringArray( String[] array, String e ) {
+        
+        String[] temp = new String[array.length + 1];
         for (int i = 0; i < array.length; i++) {
             temp[i] = array[i];
         }

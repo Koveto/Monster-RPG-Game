@@ -72,6 +72,8 @@ public class Player extends Battler {
      */
     public int getLastDirection( ) {return lastDirection;}
     
+    public int facing( ) { return facing; }
+    
     public boolean isVulnerable( ) {return !invulnerable;}
     
     public boolean isFacingUp( ) { return facing == Game.UP; }

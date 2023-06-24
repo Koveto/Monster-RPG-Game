@@ -52,6 +52,7 @@ public class TextHandler {
                             NEWLINE = "/N";
     
     public static final int DEFAULT_WRAP = 500,
+                            INDENT_WRAP = 400,
                             SHORT_WRAP = 200,
                             BUBBLE_WRAP = 100;
     
@@ -90,7 +91,7 @@ public class TextHandler {
     public static void loadFonts( ) {
         
         try {
-            DIALOGUE_FONT = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\8bitoperator_JVE\\8bitoperator_jve.ttf")).deriveFont(30f);
+            DIALOGUE_FONT = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\8bitoperator_JVE\\8bitoperator_jve.ttf")).deriveFont(33f);
             DIALOGUE_FONT_SMALL = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\8bitoperator_JVE\\8bitoperator_jve.ttf")).deriveFont(24f);
             DETERMINATION_MONO = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\determinationmonoweb-webfont.ttf")).deriveFont(30f);
             MARS = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\listeners\\Mars_Needs_Cunnilingus\\Mars_Needs_Cunnilingus.ttf")).deriveFont(26f);
