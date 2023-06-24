@@ -29,9 +29,9 @@ public class DialogueTrigger {
         
     }
     
-    public String getText( ) { return texts[0]; }
+    public String[] getTexts( ) { return texts; }
     
-    public String getFace( ) { return faces[0]; }
+    public String[] getFaces( ) { return faces; }
     
     public int getDirection( ) { return direction; }
     

@@ -34,7 +34,8 @@ public class Overworld {
         }*/
         if (confirmDelay > 0) confirmDelay--;
         if (confirmDelay == 0 && button == Game.CONFIRM && dialogueBox.finishedScrolling()) {
-            dialogueBox.hide();
+            if (!dialogueBox.progress())
+                dialogueBox.hide();
         }
         if (button == Game.CONFIRM && confirmDelay == 0) confirmDelay = 10;
         if (dialogueBox.isShowing()) return;
@@ -142,7 +143,7 @@ public class Overworld {
         
         for (DialogueTrigger dt : room.getDialogueTriggers()) {
             if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
-                dialogueBox.displayMessage(dt.getText(), dt.getFace());
+                dialogueBox.newMessage(dt.getTexts(), dt.getFaces());
                 player.stopStepping();
                 break;
             }

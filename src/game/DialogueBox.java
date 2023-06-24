@@ -15,7 +15,9 @@ public class DialogueBox {
     private AnimatedSpritedObject face;
     private Rectangle inner, outer;
     private Text[] texts;
+    private String[] dialogue, faces;
     private boolean show, usingFace;
+    private int textIndex;
     
     public DialogueBox( ) {
         
@@ -27,7 +29,8 @@ public class DialogueBox {
             new Text("Default flavor text", 200, 370, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
             new Text("Default flavor text", 200, 407, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
             new Text("Default flavor text", 200, 446, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0)};
-        
+        dialogue = new String[0];
+        faces = new String[0];
         show = false;
         
     }
@@ -47,6 +50,24 @@ public class DialogueBox {
     }
     
     public void hide( ) { show = false; }
+    
+    public boolean progress( ) {
+        
+        if (dialogue.length <= textIndex + 1) return false;
+        textIndex++;
+        displayMessage( dialogue[textIndex], faces[textIndex] );
+        return true;
+        
+    }
+    
+    public void newMessage( String[] dialogue, String[] faces ) {
+        
+        this.dialogue = dialogue;
+        this.faces = faces;
+        textIndex = 0;
+        displayMessage( dialogue[0], faces[0] );
+        
+    }
     
     public void displayMessage( String message, String newFace ) {
         
