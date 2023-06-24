@@ -142,8 +142,7 @@ public class Overworld {
         
         for (DialogueTrigger dt : room.getDialogueTriggers()) {
             if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
-                System.out.println(dt.getText());
-                dialogueBox.displayMessage(dt.getText());
+                dialogueBox.displayMessage(dt.getText(), dt.getFace());
                 player.stopStepping();
                 break;
             }

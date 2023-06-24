@@ -1,7 +1,8 @@
 // Dialogue
-// # x, y, w, h, direction
+// # x, y, w, h, direction (up, down, left, right)
 // txt
 # 123,148,19,10,1
-//* Only the fearless may proceed. @* Brave ones. Foolish ones. @* Both walk not the middle road.
-* Do you need some@>ideas for conversation@>topics?
+> None
+* Only the fearless may proceed.@* Brave ones. Foolish ones.@* Both walk not the middle road.
+* You're funny.
 # 0,0,0,0,0

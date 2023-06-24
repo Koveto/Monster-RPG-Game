@@ -52,6 +52,7 @@ public class TextHandler {
                             NEWLINE = "/N";
     
     public static final int DEFAULT_WRAP = 500,
+                            INDENT_WRAP = 400,
                             SHORT_WRAP = 200,
                             BUBBLE_WRAP = 100;
     
