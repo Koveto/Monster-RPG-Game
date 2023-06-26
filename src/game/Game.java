@@ -56,6 +56,8 @@ public class Game extends JFrame implements Runnable {
     private Battle battle;
     private Room room;
     
+    private Sound sound;
+    
     public static int scrollSpeed, mode;
     
     private static KeyboardListener keyListener = new KeyboardListener();
@@ -101,6 +103,8 @@ public class Game extends JFrame implements Runnable {
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\dialogue.txt\\");
         overworld = new Overworld(player, room);
         
+        sound = new Sound();
+        sound.play("ruins", true);
         
         iconImage = loadImage("ss\\Icon.png");
         
