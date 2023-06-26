@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 6/23/2023
+ * @version 6/26/2023
  */
 public class Overworld {
     
@@ -17,6 +17,7 @@ public class Overworld {
     
     public Overworld( Player player, Room room ) {
         
+        Game.getMusic().play(0, true);
         this.player = player;
         this.room = room;
         this.dialogueBox = new DialogueBox();
@@ -34,8 +35,10 @@ public class Overworld {
         }*/
         if (confirmDelay > 0) confirmDelay--;
         if (confirmDelay == 0 && button == Game.CONFIRM && dialogueBox.finishedScrolling()) {
-            if (!dialogueBox.progress())
+            if (!dialogueBox.progress()) {
                 dialogueBox.hide();
+            }
+            
         }
         if (button == Game.CONFIRM && confirmDelay == 0) confirmDelay = 10;
         if (dialogueBox.isShowing()) return;

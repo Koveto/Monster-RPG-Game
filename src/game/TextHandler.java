@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * TextHandler
  * @author Kobe Goodwin
- * @version 8/29/2022
+ * @version 6/26/2023
  * 
  * Handles the formatting, wrapping, and parsing of Texts.
  */
@@ -59,7 +59,8 @@ public class TextHandler {
     public static final int DEFAULT_SCROLL_SPEED = 2,
                             FAST_SCROLL_SPEED = 1,
                             SKIP_SCROLL_SPEED = 0,
-                            SLOW_SCROLL_SPEED = 5;
+                            SLOW_SCROLL_SPEED = 5,
+                            SLOWEST_SCROLL_SPEED = 1;
     
     
     /**

@@ -15,7 +15,7 @@ import java.text.AttributedCharacterIterator;
 /**
  * Text
  * @author Kobe Goodwin
- * @version 6/23/2023
+ * @version 6/26/2023
  * 
  * A message to be drawn to the screen. 
  */
@@ -24,7 +24,7 @@ public class Text {
     private String message;
     private boolean scrollingText, doubleSpaces;
     private int x, y, scrollIndex, wrap, newLineSpace;
-    private long timeLastScroll;
+    private long timeLastScroll, timeLastSound;
     private Color color;
     private Font font;
     
@@ -149,6 +149,11 @@ public class Text {
         if (scrollIndex == message.length() || !scrollingText) return message;
         if (System.nanoTime() - timeLastScroll > ((long) Game.scrollSpeed) * 10000000) {
             scrollIndex++;
+            if (message.charAt(scrollIndex - 1) != ' ' && message.charAt(scrollIndex - 1) != '*'
+                    && System.currentTimeMillis() - timeLastSound > DialogueHandler.DELAY_DIALOGUESOUND) {
+                Game.getSound().play(1, false);
+                timeLastSound = System.currentTimeMillis();
+            }
             timeLastScroll = System.nanoTime();
         }
         if (message.substring(0, scrollIndex).endsWith("/") && message.charAt(scrollIndex) == 'Y'

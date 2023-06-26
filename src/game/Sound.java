@@ -20,7 +20,7 @@ public class Sound {
     private void setFile( String path ) {
         
         try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(path));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(System.getProperty("user.dir") + "\\src\\game\\sound\\" + path));
             clip = AudioSystem.getClip();
             clip.open(ais);
         } catch (Exception e) {

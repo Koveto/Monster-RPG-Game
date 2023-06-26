@@ -3,7 +3,7 @@ package game;
 /**
  * DialogueHandler
  * @author  Kobe Goodwin
- * @version 6/24/2023
+ * @version 6/26/2023
  */
 public class DialogueHandler {
     
@@ -12,7 +12,8 @@ public class DialogueHandler {
                         X_INDENT = 236,
                         DELAY_BLINK = 5000,
                         DELAY_RANDOMBLINK = 1000,
-                        DELAY_BLINKINCREMENT = 525;
+                        DELAY_BLINKINCREMENT = 525,
+                        DELAY_DIALOGUESOUND = 50;
     
     public static   String TORIEL_NEUTRAL = "1_2";
     public static   String TORIEL_NEUTRAL_BLINK = "3_4_5";

@@ -56,7 +56,7 @@ public class Game extends JFrame implements Runnable {
     private Battle battle;
     private Room room;
     
-    private Sound sound;
+    private static Sound music, sound;
     
     public static int scrollSpeed, mode;
     
@@ -87,6 +87,9 @@ public class Game extends JFrame implements Runnable {
         // Create our object for our buffer strategy
         canvas.createBufferStrategy(3);
         
+        music = new Sound();
+        sound = new Sound();
+        
         soulSheet = new SpriteSheet(loadImage("ss\\soul.png"), 18, 18);
         SpriteSheet friskSheet = new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29);
         Player player = new Player("CHARA", friskSheet.getSprites(), new Path("1", "1", 200, 200, 0, 0, 0.1, true), 200, 200, 100, 20, 1, false, true);
@@ -102,9 +105,6 @@ public class Game extends JFrame implements Runnable {
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\walls.txt\\",
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\dialogue.txt\\");
         overworld = new Overworld(player, room);
-        
-        sound = new Sound();
-        sound.play("ruins", true);
         
         iconImage = loadImage("ss\\Icon.png");
         
@@ -362,6 +362,19 @@ public class Game extends JFrame implements Runnable {
      * @return  MouseEventListener used in Game.
      */
     public MouseEventListener getMouseEventListener() {return mouseListener;}
+    
+    /**
+     * Accessor for game music controller.
+     * @return  Sound controlling game music.
+     */
+    public static Sound getMusic() {
+        return music;}
+    
+    /**
+     * Accessor for game sound controller.
+     * @return  Sound controlling game sound.
+     */
+    public static Sound getSound() {return sound;}
 
     
     /**
