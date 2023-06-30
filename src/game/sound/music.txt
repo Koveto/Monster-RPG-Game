@@ -1,2 +1,0 @@
-0,Ruins,mus_ruins.wav
-1,Toriel,voice_toriel.wav

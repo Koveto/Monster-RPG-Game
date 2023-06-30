@@ -6,7 +6,7 @@ import java.awt.Color;
 /**
  * BattleText
  * @author Kobe Goodwin
- * @version 8/31/2022
+ * @version 6/30/2023
  * 
  * A helper class that stores and alters the Texts used in a Battle.
  */
@@ -31,22 +31,22 @@ public class BattleText {
                 player.getName() + "  LV " + String.valueOf(player.getLevel()), 
                 b.X_NAMEANDLEVEL, 
                 b.Y_NAMEANDLEVEL, 
-                false, TextHandler.WHITE, TextHandler.MARS);
+                false, TextHandler.WHITE, TextHandler.MARS, null);
         this.hpLabel = new Text("HP", 
                 b.X_HPLABEL, 
                 b.Y_HPLABEL, 
-                false, TextHandler.WHITE, TextHandler.MARS_SMALL);
+                false, TextHandler.WHITE, TextHandler.MARS_SMALL, null);
         this.hpFraction = new Text(String.valueOf(player.getHP()) + " / " + 
                 String.valueOf(player.getMaxHP()), 
                 b.X_HPFRACTION, 
                 b.Y_HPFRACTION, 
-                false, TextHandler.WHITE, TextHandler.MARS);
+                false, TextHandler.WHITE, TextHandler.MARS, null);
         this.asterisk = new Text("*", 
                 b.X_ASTERISK, b.Y_OPTIONROW1, 
-                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT);
+                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, null);
         this.flavorText = new Text(b.TEXT_DEFAULTFLAVOR, 
                 b.X_FLAVORTEXT, b.Y_OPTIONROW1, 
-                true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
+                true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "SND_TXT2", 
                 TextHandler.DEFAULT_WRAP, true, 0); // scrolls, doubles spaces
         this.longSelection1 = b.newLongSelection(1);
         this.longSelection2 = b.newLongSelection(2);
@@ -59,11 +59,11 @@ public class BattleText {
         this.shortSelection6 = b.newShortSelection(6);
         this.pageNumber = new Text("", 
                 b.X_PAGENUMBER, b.Y_OPTIONROW3, 
-                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
+                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, null, 
                 TextHandler.SHORT_WRAP, true, 0);
-        this.bubble1 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, TextHandler.BUBBLE_WRAP, false, 7);
-        this.bubble2 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, TextHandler.BUBBLE_WRAP, false, 7);
-        this.bubble3 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, TextHandler.BUBBLE_WRAP, false, 7);
+        this.bubble1 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, "Text", TextHandler.BUBBLE_WRAP, false, 7);
+        this.bubble2 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, "Text", TextHandler.BUBBLE_WRAP, false, 7);
+        this.bubble3 = new Text("message", 0, 0, true, TextHandler.BLACK, TextHandler.DOTUMCHE_PIXEL, "Text", TextHandler.BUBBLE_WRAP, false, 7);
         
         this.waiting = null;
         

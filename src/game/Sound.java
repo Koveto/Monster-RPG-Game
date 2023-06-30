@@ -9,7 +9,7 @@ import javax.sound.sampled.AudioInputStream;
 /**
  * Sound
  * @author Kobe Goodwin
- * @version 6/26/2023
+ * @version 6/30/2023
  */
 public class Sound {
     
@@ -20,7 +20,7 @@ public class Sound {
     private void setFile( String path ) {
         
         try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(System.getProperty("user.dir") + "\\src\\game\\sound\\" + path));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(System.getProperty("user.dir") + "\\src\\game\\sounds\\" + path));
             clip = AudioSystem.getClip();
             clip.open(ais);
         } catch (Exception e) {
@@ -32,7 +32,7 @@ public class Sound {
     private String getSongPath( String name ) {
         
         try {
-            File music = new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\sound\\music.txt");
+            File music = new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\sounds\\a_music.txt");
             Scanner scan = new Scanner(music);
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
@@ -50,7 +50,7 @@ public class Sound {
     private String getSongPath( int id ) {
         
         try {
-            File music = new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\sound\\music.txt");
+            File music = new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\sounds\\a_music.txt");
             Scanner scan = new Scanner(music);
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
@@ -67,6 +67,7 @@ public class Sound {
     
     public void play( String name, boolean loop ) { 
         
+        if (name == null) return;
         setFile(getSongPath(name));
         clip.start();
         if (loop) clip.loop(Clip.LOOP_CONTINUOUSLY);

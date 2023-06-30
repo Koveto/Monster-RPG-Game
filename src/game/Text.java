@@ -15,13 +15,13 @@ import java.text.AttributedCharacterIterator;
 /**
  * Text
  * @author Kobe Goodwin
- * @version 6/26/2023
+ * @version 6/30/2023
  * 
  * A message to be drawn to the screen. 
  */
 public class Text {
 
-    private String message;
+    private String message, sound;
     private boolean scrollingText, doubleSpaces;
     private int x, y, scrollIndex, wrap, newLineSpace;
     private long timeLastScroll, timeLastSound;
@@ -36,8 +36,10 @@ public class Text {
      * @param scrollingText     True if text should scroll, false if not
      * @param color             Color of message
      * @param font              Message font
+     * @param sound             Sound for text scroll
      */
-    public Text( String message, int x, int y, boolean scrollingText, Color color, Font font ) {
+    public Text( String message, int x, int y, boolean scrollingText,
+            Color color, Font font, String sound ) {
         
         this.message = message;
         this.x = x;
@@ -48,6 +50,7 @@ public class Text {
         this.font = font;
         wrap = TextHandler.DEFAULT_WRAP;
         this.newLineSpace = 0;
+        this.sound = sound;
         
     }
     
@@ -59,11 +62,13 @@ public class Text {
      * @param scrollingText     True if text should scroll, false if not
      * @param color             Color of message
      * @param font              Message font
+     * @param sound             Sound for text scroll
      * @param wrapSize          Width of wrap
      * @param doubleSpaces      True to double the spaces
      */
     public Text( String message, int x, int y, boolean scrollingText, 
-            Color color, Font font, int wrapSize, boolean doubleSpaces,
+            Color color, Font font, String sound,
+            int wrapSize, boolean doubleSpaces,
             int newLineSpace) {
         
         if (doubleSpaces) this.message = TextHandler.multiplyCharacter(message, ' ', 2);
@@ -77,6 +82,7 @@ public class Text {
         this.wrap = wrapSize;
         this.doubleSpaces = doubleSpaces;
         this.newLineSpace = newLineSpace;
+        this.sound = sound;
         
     }
     
@@ -151,7 +157,7 @@ public class Text {
             scrollIndex++;
             if (message.charAt(scrollIndex - 1) != ' ' && message.charAt(scrollIndex - 1) != '*'
                     && System.currentTimeMillis() - timeLastSound > DialogueHandler.DELAY_DIALOGUESOUND) {
-                Game.getSound().play(1, false);
+                Game.getSound().play(sound, false);
                 timeLastSound = System.currentTimeMillis();
             }
             timeLastScroll = System.nanoTime();

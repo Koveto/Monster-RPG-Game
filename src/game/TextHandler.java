@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * TextHandler
  * @author Kobe Goodwin
- * @version 6/26/2023
+ * @version 6/30/2023
  * 
  * Handles the formatting, wrapping, and parsing of Texts.
  */
@@ -121,7 +121,7 @@ public class TextHandler {
         ArrayList<Text> text = new ArrayList<>();
         Scanner scan = new Scanner(new File(path));
         while (scan.hasNextLine()) {
-            text.add(new Text(scan.nextLine(), 90, 298, true, Color.white, DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0));
+            text.add(new Text(scan.nextLine(), 90, 298, true, Color.white, DIALOGUE_FONT, "SND_TXT1", TextHandler.DEFAULT_WRAP, true, 0));
         }
         Text[] arr = new Text[text.size()];
         arr = text.toArray(arr);

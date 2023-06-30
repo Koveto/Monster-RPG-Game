@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 6/24/2023
+ * @version 6/30/2023
  */
 public class DialogueBox {
     
@@ -28,9 +28,9 @@ public class DialogueBox {
         face = new AnimatedSpritedObject(DialogueHandler.getFaceGraphic(DialogueHandler.TORIEL_SMILE),
                 59, 355, 175, false, true);
         texts = new Text[] {
-            new Text("Default flavor text", 200, 370, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
-            new Text("Default flavor text", 200, 407, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0),
-            new Text("Default flavor text", 200, 446, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, TextHandler.DEFAULT_WRAP, true, 0)};
+            new Text("Default flavor text", 200, 370, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "Text", TextHandler.DEFAULT_WRAP, true, 0),
+            new Text("Default flavor text", 200, 407, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "Text", TextHandler.DEFAULT_WRAP, true, 0),
+            new Text("Default flavor text", 200, 446, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "Text", TextHandler.DEFAULT_WRAP, true, 0)};
         dialogue = new String[0];
         faces = new String[0];
         show = false;

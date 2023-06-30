@@ -1,0 +1,4 @@
+0,Ruins,mus_ruins.wav
+1,Toriel,voice_toriel.wav
+2,Default,voice_default.wav
+3,Text,SND_TXT1.wav
