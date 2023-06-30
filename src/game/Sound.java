@@ -84,4 +84,6 @@ public class Sound {
     
     public void stop( ) { clip.stop(); }
     
+    public void resume( ) { clip.start(); }
+    
 }

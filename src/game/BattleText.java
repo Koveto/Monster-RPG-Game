@@ -46,7 +46,7 @@ public class BattleText {
                 false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, null);
         this.flavorText = new Text(b.TEXT_DEFAULTFLAVOR, 
                 b.X_FLAVORTEXT, b.Y_OPTIONROW1, 
-                true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "SND_TXT2", 
+                true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "BattleText", 
                 TextHandler.DEFAULT_WRAP, true, 0); // scrolls, doubles spaces
         this.longSelection1 = b.newLongSelection(1);
         this.longSelection2 = b.newLongSelection(2);
@@ -252,7 +252,7 @@ public class BattleText {
         
         if (pageNumber.getMessage().length() == 0)
             return 0;
-        return Integer.parseInt(pageNumber.getMessage().substring(6, 7));
+        return Integer.parseInt(pageNumber.getMessage().substring(7, 8));
         
     }
     

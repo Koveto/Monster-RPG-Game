@@ -233,6 +233,7 @@ public class Battle {
                         "Talk", "Hug"}, false);
                 } else if (state == b.SELECTING_TARGET) {
                     bt.clear();
+                    Game.getSound().play("Select", false);
                     fightButton.switchSprite();
                     attackField.show();
                     attackCursor.show();
@@ -306,6 +307,7 @@ public class Battle {
                     attackCursor.getX() > battleRect.getX() && 
                     attackCursor.getX() < (battleRect.getX() + battleRect.getWidth())) {
                 state = b.ATTACK_ANIMATION_PLAYING;
+                Game.getSound().play("Attack", false);
                 attackCursor.stopMoving();
                 attackCursor.animate();
                 attackAnimation.setX(enemies[enemySelected].getX() + 35);
@@ -513,6 +515,7 @@ public class Battle {
             enemies[enemySelected].hurt();
             enemies[enemySelected].takeDamage(damage);
             
+            Game.getSound().play("Damage", false);
             damageNumber.setSprite(getDamageNumberSprite(damage));
             
             int x = enemies[enemySelected].getHPBar().getX() + 
@@ -566,6 +569,7 @@ public class Battle {
                 && damageNumber.isShowing()) {
             damageNumber.hide();
             enemies[enemySelected].getHPBar().hide();
+            if (!enemies[enemySelected].isAlive()) Game.getSound().play("Vaporized", false);
         }
         if (System.currentTimeMillis() - lastStateSwitch >
                 500 && !enemies[enemySelected].getSpritedObject().isDarkeningToBlack()
@@ -583,11 +587,13 @@ public class Battle {
         }
         if (!attackField.isShowing() && !enemies[enemySelected].isAlive()
                 && bt.getTextWaitingOn() == null) {
-            if (bt.getFlavorText().getMessage().equals("You  won!\nYou  earned  5  EXP  and  1  gold.")) {
+            if (bt.getFlavorText().getMessage().equals("You   won!\nYou   earned   5   EXP   and   1   gold.")) {
                 state = b.BATTLE_END;
                 return;
             }
             Game.setScrollSpeed(TextHandler.SLOW_SCROLL_SPEED);
+            Game.getMusic2().stop();
+            Game.getSound().play("LevelUp", false);
             bt.displayFlavorText("You won!\nYou earned 5 EXP and 1 gold.", true);
             bt.waitOnText(bt.getFlavorText());
         }
@@ -677,6 +683,7 @@ public class Battle {
         for (int i = 0; i < patterns.length; i++) {
             for (int j = 0; j < patterns[i].getRects().length; j++) {
                 if (player.getRect().isColliding(patterns[i].getRects()[j])) {
+                    Game.getSound().play("Hurt", false);
                     damage = patterns[i].getDamage(j);
                     patterns[i].remove(j);
                     break;
@@ -809,6 +816,8 @@ public class Battle {
      */
     private void selectTarget( boolean returning ) {
         
+        if (!returning) Game.getSound().play("Select", false);
+        
         player.getSpritedObject().hide();
         state = b.SELECTING_TARGET;
         if (!returning)
@@ -860,6 +869,7 @@ public class Battle {
      */
     private void highlightSelectedEnemy( ) {
         
+        Game.getSound().play("Select", false);
         enemies[enemySelected].getSpritedObject().brightenToDefault(b.BRIGHTEN_TO_DEFAULT_FACTOR);
         enemies[enemySelected].getSpritedObject().stopFlashing();
         
@@ -955,6 +965,7 @@ public class Battle {
         
         if (buttonSelected == b.FIGHT_BUTTON) {
             
+            if (state == b.SELECTING_BATTLE_BUTTON) Game.getSound().play("Select", false);
             state = b.SELECTING_SKILL;
             listOptions(new String[] {"/AIce Age", "/RInferno", "/YThunder Reign", "/GZandyne"}, true);
             
@@ -964,11 +975,13 @@ public class Battle {
             
         } else if (buttonSelected == b.ITEM_BUTTON) {
             
+            if (state == b.SELECTING_BATTLE_BUTTON) Game.getSound().play("Select", false);
             state = b.SELECTING_ITEM;
             listOptions(new String[] {"Bandage", "Spider Donut", "Spider Cider", "Bscotch Pie", "Snail Pie", "Snow Piece", "Nice Cream", "Glamburger"}, false);
             
         } else if (buttonSelected == b.MERCY_BUTTON) {
             
+            if (state == b.SELECTING_BATTLE_BUTTON) Game.getSound().play("Select", false);
             state = b.SELECTING_MERCY;
             listOptions(new String[] {"Spare", "Flee"}, false);
             
@@ -1215,6 +1228,8 @@ public class Battle {
      * @param isMovingLeft  True if left was pressed, false if right
      */
     private void selectBattleButton( boolean isMovingLeft ) {
+        
+        Game.getSound().play("Squeak", false);
         
         DoublySpritedObject[] battleButtons = 
             {fightButton, actButton, itemButton, mercyButton};

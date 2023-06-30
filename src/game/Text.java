@@ -157,7 +157,10 @@ public class Text {
             scrollIndex++;
             if (message.charAt(scrollIndex - 1) != ' ' && message.charAt(scrollIndex - 1) != '*'
                     && System.currentTimeMillis() - timeLastSound > DialogueHandler.DELAY_DIALOGUESOUND) {
-                Game.getSound().play(sound, false);
+                if (sound != null) {
+                    //System.out.println(System.currentTimeMillis() - timeLastSound);
+                    Game.getSound().play(sound, false);
+                }
                 timeLastSound = System.currentTimeMillis();
             }
             timeLastScroll = System.nanoTime();

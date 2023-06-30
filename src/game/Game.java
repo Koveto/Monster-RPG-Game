@@ -56,7 +56,7 @@ public class Game extends JFrame implements Runnable {
     private Battle battle;
     private Room room;
     
-    private static Sound music, sound;
+    private static Sound music1, music2, sound;
     
     public static int scrollSpeed, mode;
     
@@ -87,7 +87,8 @@ public class Game extends JFrame implements Runnable {
         // Create our object for our buffer strategy
         canvas.createBufferStrategy(3);
         
-        music = new Sound();
+        music1 = new Sound();
+        music2 = new Sound();
         sound = new Sound();
         
         soulSheet = new SpriteSheet(loadImage("ss\\soul.png"), 18, 18);
@@ -105,6 +106,7 @@ public class Game extends JFrame implements Runnable {
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\walls.txt\\",
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\dialogue.txt\\");
         overworld = new Overworld(player, room);
+        Game.getMusic1().play("Ruins", true);
         
         iconImage = loadImage("ss\\Icon.png");
         
@@ -292,6 +294,7 @@ public class Game extends JFrame implements Runnable {
         if (ftb.isShowing() && !ftb.isFadingIn()
                 && !ftb.isFadingOut()) {
             mode = NO_BATTLE;
+            Game.getMusic1().resume();
             battle.getPlayer().getSpritedObject().show();
             battle.getPlayer().switchToOverworld();
             //battle.getPlayer().getSpritedObject().setSprites(new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29).getSprites());
@@ -367,8 +370,15 @@ public class Game extends JFrame implements Runnable {
      * Accessor for game music controller.
      * @return  Sound controlling game music.
      */
-    public static Sound getMusic() {
-        return music;}
+    public static Sound getMusic1() {
+        return music1;}
+    
+    /**
+     * Accessor for game music controller.
+     * @return  Sound controlling game music.
+     */
+    public static Sound getMusic2() {
+        return music2;}
     
     /**
      * Accessor for game sound controller.

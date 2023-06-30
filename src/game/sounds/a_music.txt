@@ -2,3 +2,12 @@
 1,Toriel,voice_toriel.wav
 2,Default,voice_default.wav
 3,Text,SND_TXT1.wav
+4,BattleText,SND_TXT2.wav
+5,Battle,mus_battle1.wav
+6,Squeak,snd_squeak.wav
+7,Select,snd_select.wav
+8,Attack,snd_laz.wav
+9,Hurt,snd_hurt1.wav
+10,Damage,snd_damage.wav
+11,Vaporized,snd_vaporized.wav
+12,LevelUp,snd_levelup.wav
