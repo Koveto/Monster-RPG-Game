@@ -5,7 +5,7 @@ import game.gameObjects.DoublySpritedObject;
 /**
  * BattleHandler
  * @author Kobe Goodwin
- * @version 8/31/2022
+ * @version 6/30/2023
  * 
  * Helper class containing constants related to battles.
  */
@@ -169,7 +169,7 @@ public class BattleHandler {
         
         int[] rows = new int[] {Y_OPTIONROW1, Y_OPTIONROW2, Y_OPTIONROW3};
         return new Text("", X_OPTIONCOLUMN1, rows[number - 1], 
-                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
+                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "Text",
                 TextHandler.DEFAULT_WRAP, true, 0);
         
     }
@@ -189,8 +189,8 @@ public class BattleHandler {
             row = 1;
             
         return new Text("", columns[column], rows[row], 
-                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, 
-                TextHandler.SHORT_WRAP, true, 0);
+                false, TextHandler.WHITE, TextHandler.DIALOGUE_FONT,
+                "Text", TextHandler.SHORT_WRAP, true, 0);
     }
     
 }

@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 6/23/2023
+ * @version 6/26/2023
  */
 public class Overworld {
     
@@ -34,8 +34,10 @@ public class Overworld {
         }*/
         if (confirmDelay > 0) confirmDelay--;
         if (confirmDelay == 0 && button == Game.CONFIRM && dialogueBox.finishedScrolling()) {
-            if (!dialogueBox.progress())
+            if (!dialogueBox.progress()) {
                 dialogueBox.hide();
+            }
+            
         }
         if (button == Game.CONFIRM && confirmDelay == 0) confirmDelay = 10;
         if (dialogueBox.isShowing()) return;
@@ -134,20 +136,22 @@ public class Overworld {
     
     public void checkDialogueTrigger( ) {
         
-        /*if (room.getDialogueTrigger().isColliding(player) && Game.getKeyListener().z()) {
+        if (room.getDialogueTriggers().get(0).isColliding(player) && Game.getKeyListener().z()) {
             isActivatingBattle = true;
+            Game.getMusic1().stop();
+            Game.getMusic2().play("Battle", true);
             player.setX(39);
             player.setY(444);
             player.switchToSoul();
-        }*/
-        
+        }
+        /*
         for (DialogueTrigger dt : room.getDialogueTriggers()) {
             if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
                 dialogueBox.newMessage(dt.getTexts(), dt.getFaces());
                 player.stopStepping();
                 break;
             }
-        }
+        }*/
         
     }
     
