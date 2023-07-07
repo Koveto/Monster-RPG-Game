@@ -9,13 +9,14 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 6/23/2023
+ * @version 7/7/2023
  */
 public class Room {
     
     private TileSet tiles;
     private Map map1, map2;
     private Rectangle[] walls;
+    private Entity[] entities;
     private ArrayList<DialogueTrigger> dt;
     
     public Room( TileSet tiles, String map1Path, String map2Path, String wallPath,
@@ -26,6 +27,10 @@ public class Room {
         map1 = new Map(new File(map1Path), tiles);
         map2 = new Map(new File(map2Path), tiles);
         dt = new ArrayList<DialogueTrigger>();
+        entities = new Entity[] {
+            new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
+                    new Path("1", "1", 0, 1, 1, false), 300, 200, 50, 104, 
+                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")};
         
         try {
             ArrayList<Rectangle> rects = new ArrayList();
@@ -48,49 +53,17 @@ public class Room {
             walls = new Rectangle[] {};
         }
         
-        try {
-            Scanner scan = new Scanner(new File(dialoguePath));
-            int[] xywhd = new int[5];
-            String[] texts = new String[0];
-            String[] faces = new String[0];
-            while (scan.hasNextLine()) {
-                String line = scan.nextLine();
-                if (line.contains("//")) continue;
-                if (line.charAt(0) == '#') {
-                    if (texts.length != 0) {
-                        dt.add(new DialogueTrigger(new Rectangle(
-                            xywhd[0], xywhd[1], xywhd[2], xywhd[3]),
-                            texts, faces, xywhd[4]));
-                    }
-                    String[] splitString = line.substring(2).split(",");
-                    for (int i = 0; i < splitString.length; i++) {
-                        xywhd[i] = Integer.parseInt(splitString[i]);
-                    }
-                    texts = new String[0];
-                } else {
-                    if (line.charAt(0) == '>') {
-                        faces = Game.addToStringArray(faces, line.substring(2));
-                    } else {
-                        texts = Game.addToStringArray(texts, line);
-                    }
-                }
-            }
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("Dialogue path not found.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Dialogue path incorrectly composed.");
-        }
+        dt = DialogueHandler.parseDialogueFile(dialoguePath);
     
     }
     
-    public Rectangle[] getWalls( ) { return walls; }
+    public Rectangle[] getWalls( ) { return Game.addToRectangleArray(walls, entities[0].getCollision()); }
     
-    public ArrayList<DialogueTrigger> getDialogueTriggers( ) {return dt;}
+    public ArrayList<DialogueTrigger> getDialogueTriggers( ) {return entities[0].getDialogueTriggers();}
     
     public GameObject[] getObjects( ) {
         
-        return new GameObject[] {map1, map2};
+        return new GameObject[] {map1, map2, entities[0]};
         
     }
     

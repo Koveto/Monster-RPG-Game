@@ -1,9 +1,15 @@
 package game;
 
+import game.gameObjects.Rectangle;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 /**
  * DialogueHandler
  * @author  Kobe Goodwin
- * @version 6/26/2023
+ * @version 7/7/2023
  */
 public class DialogueHandler {
     
@@ -80,6 +86,46 @@ public class DialogueHandler {
                 
             
         }
+        
+    }
+    
+    public static ArrayList<DialogueTrigger> parseDialogueFile( String dialoguePath ) {
+        
+        ArrayList<DialogueTrigger> temp = new ArrayList();
+        try {
+            Scanner scan = new Scanner(new File(dialoguePath));
+            int[] xywhd = new int[5];
+            String[] texts = new String[0];
+            String[] faces = new String[0];
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine();
+                if (line.contains("//")) continue;
+                if (line.charAt(0) == '#') {
+                    if (texts.length != 0) {
+                        temp.add(new DialogueTrigger(new Rectangle(
+                            xywhd[0], xywhd[1], xywhd[2], xywhd[3]),
+                            texts, faces, xywhd[4]));
+                    }
+                    String[] splitString = line.substring(2).split(",");
+                    for (int i = 0; i < splitString.length; i++) {
+                        xywhd[i] = Integer.parseInt(splitString[i]);
+                    }
+                    texts = new String[0];
+                } else {
+                    if (line.charAt(0) == '>') {
+                        faces = Game.addToStringArray(faces, line.substring(2));
+                    } else {
+                        texts = Game.addToStringArray(texts, line);
+                    }
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            System.out.println("Dialogue path not found.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Dialogue path incorrectly composed.");
+        }
+        return temp;
         
     }
     
