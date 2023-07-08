@@ -4,6 +4,7 @@ import game.gameObjects.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -29,10 +30,14 @@ public class Room {
         dt = new ArrayList<DialogueTrigger>();
         entities = new Entity[] {
             new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
-                    new Path("300", "t + 200", 0, 50, 0.5, false), 300, 200, 50, 104, 
-                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\"),
-            new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
                     new Path("1", "1", 0, 1, 1, false), 100, 100, 50, 104, 
+                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\"),
+            new Entity(Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 0, 4), 
+                    Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 4, 8), 
+                    Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 8, 12), 
+                    Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 12, 16), 
+                    new Path("300", "t + 200", 0, 50, 0.5, false), 
+                    300, false, true, 300, 200, 50, 104,
                     "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")
         };
         
@@ -58,7 +63,9 @@ public class Room {
         }
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
-        entities[0].startMoving();
+        entities[1].startMoving();
+        entities[1].animate();
+        entities[1].turn(3);
     
     }
     
