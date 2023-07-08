@@ -1,0 +1,4 @@
+// Script
+Wait 1000
+Entity 1
+Turn 3

@@ -16,6 +16,7 @@ public class Room {
     
     private TileSet tiles;
     private Map map1, map2;
+    private Script script;
     private Rectangle[] walls;
     private Entity[] entities;
     private ArrayList<DialogueTrigger> dt;
@@ -66,6 +67,8 @@ public class Room {
         entities[1].startMoving();
         entities[1].animate();
         //entities[1].turn(3);
+        
+        script = new Script(entities, "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\script.txt\\");
     
     }
     
@@ -93,6 +96,8 @@ public class Room {
     public Entity[] getEntities( ) { return entities; }
     
     public GameObject[] getObjects( ) {
+        
+        script.update();
         
         GameObject[] obj = new GameObject[] {map1, map2};
         for (Entity e : entities) {
