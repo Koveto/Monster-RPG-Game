@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 6/26/2023
+ * @version 7/8/2023
  */
 public class Overworld {
     
@@ -136,35 +136,47 @@ public class Overworld {
     
     public void checkDialogueTrigger( ) {
         
-        if (room.getDialogueTriggers().get(0).isColliding(player) && Game.getKeyListener().z()) {
+        /*if (room.getDialogueTriggers().get(0).isColliding(player) && Game.getKeyListener().z()) {
             isActivatingBattle = true;
             Game.getMusic1().stop();
             Game.getMusic2().play("Battle", true);
             player.setX(39);
             player.setY(444);
             player.switchToSoul();
-        }
-        /*
+        }*/
+        
         for (DialogueTrigger dt : room.getDialogueTriggers()) {
             if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
                 dialogueBox.newMessage(dt.getTexts(), dt.getFaces());
                 player.stopStepping();
                 break;
             }
-        }*/
+        }
+        
+    }
+    
+    public void checkEntityCollision( ) {
+        
+        for (Entity e : room.getEntities())
+        if (player.getRect().isColliding(e.getCollision())) {
+            player.setX(player.getX() - e.getDeltaX());
+            player.setY(player.getY() + e.getDeltaY());
+        }
         
     }
     
     public GameObject[] getObjects( ) {
         
+        checkEntityCollision();
+        
         GameObject[] temp = new GameObject[room.getObjects().length + dialogueBox.getObjects().length + 1];
         for (int i = 0; i < room.getObjects().length; i++) {
             temp[i] = room.getObjects()[i];
         }
+        temp[room.getObjects().length] = player;
         for (int i = 0; i < dialogueBox.getObjects().length; i++) {
-            temp[i + room.getObjects().length] = dialogueBox.getObjects()[i];
+            temp[i + room.getObjects().length + 1] = dialogueBox.getObjects()[i];
         }
-        temp[temp.length - 1] = player;
         return temp;
         
     }

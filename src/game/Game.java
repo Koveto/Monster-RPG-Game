@@ -104,7 +104,7 @@ public class Game extends JFrame implements Runnable {
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map.txt\\",
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map1.txt\\",
                         "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\walls.txt\\",
-                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\dialogue.txt\\");
+                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\dialogue.txt\\");
         overworld = new Overworld(player, room);
         Game.getMusic1().play("Ruins", true);
         
@@ -175,6 +175,40 @@ public class Game extends JFrame implements Runnable {
     public static Text[] addToTextArray( Text[] array, Text e ) {
         
         Text[] temp = new Text[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        temp[array.length] = e;
+        return temp;
+        
+    }
+    
+    /**
+     * Appends Rectangle to Rectangle array
+     * @param array     Rectangle array to append to
+     * @param e         Rectangle to be appended
+     * @return      Rectangle array with e appended
+     */
+    public static Rectangle[] addToRectangleArray( Rectangle[] array, Rectangle e ) {
+        
+        Rectangle[] temp = new Rectangle[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        temp[array.length] = e;
+        return temp;
+        
+    }
+    
+    /**
+     * Appends GameObject to GameObject array
+     * @param array     GameObject array to append to
+     * @param e         GameObject to be appended
+     * @return      GameObject array with e appended
+     */
+    public static GameObject[] addToGOArray( GameObject[] array, GameObject e ) {
+        
+        GameObject[] temp = new GameObject[array.length + 1];
         for (int i = 0; i < array.length; i++) {
             temp[i] = array[i];
         }

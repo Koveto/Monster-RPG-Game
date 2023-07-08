@@ -6,7 +6,7 @@ import game.gameObjects.Rectangle;
 /**
  * DialogueTrigger
  * @author Kobe Goodwin
- * @version 6/23/2023
+ * @version 7/8/2023
  */
 public class DialogueTrigger {
     
@@ -27,6 +27,11 @@ public class DialogueTrigger {
         
         return player.getRect().isColliding(interactBox);
         
+    }
+    
+    public void setInteractBox( int x, int y ) {
+        interactBox.setX(x + interactBox.getX());
+        interactBox.setY(y + interactBox.getY());
     }
     
     public String[] getTexts( ) { return texts; }

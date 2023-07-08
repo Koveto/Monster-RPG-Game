@@ -1,0 +1,7 @@
+// Dialogue
+// # x, y, w, h, direction (up, down, left, right)
+// txt
+# 300,320,19,10,1
+> Toriel_Smile
+* I was merely behind this@>pillar the whole time?
+# 0,0,0,0,0
