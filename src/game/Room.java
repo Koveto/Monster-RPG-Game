@@ -37,7 +37,7 @@ public class Room {
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 8, 12), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 12, 16), 
                     new Path("300", "t + 200", 0, 50, 0.5, false), 
-                    300, false, true, 300, 200, 50, 104,
+                    300, false, true, 300, 200, 50, 70,
                     "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")
         };
         
@@ -65,7 +65,7 @@ public class Room {
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
         entities[1].startMoving();
         entities[1].animate();
-        entities[1].turn(3);
+        //entities[1].turn(3);
     
     }
     
@@ -89,6 +89,8 @@ public class Room {
         }
         return triggers;
     }
+    
+    public Entity[] getEntities( ) { return entities; }
     
     public GameObject[] getObjects( ) {
         

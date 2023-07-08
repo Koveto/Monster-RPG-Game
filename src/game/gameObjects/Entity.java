@@ -18,6 +18,7 @@ public class Entity extends PathedAnimatedSpritedObject {
     private Rectangle collision;
     private ArrayList<DialogueTrigger> dt;
     private Sprite[] up, down, left, right;
+    private int deltaX, deltaY;
     
     public Entity( Sprite sprite, Path path, int x, int y, int w, int h,
             String dialoguePath ) {
@@ -61,6 +62,9 @@ public class Entity extends PathedAnimatedSpritedObject {
         
     }
     
+    public int getDeltaX( ) { return deltaX; }
+    public int getDeltaY( ) { return deltaY; }
+    
     public void turn( int direction ) {
         setSprites(new Sprite[][] {up, down, left, right}[direction]);
         setSprite(getSprites()[0]);
@@ -79,8 +83,10 @@ public class Entity extends PathedAnimatedSpritedObject {
             int beforeY = collision.getY();
             collision.setX(getPath().getX());
             collision.setY(getPath().getY());
+            deltaX = collision.getX() - beforeX;
+            deltaY = collision.getY() - beforeY;
             for (int i = 0; i < dt.size(); i++) {
-                dt.get(i).setInteractBox(collision.getX() - beforeX, collision.getY() - beforeY);
+                dt.get(i).setInteractBox(deltaX, deltaY);
             }
         }
         

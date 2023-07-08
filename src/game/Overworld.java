@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 7/7/2023
+ * @version 7/8/2023
  */
 public class Overworld {
     
@@ -155,7 +155,19 @@ public class Overworld {
         
     }
     
+    public void checkEntityCollision( ) {
+        
+        for (Entity e : room.getEntities())
+        if (player.getRect().isColliding(e.getCollision())) {
+            player.setX(player.getX() - e.getDeltaX());
+            player.setY(player.getY() + e.getDeltaY());
+        }
+        
+    }
+    
     public GameObject[] getObjects( ) {
+        
+        checkEntityCollision();
         
         GameObject[] temp = new GameObject[room.getObjects().length + dialogueBox.getObjects().length + 1];
         for (int i = 0; i < room.getObjects().length; i++) {
