@@ -183,7 +183,7 @@ public class Game extends JFrame implements Runnable {
         
     }
     
-        /**
+    /**
      * Appends Rectangle to Rectangle array
      * @param array     Rectangle array to append to
      * @param e         Rectangle to be appended
@@ -192,6 +192,23 @@ public class Game extends JFrame implements Runnable {
     public static Rectangle[] addToRectangleArray( Rectangle[] array, Rectangle e ) {
         
         Rectangle[] temp = new Rectangle[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        temp[array.length] = e;
+        return temp;
+        
+    }
+    
+    /**
+     * Appends GameObject to GameObject array
+     * @param array     GameObject array to append to
+     * @param e         GameObject to be appended
+     * @return      GameObject array with e appended
+     */
+    public static GameObject[] addToGOArray( GameObject[] array, GameObject e ) {
+        
+        GameObject[] temp = new GameObject[array.length + 1];
         for (int i = 0; i < array.length; i++) {
             temp[i] = array[i];
         }

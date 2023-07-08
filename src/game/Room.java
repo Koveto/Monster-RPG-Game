@@ -9,7 +9,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 7/7/2023
+ * @version 7/8/2023
  */
 public class Room {
     
@@ -29,8 +29,12 @@ public class Room {
         dt = new ArrayList<DialogueTrigger>();
         entities = new Entity[] {
             new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
-                    new Path("1", "1", 0, 1, 1, false), 300, 200, 50, 104, 
-                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")};
+                    new Path("300", "t + 200", 0, 50, 0.5, false), 300, 200, 50, 104, 
+                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\"),
+            new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
+                    new Path("1", "1", 0, 1, 1, false), 100, 100, 50, 104, 
+                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")
+        };
         
         try {
             ArrayList<Rectangle> rects = new ArrayList();
@@ -54,16 +58,38 @@ public class Room {
         }
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
+        entities[0].startMoving();
     
     }
     
-    public Rectangle[] getWalls( ) { return Game.addToRectangleArray(walls, entities[0].getCollision()); }
+    public Rectangle[] getWalls( ) { 
+        
+        Rectangle[] toReturn = walls;
+        toReturn = Game.addToRectangleArray(walls, entities[0].getCollision());
+        for (Entity e : entities) {
+            toReturn = Game.addToRectangleArray(toReturn, e.getCollision());
+        }
+        return toReturn;
+        
+    }
     
-    public ArrayList<DialogueTrigger> getDialogueTriggers( ) {return entities[0].getDialogueTriggers();}
+    public ArrayList<DialogueTrigger> getDialogueTriggers( ) {
+        ArrayList<DialogueTrigger> triggers = new ArrayList();
+        for (Entity e : entities) {
+            for (DialogueTrigger d : e.getDialogueTriggers()) {
+                triggers.add(d);
+            }
+        }
+        return triggers;
+    }
     
     public GameObject[] getObjects( ) {
         
-        return new GameObject[] {map1, map2, entities[0]};
+        GameObject[] obj = new GameObject[] {map1, map2};
+        for (Entity e : entities) {
+            obj = Game.addToGOArray(obj, e);
+        }
+        return obj;
         
     }
     

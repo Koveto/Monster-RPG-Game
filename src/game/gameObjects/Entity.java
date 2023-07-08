@@ -2,6 +2,7 @@ package game.gameObjects;
 
 import game.DialogueHandler;
 import game.DialogueTrigger;
+import game.Game;
 import game.Path;
 import game.Sprite;
 import java.util.ArrayList;
@@ -28,6 +29,17 @@ public class Entity extends PathedAnimatedSpritedObject {
     public ArrayList<DialogueTrigger> getDialogueTriggers( ) { return dt; }
     
     public Rectangle getCollision( ) { return collision; }
+    
+    @Override
+    public void update( Game g ) {
+        
+        super.update(g);
+        if (getPath().isMoving()) {
+            collision.setX(getPath().getX());
+            collision.setY(getPath().getY());
+        }
+        
+    }
 
     /*@Override
     public void render() {
