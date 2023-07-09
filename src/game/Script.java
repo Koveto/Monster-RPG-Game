@@ -39,7 +39,7 @@ public class Script {
     private int parseScriptFile( String scriptPath, int lineNum ) {
         
         try {
-            File f = new File(scriptPath);
+            File f = new File(System.getProperty("user.dir") + "\\src\\game\\" + scriptPath);
             Scanner scan = new Scanner(f);
             
             int i = 0;

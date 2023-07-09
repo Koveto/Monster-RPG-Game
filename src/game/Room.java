@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 7/8/2023
+ * @version 7/9/2023
  */
 public class Room {
     
@@ -32,14 +32,14 @@ public class Room {
         entities = new Entity[] {
             new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
                     new Path("1", "1", 0, 1, 1, false), 100, 100, 50, 104, 
-                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\"),
+                    "text\\testEntity.txt\\"),
             new Entity(Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 0, 4), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 4, 8), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 8, 12), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 12, 16), 
                     new Path("1", "t", 300, 200, 0, 50, 0.5, false), 
                     300, false, true, 300, 200, 50, 70,
-                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")
+                    "text\\testEntity.txt\\")
         };
         
         try {
@@ -65,7 +65,7 @@ public class Room {
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
         
-        script = new Script(entities, "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\script.txt\\");
+        script = new Script(entities, "text\\script.txt\\");
     
     }
     
