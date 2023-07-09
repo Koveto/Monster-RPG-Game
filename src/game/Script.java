@@ -68,20 +68,46 @@ public class Script {
                     delay = Integer.parseInt(line.substring(5));
                     return i;
                 }
-                if (line.startsWith("Object")) {
-                    current = gameObjects[Integer.parseInt(String.valueOf(line.charAt(7)))];
+                if (line.startsWith(">  Object")) {
+                    current = gameObjects[Integer.parseInt(line.substring(10, 12))];
                     continue;
+                }
+                if (line.startsWith("Switch to overworld")) {
+                    try {
+                        Player p = (Player) current;
+                        p.switchToOverworld();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to Player.");
+                    }
+                }
+                if (line.startsWith("Switch to soul")) {
+                    try {
+                        Player p = (Player) current;
+                        p.switchToSoul();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to Player.");
+                    }
+                }
+                if (line.startsWith("Take damage")) {
+                    try {
+                        Player p = (Player) current;
+                        p.takeDamage(Integer.parseInt(line.substring(12)));
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to Player.");
+                    }
                 }
                 if (line.startsWith("Turn")) {
                     try {
                         Entity e = (Entity) current;
-                        if (e != null) e.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
-                        continue;
+                        e.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
                     } catch (Exception e) {
-                        System.out.println("Cannot cast to Entity.");
-                        continue;
+                        try {
+                            Player p = (Player) current;
+                            p.turnDirection(Integer.parseInt(String.valueOf(line.charAt(5))));
+                        } catch (Exception ex) {
+                            System.out.println("Cannot cast to Entity or Player.");
+                        }
                     }
-                    
                 }
                 if (line.startsWith("Path")) {
                     try {

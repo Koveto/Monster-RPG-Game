@@ -1,5 +1,5 @@
 // Script
 // xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
 Wait 1000
-Object 2
+>  Object 02 (Toriel)
 Path 1,t,300,200,0,50,0.5,false
