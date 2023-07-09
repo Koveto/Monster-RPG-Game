@@ -37,7 +37,7 @@ public class Room {
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 4, 8), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 8, 12), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 12, 16), 
-                    new Path("300", "t + 200", 0, 50, 0.5, false), 
+                    new Path("1", "t", 300, 200, 0, 50, 0.5, false), 
                     300, false, true, 300, 200, 50, 70,
                     "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")
         };
@@ -64,9 +64,6 @@ public class Room {
         }
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
-        entities[1].startMoving();
-        entities[1].animate();
-        //entities[1].turn(3);
         
         script = new Script(entities, "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\script.txt\\");
     
