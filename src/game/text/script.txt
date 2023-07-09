@@ -3,3 +3,5 @@
 Wait 1000
 >  Object 02 (Toriel)
 Path 1,t,300,200,0,50,0.5,false
+Until Stopped Moving
+Turn 1

@@ -68,6 +68,28 @@ public class Script {
                     delay = Integer.parseInt(line.substring(5));
                     return i;
                 }
+                if (line.startsWith("Until")) {
+                    if (line.substring(6, 20).equals("Stop Moving")) {
+                        try {
+                            PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
+                            if (!paso.finishedMoving()) {
+                                return i - 1;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Cannot cast to PathedAnimatedSpritedObject.");
+                        }
+                    }
+                    if (line.substring(6, 18+6).equals("Finished Animating")) {
+                        try {
+                            AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                            if (!aso.finishedAnimating()) {
+                                return i - 1;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Cannot cast to AnimatedSpritedObject.");
+                        }
+                    }
+                }
                 if (line.startsWith(">  Object")) {
                     current = gameObjects[Integer.parseInt(line.substring(10, 12))];
                     continue;
