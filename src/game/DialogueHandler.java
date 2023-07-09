@@ -9,7 +9,7 @@ import java.util.Scanner;
 /**
  * DialogueHandler
  * @author  Kobe Goodwin
- * @version 7/7/2023
+ * @version 7/9/2023
  */
 public class DialogueHandler {
     
@@ -93,7 +93,7 @@ public class DialogueHandler {
         
         ArrayList<DialogueTrigger> temp = new ArrayList();
         try {
-            Scanner scan = new Scanner(new File(dialoguePath));
+            Scanner scan = new Scanner(new File(System.getProperty("user.dir") + "\\src\\game\\"+ dialoguePath));
             int[] xywhd = new int[5];
             String[] texts = new String[0];
             String[] faces = new String[0];

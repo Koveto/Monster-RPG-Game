@@ -99,12 +99,13 @@ public class Game extends JFrame implements Runnable {
         ftb.hide();
         
         battle = null;
-        room = new Room(new TileSet(new File("C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\tiles.txt\\"), 
+        room = new Room(player, new DialogueBox(),
+                        new TileSet(new File(System.getProperty("user.dir") + "\\src\\game\\maps\\tiles.txt\\"), 
                                         new SpriteSheet(Game.loadImage("ss\\ruins.png"), 20, 20)),
-                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map.txt\\",
-                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\map1.txt\\",
-                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\maps\\walls.txt\\",
-                        "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\dialogue.txt\\");
+                        "maps\\map.txt\\",
+                        "maps\\map1.txt\\",
+                        "maps\\walls.txt\\",
+                        "text\\dialogue.txt\\");
         overworld = new Overworld(player, room);
         Game.getMusic1().play("Ruins", true);
         

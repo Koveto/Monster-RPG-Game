@@ -10,10 +10,12 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 7/8/2023
+ * @version 7/9/2023
  */
 public class Room {
     
+    private Player player;
+    private DialogueBox dialogueBox;
     private TileSet tiles;
     private Map map1, map2;
     private Script script;
@@ -21,30 +23,32 @@ public class Room {
     private Entity[] entities;
     private ArrayList<DialogueTrigger> dt;
     
-    public Room( TileSet tiles, String map1Path, String map2Path, String wallPath,
+    public Room( Player player, DialogueBox dialogueBox,
+            TileSet tiles, String map1Path, String map2Path, String wallPath,
             String dialoguePath ) {
         
+        this.player = player;
+        this.dialogueBox = dialogueBox;
         this.tiles = tiles;
-        this.walls = walls;
-        map1 = new Map(new File(map1Path), tiles);
-        map2 = new Map(new File(map2Path), tiles);
+        map1 = new Map(new File(System.getProperty("user.dir") + "\\src\\game\\" + map1Path), tiles);
+        map2 = new Map(new File(System.getProperty("user.dir") + "\\src\\game\\" + map2Path), tiles);
         dt = new ArrayList<DialogueTrigger>();
         entities = new Entity[] {
             new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
                     new Path("1", "1", 0, 1, 1, false), 100, 100, 50, 104, 
-                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\"),
+                    "text\\testEntity.txt\\"),
             new Entity(Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 0, 4), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 4, 8), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 8, 12), 
                     Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 12, 16), 
-                    new Path("300", "t + 200", 0, 50, 0.5, false), 
+                    new Path("1", "t", 300, 200, 0, 50, 0.5, false), 
                     300, false, true, 300, 200, 50, 70,
-                    "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\testEntity.txt\\")
+                    "text\\testEntity.txt\\")
         };
         
         try {
             ArrayList<Rectangle> rects = new ArrayList();
-            Scanner scan = new Scanner(new File(wallPath));
+            Scanner scan = new Scanner(new File(System.getProperty("user.dir") + "\\src\\game\\" + wallPath));
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 if (line.contains("//")) continue;
@@ -64,11 +68,10 @@ public class Room {
         }
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
-        entities[1].startMoving();
-        entities[1].animate();
-        //entities[1].turn(3);
         
-        script = new Script(entities, "C:\\Users\\bluey\\OneDrive\\Documents\\NetBeansProjects\\smt\\src\\game\\text\\script.txt\\");
+        script = new Script("text\\script.txt\\", 
+                new GameObject[] {player, entities[0], entities[1]}, 
+                dialogueBox);
     
     }
     
@@ -82,6 +85,8 @@ public class Room {
         return toReturn;
         
     }
+    
+    public DialogueBox getDialogueBox( ) { return dialogueBox; }
     
     public ArrayList<DialogueTrigger> getDialogueTriggers( ) {
         ArrayList<DialogueTrigger> triggers = new ArrayList();

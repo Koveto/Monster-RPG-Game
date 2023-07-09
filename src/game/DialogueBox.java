@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 6/30/2023
+ * @version 7/9/2023
  */
 public class DialogueBox {
     
