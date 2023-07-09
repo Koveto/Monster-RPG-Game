@@ -1,6 +1,7 @@
 package game;
 
 import game.gameObjects.Entity;
+import game.gameObjects.Player;
 import game.gameObjects.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,16 +15,20 @@ import java.util.Scanner;
  */
 public class Script {
     
+    private Player player;
+    private DialogueBox dialogueBox;
     private Entity[] entities;
     private Entity current;
     private String scriptPath;
     private int index = 0, delay = 0;
     private long last = 0;
     
-    public Script( Entity[] entities, String scriptPath ) {
+    public Script( String scriptPath, Entity[] entities, Player player, DialogueBox dialogueBox ) {
         
         this.scriptPath = scriptPath;
         this.entities = entities;
+        this.player = player;
+        this.dialogueBox = dialogueBox;
         index = parseScriptFile(scriptPath, 0);
         
     }
@@ -79,7 +84,16 @@ public class Script {
                     current.startMoving();
                 }
                 if (line.startsWith("Dialogue")) {
-                    //DialogueHandler.
+                    String[] substrings = line.split(",");
+                    ArrayList<DialogueTrigger> dt = DialogueHandler.parseDialogueFile(substrings[0].substring(9));
+                    ArrayList<DialogueTrigger> newDt = new ArrayList();
+                    for (DialogueTrigger d : dt) {
+                        if (d.getDirection() == 0) {
+                            newDt.add(d);
+                        }
+                    }
+                    int num = Integer.parseInt(substrings[1]);
+                    dialogueBox.newMessage(newDt.get(num).getTexts(), newDt.get(num).getFaces());
                 }
                 if (line.startsWith("Sprite ")) {
                     if (line.charAt(7) == '#')
@@ -96,6 +110,11 @@ public class Script {
                     SpriteSheet s = new SpriteSheet(Game.loadImage(substrings[0].substring(8)), 
                             Integer.parseInt(substrings[1]), Integer.parseInt(substrings[2]));
                     current.setSprites(s.getSprites());
+                }
+                if (line.startsWith("Move")) {
+                    String[] substrings = line.split(",");
+                    current.setX(Integer.parseInt(substrings[0].substring(5)));
+                    current.setY(Integer.parseInt(substrings[1]));
                 }
                 if (line.equals("Stop Moving")) current.stopMoving();
                 if (line.equals("Animate")) current.animate();

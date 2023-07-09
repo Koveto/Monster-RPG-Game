@@ -19,7 +19,7 @@ public class Overworld {
         
         this.player = player;
         this.room = room;
-        this.dialogueBox = new DialogueBox();
+        this.dialogueBox = room.getDialogueBox();
         holdingUpOrDown = false;
         isActivatingBattle = false;
         

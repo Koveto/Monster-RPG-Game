@@ -3,4 +3,3 @@
 Wait 1000
 Entity 1
 Path 1,t,300,200,0,50,0.5,false
-Sprites ss\buttons.png,110,42
