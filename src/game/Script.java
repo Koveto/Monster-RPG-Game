@@ -1,8 +1,12 @@
 package game;
 
+import game.gameObjects.AnimatedSpritedObject;
 import game.gameObjects.Entity;
+import game.gameObjects.GameObject;
+import game.gameObjects.PathedAnimatedSpritedObject;
 import game.gameObjects.Player;
 import game.gameObjects.Rectangle;
+import game.gameObjects.SpritedObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -15,19 +19,17 @@ import java.util.Scanner;
  */
 public class Script {
     
-    private Player player;
     private DialogueBox dialogueBox;
-    private Entity[] entities;
-    private Entity current;
+    private GameObject[] gameObjects;
+    private GameObject current;
     private String scriptPath;
     private int index = 0, delay = 0;
     private long last = 0;
     
-    public Script( String scriptPath, Entity[] entities, Player player, DialogueBox dialogueBox ) {
+    public Script( String scriptPath, GameObject[] gameObjects, DialogueBox dialogueBox ) {
         
         this.scriptPath = scriptPath;
-        this.entities = entities;
-        this.player = player;
+        this.gameObjects = gameObjects;
         this.dialogueBox = dialogueBox;
         index = parseScriptFile(scriptPath, 0);
         
@@ -66,22 +68,36 @@ public class Script {
                     delay = Integer.parseInt(line.substring(5));
                     return i;
                 }
-                if (line.startsWith("Entity")) {
-                    current = entities[Integer.parseInt(String.valueOf(line.charAt(7)))];
+                if (line.startsWith("Object")) {
+                    current = gameObjects[Integer.parseInt(String.valueOf(line.charAt(7)))];
                     continue;
                 }
                 if (line.startsWith("Turn")) {
-                    if (current != null) current.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
-                    continue;
+                    try {
+                        Entity e = (Entity) current;
+                        if (e != null) e.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
+                        continue;
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to Entity.");
+                        continue;
+                    }
+                    
                 }
                 if (line.startsWith("Path")) {
-                    String[] substrings = line.split(",");
-                    Path p = new Path(substrings[0].substring(4), substrings[1], Integer.parseInt(substrings[2]),
-                            Integer.parseInt(substrings[3]), Double.parseDouble(substrings[4]),
-                            Double.parseDouble(substrings[5]), Double.parseDouble(substrings[6]),
-                            Boolean.parseBoolean(substrings[7]));
-                    current.setPath(p);
-                    current.startMoving();
+                    try {
+                        PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
+                        String[] substrings = line.split(",");
+                        Path p = new Path(substrings[0].substring(4), substrings[1], Integer.parseInt(substrings[2]),
+                                Integer.parseInt(substrings[3]), Double.parseDouble(substrings[4]),
+                                Double.parseDouble(substrings[5]), Double.parseDouble(substrings[6]),
+                                Boolean.parseBoolean(substrings[7]));
+                        paso.setPath(p);
+                        paso.startMoving();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to PathedAnimatedSpritedObject.");
+                        continue;
+                    }
+                        
                 }
                 if (line.startsWith("Dialogue")) {
                     String[] substrings = line.split(",");
@@ -96,32 +112,92 @@ public class Script {
                     dialogueBox.newMessage(newDt.get(num).getTexts(), newDt.get(num).getFaces());
                 }
                 if (line.startsWith("Sprite ")) {
-                    if (line.charAt(7) == '#')
-                        current.setSprite(current.getSprites()[Integer.parseInt(String.valueOf(line.charAt(8)))]);
+                    if (line.charAt(7) == '#') {
+                        try {
+                            AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                            aso.setSprite(aso.getSprites()[Integer.parseInt(String.valueOf(line.charAt(8)))]);
+                            
+                        } catch (Exception e) {
+                            System.out.println("Cannot cast to AnimatedSpritedObject.");
+                        }
+                    }
                     else {
-                        String[] substrings = line.split(",");
-                        SpriteSheet s = new SpriteSheet(Game.loadImage(substrings[0].substring(7)), 
+                        try {
+                            SpritedObject so = (SpritedObject) current;
+                            String[] substrings = line.split(",");
+                            SpriteSheet s = new SpriteSheet(Game.loadImage(substrings[0].substring(7)), 
                                 Integer.parseInt(substrings[1]), Integer.parseInt(substrings[2]));
-                        current.setSprite(s.getSprite(Integer.parseInt(substrings[3]), Integer.parseInt(substrings[4])));
+                            so.setSprite(s.getSprite(Integer.parseInt(substrings[3]), Integer.parseInt(substrings[4])));
+                        } catch (Exception e) {
+                            System.out.println("Cannot cast to SpritedObject.");
+                        }
                     }
                 }
                 if (line.startsWith("Sprites")) {
-                    String[] substrings = line.split(",");
-                    SpriteSheet s = new SpriteSheet(Game.loadImage(substrings[0].substring(8)), 
-                            Integer.parseInt(substrings[1]), Integer.parseInt(substrings[2]));
-                    current.setSprites(s.getSprites());
+                    try {
+                        AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                        String[] substrings = line.split(",");
+                        SpriteSheet s = new SpriteSheet(Game.loadImage(substrings[0].substring(8)), 
+                                Integer.parseInt(substrings[1]), Integer.parseInt(substrings[2]));
+                        aso.setSprites(s.getSprites());
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to AnimatedSpritedObject.");
+                    }
+                    
                 }
                 if (line.startsWith("Move")) {
                     String[] substrings = line.split(",");
                     current.setX(Integer.parseInt(substrings[0].substring(5)));
                     current.setY(Integer.parseInt(substrings[1]));
                 }
-                if (line.equals("Stop Moving")) current.stopMoving();
-                if (line.equals("Animate")) current.animate();
-                if (line.equals("Show")) current.show();
-                if (line.equals("Hide")) current.hide();
-                if (line.equals("Pause")) current.pause();
-                if (line.equals("Resume")) current.resume();
+                if (line.equals("Stop Moving")) {
+                    try {
+                        PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
+                        paso.stopMoving();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to PathedAnimatedSpritedObject.");
+                    }
+                }
+                if (line.equals("Animate")) {
+                    try {
+                        AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                        aso.animate();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to AnimatedSpritedObject.");
+                    }
+                }
+                if (line.equals("Show")) {
+                    try {
+                        SpritedObject so = (SpritedObject) current;
+                        so.show();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to SpritedObject.");
+                    }
+                }
+                if (line.equals("Hide")) {
+                    try {
+                        SpritedObject so = (SpritedObject) current;
+                        so.hide();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to SpritedObject.");
+                    }
+                }
+                if (line.equals("Pause")) {
+                    try {
+                        AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                        aso.pause();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to AnimatedSpritedObject.");
+                    }
+                }
+                if (line.equals("Resume")) {
+                    try {
+                        AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                        aso.resume();
+                    } catch (Exception e) {
+                        System.out.println("Cannot cast to AnimatedSpritedObject.");
+                    }
+                }
             }
             
             scan.close();

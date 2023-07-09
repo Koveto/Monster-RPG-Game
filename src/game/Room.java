@@ -69,7 +69,9 @@ public class Room {
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
         
-        script = new Script("text\\script.txt\\", entities, player, dialogueBox);
+        script = new Script("text\\script.txt\\", 
+                new GameObject[] {player, entities[0], entities[1]}, 
+                dialogueBox);
     
     }
     
