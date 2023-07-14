@@ -15,7 +15,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 4/12/2023
+ * @version 7/13/2023
  * 
  * Handles the properties of a battle.
  */
@@ -23,6 +23,7 @@ public class Battle {
 
     private final BattleHandler b;
     private final BattleText bt;
+    private Script s;
     
     private final ImageObject backgroundImage;
     private final Rectangle battleRect;
@@ -123,6 +124,9 @@ public class Battle {
         this.state = b.SELECTING_BATTLE_BUTTON;
         this.lastStateSwitch = System.currentTimeMillis();
         
+        s = new Script("text\\battleScript.txt\\", null, this,
+            new GameObject[] {attackAnimation}, new DialogueBox());
+        
     }
     
     /**
@@ -184,6 +188,8 @@ public class Battle {
      * @return  True if the Battle is ended, False if not.
      */
     public boolean update( ) {
+        
+        s.update();
         
         if (isAttackAnimationPlaying() ) {
             checkIfAttackAnimationIsFinished();
@@ -313,6 +319,10 @@ public class Battle {
                 attackAnimation.setX(enemies[enemySelected].getX() + 35);
                 attackAnimation.setY(enemies[enemySelected].getY() + 30);
                 attackAnimation.animate();
+                s = new Script("text\\battleScript.txt\\", null, this, 
+                    new GameObject[] {attackAnimation, enemies[enemySelected], enemies[enemySelected].getHPBar(),
+                    damageNumber}, 
+                        new DialogueBox());
                 
             }
             
@@ -441,9 +451,7 @@ public class Battle {
                     patterns[2].getObjects()[i];
         }
         objects[objects.length - 1] = attackAnimation;
-        
         //for (GameObject go : objects) System.out.println(go);
-        //System.out.println("");
         return objects;
         
     }
@@ -509,14 +517,14 @@ public class Battle {
         if (attackAnimation.finishedAnimating() && System.currentTimeMillis() - 
                 lastStateSwitch >= b.DELAY_ATTACKTOTAKINGDAMAGE) {
             state = b.ENEMY_TAKING_DAMAGE;
-            int damage = 5;
+            /*int damage = 5;
             enemies[enemySelected].getHPBar().slideToNumerator(
                     enemies[enemySelected].getHP() - damage);
             enemies[enemySelected].hurt();
             enemies[enemySelected].takeDamage(damage);
             
             Game.getSound().play("Damage", false);
-            damageNumber.setSprite(getDamageNumberSprite(damage));
+            setDamageNumberSprite(damage);
             
             int x = enemies[enemySelected].getHPBar().getX() + 
                     ((enemies[enemySelected].getHPBar().getWidth() 
@@ -527,7 +535,7 @@ public class Battle {
             damageNumber.setX(x);
             damageNumber.setY(y);
             
-            damageNumber.show();
+            damageNumber.show();*/
             lastStateSwitch = System.currentTimeMillis();
         } else if (!attackAnimation.finishedAnimating()) {
             lastStateSwitch = System.currentTimeMillis();
@@ -765,48 +773,32 @@ public class Battle {
     }
     
     /**
-     * Creates a Sprite representing the number of damage dealt. 
+     * Changes Damage Number Sprite representing the number of damage dealt. 
      * @param damage    Damage dealt.
-     * @return      Sprite representing damage.
      */
-    private Sprite getDamageNumberSprite( int damage ) {
+    public void setDamageNumberSprite( int damage ) {
+        
+        Sprite newSprite = null;
         
         if (damage < 10) {
             if (damage == 1) {
-                return getNumberOneSprite();
+                newSprite = getNumberOneSprite();
             }
-            return b.DAMAGE_NUMBERS.getSprite(damage, 0);
+            else newSprite = b.DAMAGE_NUMBERS.getSprite(damage, 0);
         }
+        else {
+            String damageString = String.valueOf(damage);
+            Sprite[] numbers = new Sprite[damageString.length()];
+            for (int i = 0; i < damageString.length(); i++) {
+                int x = Integer.parseInt(
+                        new String(new char[] {damageString.charAt(i)}));
+                numbers[i] = b.DAMAGE_NUMBERS.getSprite(x, 0);
+                if (damageString.charAt(i) == '1') numbers[i] = getNumberOneSprite();
+            }
+            newSprite = new Sprite(numbers); 
+        }
+        damageNumber.setSprite(newSprite);
         
-        String damageString = String.valueOf(damage);
-        Sprite[] numbers = new Sprite[damageString.length()];
-        for (int i = 0; i < damageString.length(); i++) {
-            int x = Integer.parseInt(
-                    new String(new char[] {damageString.charAt(i)}));
-            numbers[i] = b.DAMAGE_NUMBERS.getSprite(x, 0);
-            if (damageString.charAt(i) == '1') numbers[i] = getNumberOneSprite();
-        }
-        
-        return new Sprite(numbers);
-        /*
-        int[] pixels = new int[30 * 30 * numbers.length];
-        for (int i = 0; i < 30; i++) { // for each row
-            int[] row = new int[30 * numbers.length];
-            for (int j = 0; j < numbers.length; j++) { // for each number, get row
-                int[] subrow = new int[30];
-                for (int k = 0; k < subrow.length; k++) {
-                    subrow[k] = numbers[j].getPixels()[k + (30 * i)];
-                }
-                for (int k = 0; k < subrow.length; k++) {
-                    row[(j * 30) + k] = subrow[k];
-                }
-            }
-            for (int k = 0; k < row.length; k++) {
-                pixels[(i * row.length) + k] = row[k];
-            }
-        }
-        return new Sprite(pixels, 30 * numbers.length, 30);
-        */
     }
     
     /**

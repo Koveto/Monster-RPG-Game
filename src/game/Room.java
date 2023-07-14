@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 7/9/2023
+ * @version 7/13/2023
  */
 public class Room {
     
@@ -69,7 +69,7 @@ public class Room {
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
         
-        script = new Script("text\\script.txt\\", 
+        script = new Script("text\\script.txt\\", this, null,
                 new GameObject[] {player, entities[0], entities[1]}, 
                 dialogueBox);
     

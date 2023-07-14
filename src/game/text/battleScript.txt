@@ -1,0 +1,25 @@
+// Script
+// xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
+>  Object 00 (Attack Animation)
+Until Finished Animating
+Wait 500
+Music Damage False
+>  Object 01 (Enemy)
+Store HP
+>  Object 02 (Enemy HP Bar)
+Slide to numerator s - 5
+Store Clear
+Store X
+Store Y
+Store Width
+>  Object 01 (Enemy)
+Take damage 5
+Hurt
+B  Set damage number sprite 5
+>  Object 03 (Damage Number)
+Store Width
+Store s0 + ( ( s2 - s3 ) / 2 )
+Store s1 - 33
+Move s4,s5
+Start At s4,s5
+Show
