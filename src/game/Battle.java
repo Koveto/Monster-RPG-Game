@@ -42,6 +42,7 @@ public class Battle {
     
     private int state, optionSelected, enemySelected, lastOptionSelected;
     private long lastStateSwitch;
+    private String key;
     
     /**
      * Constructor
@@ -123,9 +124,7 @@ public class Battle {
         
         this.state = b.SELECTING_BATTLE_BUTTON;
         this.lastStateSwitch = System.currentTimeMillis();
-        
-        s = new Script("text\\battleScript.txt\\", null, this,
-            new GameObject[] {attackAnimation}, new DialogueBox());
+        this.key = "";
         
     }
     
@@ -189,14 +188,16 @@ public class Battle {
      */
     public boolean update( ) {
         
-        s.update();
+        if (s != null) s.update();
+        
+        if (key.equals("resize") || key.equals("text")) resizeBattleRect();
+        if (key.equals("end")) endBattle();
+        if (key.equals("text")) enemyTurn();
         
         if (isAttackAnimationPlaying() ) {
             checkIfAttackAnimationIsFinished();
         } else if (isEnemyTakingDamage()) {
             checkIfDamageNumberFinished();
-        } else if (isBetweenTurns()) {
-            checkTimeBetweenTurns();
         } else if (isEnemyTurn()) {
             checkBulletCollision();
         } else if (isTransitioningToPlayerTurn()) {
@@ -321,7 +322,8 @@ public class Battle {
                 attackAnimation.animate();
                 s = new Script("text\\battleScript.txt\\", null, this, 
                     new GameObject[] {attackAnimation, enemies[enemySelected], enemies[enemySelected].getHPBar(),
-                    damageNumber}, 
+                    damageNumber, enemies[enemySelected].getSpritedObject(), attackField, attackCursor, battleRect,
+                    textBubble, player, player.getSpritedObject(), player.getRect()}, 
                         new DialogueBox());
                 
             }
@@ -334,8 +336,10 @@ public class Battle {
             
             if (button == Game.LEFT) {
                 player.setX(player.getX() - b.PLAYER_SPEED);
-                if (!player.getRect().isInside(battleRect.getInnerRect()))
+                if (!player.getRect().isInside(battleRect.getInnerRect())) {
                     player.setX(battleRect.getX() + battleRect.getBorderWidth());
+                }
+                    
             } else if (button == Game.RIGHT) {
                 player.setX(player.getX() + b.PLAYER_SPEED);
                 if (!player.getRect().isInside(battleRect.getInnerRect()))
@@ -562,37 +566,46 @@ public class Battle {
      */
     private boolean isEnded( ) { return state == b.BATTLE_END; }
     
-    /**
-     * Handles Battle between turns. Hides damage number and HP bar after
-     * DELAY_TURNENDTOHPFADE. Darkens Enemy if defeated after 500 ms. Changes 
-     * state to BATTLE_END when Enemy finished moving. Hides attackCursor and
-     * shrinks attackField. If Enemy is alive, resumes its animation. If not,
-     * displays victory text and shrinks battle box. Creates text bubbles for
-     * surviving enemies. After dialogue progressed, state is changed to 
-     * ENEMY_TURN and BulletPattern is initiated.
-     */
-    private void checkTimeBetweenTurns( ) {
+    public void startResizing( ) {key = "resize";}
+    public void startBattleEnd( ) {key = "end";}
+    
+    private void enemyTurn( ) {
+        if (!isWaitingOnText()) {
+            key = "";
+            textBubble.hide();
+            bt.clear();
+            state = b.ENEMY_TURN;
+            patterns[0].newWhimsunAttack(battleRect);
+            patterns[0].start();
+            patterns[1].newAttack(battleRect);
+            patterns[1].start();
+        }
+    }
+    
+    public void waitOnTextBubble( ) {
         
-        if (System.currentTimeMillis() - lastStateSwitch > b.DELAY_TURNENDTOHPFADE
-                && damageNumber.isShowing()) {
-            damageNumber.hide();
-            enemies[enemySelected].getHPBar().hide();
-            if (!enemies[enemySelected].isAlive()) Game.getSound().play("Vaporized", false);
+        Text bubble = bt.getTextBubbles()[0];
+        bubble.setX(textBubble.getX() + b.X_BUBBLEOFFSET);
+        bubble.setY(textBubble.getY() + b.Y_BUBBLEOFFSET);
+        bubble.newMessage("Ribbit, ribbit, ribbit, ribbit");
+        bt.displayTexts(new Text[] {bubble});
+        bt.waitOnText(bubble);
+        key = "text";
+        
+    }
+    
+    private void resizeBattleRect( ) {
+        if (!attackCursor.isShowing() &&
+                battleRect.getWidth() > 220
+                && enemies[enemySelected].isAlive()) {
+            battleRect.setX(battleRect.getX() + b.W_BATTLERECTINCREMENT);
+            battleRect.setWidth(battleRect.getWidth() - (2 * b.W_BATTLERECTINCREMENT));
+            battleRect.generateGraphics(b.W_BATTLERECTBORDER, TextHandler.WHITE.getRGB());
         }
-        if (System.currentTimeMillis() - lastStateSwitch >
-                500 && !enemies[enemySelected].getSpritedObject().isDarkeningToBlack()
-                && !enemies[enemySelected].isAlive()) {
-            enemies[enemySelected].getSpritedObject().darkenToBlack(b.DEATH_FADE_OUT_FACTOR);
-        }
-        if (enemies[enemySelected].getSpritedObject().finishedMoving() &&
-                attackCursor.isShowing()) {
-            lastStateSwitch = System.currentTimeMillis(); //TURNEND
-            if (enemies[enemySelected].isAlive())enemies[enemySelected].noLongerHurt();
-            attackField.animate();
-            attackField.darkenToBlack(b.ATTACK_FIELD_DARKEN_FACTOR);
-            attackCursor.pause();
-            attackCursor.hide();
-        }
+    }
+    
+    private void endBattle( ) {
+        s = null;
         if (!attackField.isShowing() && !enemies[enemySelected].isAlive()
                 && bt.getTextWaitingOn() == null) {
             if (bt.getFlavorText().getMessage().equals("You   won!\nYou   earned   5   EXP   and   1   gold.")) {
@@ -605,39 +618,6 @@ public class Battle {
             bt.displayFlavorText("You won!\nYou earned 5 EXP and 1 gold.", true);
             bt.waitOnText(bt.getFlavorText());
         }
-        if (!attackCursor.isShowing() &&
-                battleRect.getWidth() > 220
-                && enemies[enemySelected].isAlive()) {
-            battleRect.setX(battleRect.getX() + b.W_BATTLERECTINCREMENT);
-            battleRect.setWidth(battleRect.getWidth() - (2 * b.W_BATTLERECTINCREMENT));
-            battleRect.generateGraphics(b.W_BATTLERECTBORDER, TextHandler.WHITE.getRGB());
-        }
-        if (System.currentTimeMillis() - lastStateSwitch > b.DELAY_DAMAGEDTOCHATBOX
-                && !player.getSpritedObject().isShowing()
-                && enemies[enemySelected].isAlive()) {
-            Game.setScrollSpeed(TextHandler.SLOW_SCROLL_SPEED);
-            textBubble.show();
-            player.setX(b.X_PLAYERBATTLEBOX);
-            player.setY(b.Y_PLAYERBATTLEBOX);
-            player.getSpritedObject().show();
-            Text bubble = bt.getTextBubbles()[0];
-            bubble.setX(textBubble.getX() + b.X_BUBBLEOFFSET);
-            bubble.setY(textBubble.getY() + b.Y_BUBBLEOFFSET);
-            bubble.newMessage("Ribbit, ribbit, ribbit, ribbit");
-            bt.displayTexts(new Text[] {bubble});
-            bt.waitOnText(bubble);
-        }
-        if (textBubble.isShowing() && !isWaitingOnText()
-                && enemies[enemySelected].isAlive()) {
-            textBubble.hide();
-            bt.clear();
-            state = b.ENEMY_TURN;
-            patterns[0].newWhimsunAttack(battleRect);
-            patterns[0].start();
-            patterns[1].newAttack(battleRect);
-            patterns[1].start();
-        }
-        
     }
     
     /**

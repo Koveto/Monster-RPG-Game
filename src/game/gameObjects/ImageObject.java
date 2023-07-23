@@ -63,6 +63,9 @@ public class ImageObject implements GameObject {
      */
     public void setY( int y ) {this.y = y;}
     
+    public void show( ) {}
+    public void hide( ) {}
+    
     /**
      * Mutator for Transparency
      * @param transparency  New transparency between 0.0 and 1.0

@@ -36,6 +36,7 @@ public class Script {
     private int index, delay;
     private int[] storedNums;
     private long last = 0;
+    private boolean storedBoolean;
     
     public Script( String scriptPath, Room room, Battle battle, 
             GameObject[] gameObjects, DialogueBox dialogueBox ) {
@@ -79,6 +80,21 @@ public class Script {
                 
                 if (line.startsWith("//")) continue;
                 
+                if (line.startsWith("If")) {
+                    if (line.charAt(3) == '!') {
+                        int len = checkIf(line.substring(4));
+                        if (len == -1) {
+                            String next = line.split(" ")[2];
+                            line = line.substring(line.indexOf(next));
+                        } else continue;
+                    } else {
+                        int len = checkIf(line.substring(3));
+                        if (len != -1) {
+                            line = line.substring(4 + len);
+                        } else continue;
+                    }
+                }
+                
                 if (line.startsWith(">  Object")) {
                     current = gameObjects[Integer.parseInt(line.substring(10, 12))];
                     continue;
@@ -93,6 +109,12 @@ public class Script {
                 if (line.startsWith("Music")) {
                     String[] substrings = line.split(" ");
                     Game.getSound().play(substrings[1], Boolean.valueOf(substrings[2]));
+                }
+                
+                if (line.startsWith("Test")) {System.out.println(line);}
+                
+                if (line.startsWith("Scroll Speed")) {
+                    Game.setScrollSpeed(Integer.parseInt(line.substring(13)));
                 }
                 
                 if (line.startsWith("Dialogue")) {
@@ -112,7 +134,9 @@ public class Script {
                     String[] substrings = line.split(",");
                     if (substrings[0].substring(5).startsWith("s")) {
                         current.setX(storedNums[Integer.parseInt(substrings[0].substring(6))]);
-                    } else current.setX(Integer.parseInt(substrings[0].substring(5)));
+                    } else {
+                        current.setX(Integer.parseInt(substrings[0].substring(5)));
+                    }
                     if (substrings[1].startsWith("s")) {
                         current.setY(storedNums[Integer.parseInt(substrings[1].substring(1))]);
                     } else current.setY(Integer.parseInt(substrings[1]));
@@ -122,6 +146,10 @@ public class Script {
                     String l = line.substring(6);
                     if (l.equals("Clear")) {
                         storedNums = new int[0];
+                    } else if (l.equals("True")) {
+                        storedBoolean = true;
+                    } else if (l.equals("False")) {
+                        storedBoolean = false;
                     } else if (l.equals("HP")) {
                         try {
                             Battler b = (Battler) current;
@@ -154,48 +182,24 @@ public class Script {
                 }
                 
                 if (line.startsWith("Until")) {
-                    if (line.contains("Stop Moving") && 
-                            line.substring(6, 20).equals("Stop Moving")) {
-                        try {
-                            PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
-                            if (!paso.finishedMoving()) {
-                                return i - 1;
-                            }
-                        } catch (ClassCastException e) {
-                            System.out.println("Cannot cast to PathedAnimatedSpritedObject.");
-                        }
-                    }
-                    if (line.contains("Finished Animating") && 
-                            line.substring(6, 18+6).equals("Finished Animating")) {
-                        //System.out.println(current);
-                        try {
-                            AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
-                            //System.out.println(aso.finishedAnimating());
-                            if (!aso.finishedAnimating()) {
-                                return i - 1;
-                            }
-                        } catch (ClassCastException e) {
-                            System.out.println("Cannot cast to AnimatedSpritedObject.");
-                        }
-                    }
-                    if (line.contains("Is Animating") && 
-                            line.substring(6, 12+6).equals("Is Animating")) {
-                        try {
-                            AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
-                            if (!aso.isAnimating()) {
-                                return i - 1;
-                            }
-                        } catch (ClassCastException e) {
-                            System.out.println("Cannot cast to AnimatedSpritedObject.");
-                        }
-                    }
+                    if (checkIf(line.substring(6)) == -1) return i - 1;
                 }
+                
+                
+                
+                
                 
                 
                 
                 // BATTLE METHODS
                 if (line.startsWith("B  Set damage number sprite")) {
                     battle.setDamageNumberSprite(Integer.parseInt(line.substring(28)));
+                } if (line.startsWith("B  Resize battle rect")) {
+                    battle.startResizing();
+                } if (line.startsWith("B  End battle")) {
+                    battle.startBattleEnd();
+                } if (line.startsWith("B  Wait on text bubble")) {
+                    battle.waitOnTextBubble();
                 }
                 
                 
@@ -283,7 +287,6 @@ public class Script {
                 
                 
                 
-                
                 // SPRITEDOBJECT METHODS
                 try {
                     SpritedObject so = (SpritedObject) current;
@@ -293,8 +296,10 @@ public class Script {
                             Integer.parseInt(substrings[1]), Integer.parseInt(substrings[2]));
                         so.setSprite(s.getSprite(Integer.parseInt(substrings[3]), Integer.parseInt(substrings[4])));
                     }
+                    if (line.startsWith("Darken to black")) so.darkenToBlack(Float.parseFloat(line.substring(16)));
                     if (line.equals("Show")) {so.show();}
-                    if (line.equals("Hide")) so.hide();
+                    if (line.contains("Hide")) so.hide();
+                    
                 } catch (ClassCastException e) {}
                 
                 
@@ -324,6 +329,7 @@ public class Script {
                 try {
                     Enemy e = (Enemy) current;
                     if (line.startsWith("Hurt")) e.hurt();
+                    if (line.startsWith("No longer hurt")) e.noLongerHurt();
                 } catch (ClassCastException e) {}
             }
             
@@ -339,4 +345,48 @@ public class Script {
     
     }
     
+    
+    private int checkIf( String line ) {
+        
+        if (line.contains("Finished-Moving") && 
+                line.startsWith("Finished-Moving")) {
+            try {
+                PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
+                if (paso.finishedMoving()) {
+                    return 15;
+                }
+            } catch (ClassCastException e) {}
+        }
+        if (line.contains("Finished-Animating") && 
+                line.startsWith("Finished-Animating")) {
+            try {
+                AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                if (aso.finishedAnimating()) {return 18;}
+            } catch (ClassCastException e) {}
+        }
+        if (line.contains("Is-Animating") && 
+                line.startsWith("Is-Animating")) {
+            try {
+                AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
+                if (aso.isAnimating()) {return 12;}
+            } catch (ClassCastException e) {}
+        }
+        if (line.contains("Path-Finished") && 
+                line.startsWith("Path-Finished")) {
+            try {
+                PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
+                if (paso.getPath().isFinished()) {return 13;}
+            } catch (ClassCastException e) {}
+        }
+        if (line.contains("Alive") && line.startsWith("Alive")) {
+            try {
+                Battler b = (Battler) current;
+                if (b.isAlive()) {return 5;}
+            } catch (ClassCastException e) {}
+        }
+        if (line.startsWith("Stored") && storedBoolean) return 6;
+        return -1;
+    }
+    
 }
+

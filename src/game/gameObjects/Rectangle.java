@@ -10,7 +10,7 @@ import java.awt.Graphics;
 /**
  * Rectangle
  * @author Kobe Goodwin
- * @version 8/28/2022
+ * @version 7/18/2023
  * 
  * A rectangle with a width, height, x position, and y position to be rendered
  * and updated.
@@ -241,6 +241,9 @@ public class Rectangle implements GameObject {
      * @param h     New height
      */
     public void setHeight( int h ) {this.h = h;}
+    
+    public void show( ) {}
+    public void hide( ) {}
     
     /**
      * Accessor for pixel array

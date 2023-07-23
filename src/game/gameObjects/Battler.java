@@ -10,7 +10,7 @@ import java.awt.Graphics;
 /**
  * Battler
  * @author Kobe Goodwin
- * @version 8/31/2022
+ * @version 7/18/2023
  * 
  * A SpritedObject that has battle statistics, such as health and level.
  */
@@ -193,6 +193,9 @@ public class Battler implements GameObject {
                 ":" + this.maxHP + ":" + this.isAlive + ":" + this.level;
         
     }
+    
+    public void show( ) {}
+    public void hide( ) {}
 
     @Override
     public int getX() {

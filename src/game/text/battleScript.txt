@@ -1,11 +1,15 @@
 // Script
-// xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
+// Path: xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
+//
+//
+//                   ATTACK_ANIMATION_PLAYING
 >  Object 00 (Attack Animation)
-Until Finished Animating
+Until Finished-Animating
 Wait 500
 Music Damage False
 >  Object 01 (Enemy)
 Store HP
+//                     ENEMY_TAKING_DAMAGE
 >  Object 02 (Enemy HP Bar)
 Slide to numerator s - 5
 Store Clear
@@ -23,3 +27,35 @@ Store s1 - 33
 Move s4,s5
 Start At s4,s5
 Show
+Until Path-Finished
+//                          BETWEEN_TURNS
+Wait 520
+Hide
+>  Object 02 (Enemy HP Bar)
+Hide
+>  Object 01 (Enemy)
+If !Alive Store True
+If Stored Music Vaporized False
+>  Object 04 (Enemy PASO)
+If Stored Darken to black 0.9F
+Until Finished-Moving
+>  Object 01 (Enemy)
+If Alive No longer hurt
+>  Object 05 (Attack Field)
+Animate
+Darken to black 0.85F
+>  Object 06 (Attack Cursor)
+Pause
+Hide
+B  Resize battle rect
+If Stored B  End battle
+Wait 500
+Scroll Speed 5
+>  Object 08 (Text Bubble)
+Show
+>  Object 10 (Player PASO)
+Move 310,310
+Show
+B  Wait on text bubble
+>  Object 11 (Player Rect)
+Move 310,310
