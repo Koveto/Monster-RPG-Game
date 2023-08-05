@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * Map
  * @author Kobe Goodwin
- * @version 3/13/2022
+ * @version 7/18/2023
  * 
  * Plots a TileSet to the screen from a file specifying x and y positions.
  */
@@ -81,6 +81,8 @@ public class Map implements GameObject {
     public void setY( int y ) {}
     public void setTransparency( double transparency ) {}
     public void render( Graphics graphics ) {}
+    public void show( ) {}
+    public void hide( ) {}
     
     /**
      * Renders each tile on the map.

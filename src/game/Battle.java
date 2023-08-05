@@ -15,7 +15,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 4/12/2023
+ * @version 8/2/2023
  * 
  * Handles the properties of a battle.
  */
@@ -29,18 +29,20 @@ public class Battle {
     private final Rectangle[] backgroundRects;
     private final DoublySpritedObject fightButton, actButton, itemButton, mercyButton;
     
-    private SpritedObject textBubble;
-    private AnimatedSpritedObject attackAnimation, attackField;
-    private PathedAnimatedSpritedObject attackCursor, damageNumber;
+    private Script s;
+        
+    private final SpritedObject textBubble;
+    private final AnimatedSpritedObject attackAnimation, attackField;
+    private final PathedAnimatedSpritedObject attackCursor, damageNumber;
     
-    private BulletPattern[] patterns;
+    private final BulletPattern[] patterns;
     
     private String[] initialOptions, extraOptions;
-    private Player player;
-    private Enemy[] enemies;
+    private final Player player;
+    private final Enemy[] enemies;
     
     private int state, optionSelected, enemySelected, lastOptionSelected;
-    private long lastStateSwitch;
+    private String key;
     
     /**
      * Constructor
@@ -121,33 +123,9 @@ public class Battle {
         this.extraOptions = new String[0];
         
         this.state = b.SELECTING_BATTLE_BUTTON;
-        this.lastStateSwitch = System.currentTimeMillis();
+        this.key = "";
         
     }
-    
-    /**
-     * Evaluates if attack animation is playing
-     * @return  True if attack animation is playing
-     */
-    private boolean isAttackAnimationPlaying( ) { return state == b.ATTACK_ANIMATION_PLAYING; }
-    
-    /**
-     * Evaluates if enemy hp bar is sliding down
-     * @return  True if enemy is taking damage
-     */
-    private boolean isEnemyTakingDamage( ) { return state == b.ENEMY_TAKING_DAMAGE; }
-    
-    /**
-     * Evaluates if battle is between player's turn and enemy's turn
-     * @return  True if battle is between turns
-     */
-    private boolean isBetweenTurns( ) { return state == b.BETWEEN_TURNS; }
-    
-    /**
-     * Evaluates if battle is between enemy's turn and player's turn
-     * @return  True if battle is between turns
-     */
-    private boolean isTransitioningToPlayerTurn( ) { return state == b.ENEMY_TURN_FINISHED; }
     
     /**
      * Determines if the battle is waiting to progress on the scroll of a Text.
@@ -180,21 +158,26 @@ public class Battle {
     public Text[] getText( ) { return bt.getText(); }
     
     /**
+     * Retrieves BattleText instance.
+     * @return  BattleText instance
+     */
+    public BattleText getBattleText( ) { return bt; }
+    
+    /**
      * Updates processes and Objects in Battle depending on its state.
      * @return  True if the Battle is ended, False if not.
      */
     public boolean update( ) {
         
-        if (isAttackAnimationPlaying() ) {
-            checkIfAttackAnimationIsFinished();
-        } else if (isEnemyTakingDamage()) {
-            checkIfDamageNumberFinished();
-        } else if (isBetweenTurns()) {
-            checkTimeBetweenTurns();
-        } else if (isEnemyTurn()) {
+        if (s != null) s.update();
+        
+        if (key.equals("resize") || key.equals("text")) resizeBattleRect();
+        if (key.equals("end")) endBattle();
+        if (key.equals("text")) enemyTurn();
+        if (key.equals("grow")) transitionToPlayerTurn();
+        
+        if (isEnemyTurn()) {
             checkBulletCollision();
-        } else if (isTransitioningToPlayerTurn()) {
-            transitionToPlayerTurn();
         } else if (isEnded()) { return true; }
         
         return false;
@@ -237,6 +220,7 @@ public class Battle {
                     fightButton.switchSprite();
                     attackField.show();
                     attackCursor.show();
+                    attackCursor.getPath().restart();
                     attackCursor.startMoving();  //getPath().startAt(b.X_ATTACKCURSOR, b.Y_ATTACKCURSOR);
                     //resetSelectedEnemy();
                     for (Enemy e : enemies) {
@@ -313,6 +297,11 @@ public class Battle {
                 attackAnimation.setX(enemies[enemySelected].getX() + 35);
                 attackAnimation.setY(enemies[enemySelected].getY() + 30);
                 attackAnimation.animate();
+                s = new Script("text\\battleScript.txt\\", null, this, 
+                    new GameObject[] {attackAnimation, enemies[enemySelected], enemies[enemySelected].getHPBar(),
+                    damageNumber, enemies[enemySelected].getSpritedObject(), attackField, attackCursor, battleRect,
+                    textBubble, player, player.getSpritedObject(), player.getRect()}, 
+                        new DialogueBox());
                 
             }
             
@@ -324,8 +313,10 @@ public class Battle {
             
             if (button == Game.LEFT) {
                 player.setX(player.getX() - b.PLAYER_SPEED);
-                if (!player.getRect().isInside(battleRect.getInnerRect()))
+                if (!player.getRect().isInside(battleRect.getInnerRect())) {
                     player.setX(battleRect.getX() + battleRect.getBorderWidth());
+                }
+                    
             } else if (button == Game.RIGHT) {
                 player.setX(player.getX() + b.PLAYER_SPEED);
                 if (!player.getRect().isInside(battleRect.getInnerRect()))
@@ -336,61 +327,16 @@ public class Battle {
                     player.setY(battleRect.getY() + battleRect.getBorderWidth());
             } else if (button == Game.DOWN) {
                 player.setY(player.getY() + b.PLAYER_SPEED);
-                if (!player.getRect().isInside(battleRect.getInnerRect())) {
+                if (!player.getRect().isInside(battleRect.getInnerRect()))
                     player.setY(battleRect.getY() + battleRect.getHeight() - battleRect.getBorderWidth() - player.getSpritedObject().getSprite().getHeight());
-                }
             }
-            
         }
         
         if (!(state == b.SELECTING_BATTLE_BUTTON && button == Game.CANCEL)) 
             player.setLastDirection(button);
         
     }
-    
-    /**
-     * Determines which option is being selected based on the options being
-     * displayed to the screen and the player's position.
-     * @return  Option selected
-     */
-    private int getSelectedOption( ) {
-        
-        Text[] options = getOptions();
-        
-        int optionSelected = 0;
-        
-        if (options.length > 3) {
-            if (player.getY() == b.Y_PLAYEROPTIONROW1) {
-                if (player.getX() == b.X_PLAYEROPTIONCOLUMN1)
-                    optionSelected = 0;
-                else
-                    optionSelected = 1;
-            }
-            else if (player.getY() == b.Y_PLAYEROPTIONROW2) {
-                if (player.getX() == b.X_PLAYEROPTIONCOLUMN1)
-                    optionSelected = 2;
-                else
-                    optionSelected = 3;
-            }
-            else {
-                if (player.getX() == b.X_PLAYEROPTIONCOLUMN1)
-                    optionSelected = 4;
-                else
-                    optionSelected = 5;
-            }
-        }
-        else {
-            if (player.getY() == b.Y_PLAYEROPTIONROW1)
-                optionSelected = 0;
-            else if (player.getY() == b.Y_PLAYEROPTIONROW2)
-                optionSelected = 1;
-            else
-                optionSelected = 2;
-        }
-        
-        return optionSelected;
-        
-    }
+
     
     /**
      * Lists GameObjects in the Battle
@@ -441,9 +387,7 @@ public class Battle {
                     patterns[2].getObjects()[i];
         }
         objects[objects.length - 1] = attackAnimation;
-        
         //for (GameObject go : objects) System.out.println(go);
-        //System.out.println("");
         return objects;
         
     }
@@ -500,91 +444,52 @@ public class Battle {
     }
     
     /**
-     * Progresses Battle after the attack animation plays. Changes state to
-     * ENEMY_TAKING_DAMAGE. Slides HP bar by damage, calls hurt animation,
-     * updates enemy health, begins damageNumber Path.
-     */
-    private void checkIfAttackAnimationIsFinished( ) {
-        
-        if (attackAnimation.finishedAnimating() && System.currentTimeMillis() - 
-                lastStateSwitch >= b.DELAY_ATTACKTOTAKINGDAMAGE) {
-            state = b.ENEMY_TAKING_DAMAGE;
-            int damage = 5;
-            enemies[enemySelected].getHPBar().slideToNumerator(
-                    enemies[enemySelected].getHP() - damage);
-            enemies[enemySelected].hurt();
-            enemies[enemySelected].takeDamage(damage);
-            
-            Game.getSound().play("Damage", false);
-            damageNumber.setSprite(getDamageNumberSprite(damage));
-            
-            int x = enemies[enemySelected].getHPBar().getX() + 
-                    ((enemies[enemySelected].getHPBar().getWidth() 
-                    - damageNumber.getSprite().getWidth()) / 2);
-            int y = enemies[enemySelected].getHPBar().getY() - 3 -
-                    b.H_SHEET_DAMAGENUMBERS;
-            damageNumber.getPath().startAt(x, y);
-            damageNumber.setX(x);
-            damageNumber.setY(y);
-            
-            damageNumber.show();
-            lastStateSwitch = System.currentTimeMillis();
-        } else if (!attackAnimation.finishedAnimating()) {
-            lastStateSwitch = System.currentTimeMillis();
-        }
-        
-        
-    }
-    
-    /**
-     * Updates state to BETWEEN_TURNS if damageNumber completed Path.
-     */
-    private void checkIfDamageNumberFinished( ) {
-        
-        if (damageNumber.getPath().isFinished()) {
-            state = b.BETWEEN_TURNS;
-            lastStateSwitch = System.currentTimeMillis();
-        }
-        
-    }
-    
-    /**
      * Determines if Battle ended.
      * @return  True if ended, False if not.
      */
     private boolean isEnded( ) { return state == b.BATTLE_END; }
     
-    /**
-     * Handles Battle between turns. Hides damage number and HP bar after
-     * DELAY_TURNENDTOHPFADE. Darkens Enemy if defeated after 500 ms. Changes 
-     * state to BATTLE_END when Enemy finished moving. Hides attackCursor and
-     * shrinks attackField. If Enemy is alive, resumes its animation. If not,
-     * displays victory text and shrinks battle box. Creates text bubbles for
-     * surviving enemies. After dialogue progressed, state is changed to 
-     * ENEMY_TURN and BulletPattern is initiated.
-     */
-    private void checkTimeBetweenTurns( ) {
+    public void startResizing( ) {key = "resize";}
+    public void startBattleEnd( ) {key = "end";}
+    public void startBattleBoxGrowing( ) {key = "grow";}
+    
+    private void enemyTurn( ) {
+        if (!isWaitingOnText()) {
+            key = "";
+            textBubble.hide();
+            bt.clear();
+            state = b.ENEMY_TURN;
+            patterns[0].newWhimsunAttack(battleRect);
+            patterns[0].start();
+            patterns[1].newAttack(battleRect);
+            patterns[1].start();
+        }
+    }
+    
+    public void waitOnTextBubble( ) {
         
-        if (System.currentTimeMillis() - lastStateSwitch > b.DELAY_TURNENDTOHPFADE
-                && damageNumber.isShowing()) {
-            damageNumber.hide();
-            enemies[enemySelected].getHPBar().hide();
-            if (!enemies[enemySelected].isAlive()) Game.getSound().play("Vaporized", false);
+        Text bubble = bt.getTextBubbles()[0];
+        bubble.setX(textBubble.getX() + b.X_BUBBLEOFFSET);
+        bubble.setY(textBubble.getY() + b.Y_BUBBLEOFFSET);
+        bubble.newMessage("Ribbit, ribbit, ribbit, ribbit");
+        bt.displayTexts(new Text[] {bubble});
+        bt.waitOnText(bubble);
+        key = "text";
+        
+    }
+    
+    private void resizeBattleRect( ) {
+        if (!attackCursor.isShowing() &&
+                battleRect.getWidth() > 220
+                && enemies[enemySelected].isAlive()) {
+            battleRect.setX(battleRect.getX() + b.W_BATTLERECTINCREMENT);
+            battleRect.setWidth(battleRect.getWidth() - (2 * b.W_BATTLERECTINCREMENT));
+            battleRect.generateGraphics(b.W_BATTLERECTBORDER, TextHandler.WHITE.getRGB());
         }
-        if (System.currentTimeMillis() - lastStateSwitch >
-                500 && !enemies[enemySelected].getSpritedObject().isDarkeningToBlack()
-                && !enemies[enemySelected].isAlive()) {
-            enemies[enemySelected].getSpritedObject().darkenToBlack(b.DEATH_FADE_OUT_FACTOR);
-        }
-        if (enemies[enemySelected].getSpritedObject().finishedMoving() &&
-                attackCursor.isShowing()) {
-            lastStateSwitch = System.currentTimeMillis(); //TURNEND
-            if (enemies[enemySelected].isAlive())enemies[enemySelected].noLongerHurt();
-            attackField.animate();
-            attackField.darkenToBlack(b.ATTACK_FIELD_DARKEN_FACTOR);
-            attackCursor.pause();
-            attackCursor.hide();
-        }
+    }
+    
+    private void endBattle( ) {
+        s = null;
         if (!attackField.isShowing() && !enemies[enemySelected].isAlive()
                 && bt.getTextWaitingOn() == null) {
             if (bt.getFlavorText().getMessage().equals("You   won!\nYou   earned   5   EXP   and   1   gold.")) {
@@ -597,39 +502,6 @@ public class Battle {
             bt.displayFlavorText("You won!\nYou earned 5 EXP and 1 gold.", true);
             bt.waitOnText(bt.getFlavorText());
         }
-        if (!attackCursor.isShowing() &&
-                battleRect.getWidth() > 220
-                && enemies[enemySelected].isAlive()) {
-            battleRect.setX(battleRect.getX() + b.W_BATTLERECTINCREMENT);
-            battleRect.setWidth(battleRect.getWidth() - (2 * b.W_BATTLERECTINCREMENT));
-            battleRect.generateGraphics(b.W_BATTLERECTBORDER, TextHandler.WHITE.getRGB());
-        }
-        if (System.currentTimeMillis() - lastStateSwitch > b.DELAY_DAMAGEDTOCHATBOX
-                && !player.getSpritedObject().isShowing()
-                && enemies[enemySelected].isAlive()) {
-            Game.setScrollSpeed(TextHandler.SLOW_SCROLL_SPEED);
-            textBubble.show();
-            player.setX(b.X_PLAYERBATTLEBOX);
-            player.setY(b.Y_PLAYERBATTLEBOX);
-            player.getSpritedObject().show();
-            Text bubble = bt.getTextBubbles()[0];
-            bubble.setX(textBubble.getX() + b.X_BUBBLEOFFSET);
-            bubble.setY(textBubble.getY() + b.Y_BUBBLEOFFSET);
-            bubble.newMessage("Ribbit, ribbit, ribbit, ribbit");
-            bt.displayTexts(new Text[] {bubble});
-            bt.waitOnText(bubble);
-        }
-        if (textBubble.isShowing() && !isWaitingOnText()
-                && enemies[enemySelected].isAlive()) {
-            textBubble.hide();
-            bt.clear();
-            state = b.ENEMY_TURN;
-            patterns[0].newWhimsunAttack(battleRect);
-            patterns[0].start();
-            patterns[1].newAttack(battleRect);
-            patterns[1].start();
-        }
-        
     }
     
     /**
@@ -642,17 +514,13 @@ public class Battle {
             battleRect.setWidth(battleRect.getWidth() + (2 * b.W_BATTLERECTINCREMENT));
             battleRect.generateGraphics(b.W_BATTLERECTBORDER, TextHandler.WHITE.getRGB());
         } else {
+            s = new Script("text\\transition.txt\\", null, this, 
+                    new GameObject[] {player.getSpritedObject(), attackField,
+                    attackCursor, fightButton}, 
+                        new DialogueBox());
             state = b.SELECTING_BATTLE_BUTTON;
-            player.getSpritedObject().show();
-            player.setX(b.X_PLAYERFIGHTBUTTON);
-            player.setY(b.Y_PLAYERBUTTONS);
-            attackField.setSprite(b.ATTACK_FIELD.getSprite(0, 0));
-            attackCursor.setSprite(b.ATTACK_CURSORS.getSprite(0, 0));
-            attackCursor.setX(b.X_ATTACKCURSOR);
-            attackCursor.getPath().restart();
-            Game.setScrollSpeed(TextHandler.DEFAULT_SCROLL_SPEED);
+            key = "";
             bt.displayFlavorText(b.TEXT_DEFAULTFLAVOR, true);
-            fightButton.switchSprite();
         }
         
     }
@@ -663,11 +531,6 @@ public class Battle {
      */
     private void checkBulletCollision( ) {
         
-        /*Rectangle[] bullets = new Rectangle[patterns[0].getRects().length + 
-                patterns[1].getRects().length + patterns[2].getRects().length];
-        for (int i = 0; i < patterns[0].getRects().length; i++) {
-            bullets[i] = patterns[0].getRects()[i];
-        }*/
         for (BulletPattern bp : patterns) {
             if (bp.isMoving() && bp.isComplete()) {
                 patterns[0] = new BulletPattern();
@@ -675,6 +538,7 @@ public class Battle {
                 patterns[2] = new BulletPattern();
                 player.getSpritedObject().hide();
                 state = b.ENEMY_TURN_FINISHED;
+                key = "grow";
                 return;
             }
         }
@@ -717,16 +581,6 @@ public class Battle {
     private Text[] getOptions( ) { return bt.getOptions(); }
     
     /**
-     * Resets the flashing of an Enemy and its brightness.
-     */
-    private void resetSelectedEnemy( ) {
-        
-        enemies[enemySelected].getSpritedObject().stopFlashing();
-        enemies[enemySelected].getSpritedObject().brightenToDefault(b.BRIGHTEN_TO_DEFAULT_FACTOR);
-        
-    }
-    
-    /**
      * Determines which Battle Button is selected
      * @return  Index of battle button 0-3
      */
@@ -765,48 +619,32 @@ public class Battle {
     }
     
     /**
-     * Creates a Sprite representing the number of damage dealt. 
+     * Changes Damage Number Sprite representing the number of damage dealt. 
      * @param damage    Damage dealt.
-     * @return      Sprite representing damage.
      */
-    private Sprite getDamageNumberSprite( int damage ) {
+    public void setDamageNumberSprite( int damage ) {
+        
+        Sprite newSprite = null;
         
         if (damage < 10) {
             if (damage == 1) {
-                return getNumberOneSprite();
+                newSprite = getNumberOneSprite();
             }
-            return b.DAMAGE_NUMBERS.getSprite(damage, 0);
+            else newSprite = b.DAMAGE_NUMBERS.getSprite(damage, 0);
         }
+        else {
+            String damageString = String.valueOf(damage);
+            Sprite[] numbers = new Sprite[damageString.length()];
+            for (int i = 0; i < damageString.length(); i++) {
+                int x = Integer.parseInt(
+                        new String(new char[] {damageString.charAt(i)}));
+                numbers[i] = b.DAMAGE_NUMBERS.getSprite(x, 0);
+                if (damageString.charAt(i) == '1') numbers[i] = getNumberOneSprite();
+            }
+            newSprite = new Sprite(numbers); 
+        }
+        damageNumber.setSprite(newSprite);
         
-        String damageString = String.valueOf(damage);
-        Sprite[] numbers = new Sprite[damageString.length()];
-        for (int i = 0; i < damageString.length(); i++) {
-            int x = Integer.parseInt(
-                    new String(new char[] {damageString.charAt(i)}));
-            numbers[i] = b.DAMAGE_NUMBERS.getSprite(x, 0);
-            if (damageString.charAt(i) == '1') numbers[i] = getNumberOneSprite();
-        }
-        
-        return new Sprite(numbers);
-        /*
-        int[] pixels = new int[30 * 30 * numbers.length];
-        for (int i = 0; i < 30; i++) { // for each row
-            int[] row = new int[30 * numbers.length];
-            for (int j = 0; j < numbers.length; j++) { // for each number, get row
-                int[] subrow = new int[30];
-                for (int k = 0; k < subrow.length; k++) {
-                    subrow[k] = numbers[j].getPixels()[k + (30 * i)];
-                }
-                for (int k = 0; k < subrow.length; k++) {
-                    row[(j * 30) + k] = subrow[k];
-                }
-            }
-            for (int k = 0; k < row.length; k++) {
-                pixels[(i * row.length) + k] = row[k];
-            }
-        }
-        return new Sprite(pixels, 30 * numbers.length, 30);
-        */
     }
     
     /**

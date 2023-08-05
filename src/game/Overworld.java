@@ -136,22 +136,22 @@ public class Overworld {
     
     public void checkDialogueTrigger( ) {
         
-        /*if (room.getDialogueTriggers().get(0).isColliding(player) && Game.getKeyListener().z()) {
+        if (room.getDialogueTriggers().get(0).isColliding(player) && Game.getKeyListener().z()) {
             isActivatingBattle = true;
             Game.getMusic1().stop();
             Game.getMusic2().play("Battle", true);
             player.setX(39);
             player.setY(444);
             player.switchToSoul();
-        }*/
+        }
         
-        for (DialogueTrigger dt : room.getDialogueTriggers()) {
+        /*for (DialogueTrigger dt : room.getDialogueTriggers()) {
             if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {
                 dialogueBox.newMessage(dt.getTexts(), dt.getFaces());
                 player.stopStepping();
                 break;
             }
-        }
+        }*/
         
     }
     

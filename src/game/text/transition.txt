@@ -1,0 +1,14 @@
+// Script
+>  Object 00 (Player PASO)
+Show
+Move 39,444
+>  Object 01 (Attack Field)
+Sprite #0
+>  Object 02 (Attack Cursor)
+Sprite #0
+X -150
+>  Object 00 (Player PASO)
+Restart
+Scroll Speed 2
+>  Object 03 (Fight Button)
+Switch Sprite
