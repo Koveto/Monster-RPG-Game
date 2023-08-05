@@ -2,6 +2,7 @@ package game;
 
 import game.gameObjects.AnimatedSpritedObject;
 import game.gameObjects.Battler;
+import game.gameObjects.DoublySpritedObject;
 import game.gameObjects.Enemy;
 import game.gameObjects.Entity;
 import game.gameObjects.GameObject;
@@ -78,6 +79,8 @@ public class Script {
                 
                 String line = scan.nextLine();
                 
+                if (storedNums == null) storedNums = new int[0];
+                
                 if (line.startsWith("//")) continue;
                 
                 if (line.startsWith("If")) {
@@ -142,6 +145,21 @@ public class Script {
                     } else current.setY(Integer.parseInt(substrings[1]));
                 }
                 
+                if (line.startsWith("X ")) {
+                    if (line.substring(2).startsWith("s")) {
+                        current.setX(storedNums[Integer.parseInt(line.substring(3))]);
+                    } else {
+                        current.setX(Integer.parseInt(line.substring(2)));
+                    }
+                }
+                if (line.startsWith("Y ")) {
+                    if (line.substring(2).startsWith("s")) {
+                        current.setY(storedNums[Integer.parseInt(line.substring(3))]);
+                    } else {
+                        current.setY(Integer.parseInt(line.substring(2)));
+                    }
+                }
+                
                 if (line.startsWith("Store")) {
                     String l = line.substring(6);
                     if (l.equals("Clear")) {
@@ -177,6 +195,7 @@ public class Script {
                         }
                         LinkedQueue<String> infix = FileReader.createQueueFromLine(l);
                         LinkedQueue<String> postfix = InfixTranslator.infixToPostfix(infix);
+                        if (storedNums == null) storedNums = new int[0];
                         storedNums = Game.addToIntArray(storedNums, (int) PostfixCalculator.evaluatePostfix(postfix, "x", 5.0));
                     }
                 }
@@ -200,6 +219,8 @@ public class Script {
                     battle.startBattleEnd();
                 } if (line.startsWith("B  Wait on text bubble")) {
                     battle.waitOnTextBubble();
+                } if (line.startsWith("B  Start battle box growing")) {
+                    battle.startBattleBoxGrowing();
                 }
                 
                 
@@ -281,8 +302,17 @@ public class Script {
                         if (b.startsWith("s")) b = String.valueOf(storedNums[Integer.parseInt(b.substring(1))]);
                         p.startAt(Integer.parseInt(a), Integer.parseInt(b));
                     }
+                    if (line.equals("Restart")) paso.getPath().restart();
                     if (line.equals("Stop Moving")) paso.stopMoving();
                 } catch (ClassCastException e) {}
+                
+                
+                
+                // DOUBLYSPRITEDOBJECT METHODS
+                try {
+                    DoublySpritedObject dso = (DoublySpritedObject) current;
+                    if (line.equals("Switch Sprite")) dso.switchSprite();
+                } catch (ClassCastException cce) {}
                 
                 
                 
@@ -348,6 +378,12 @@ public class Script {
     
     private int checkIf( String line ) {
         
+        if (line.contains("<")) {
+            int temp = line.indexOf("<");
+            int first = storedNums[Integer.parseInt(line.substring(temp - 3, temp - 1))];
+            int second = storedNums[Integer.parseInt(line.substring(temp + 2,temp + 4))];
+            if (first < second) return 7;
+        }
         if (line.contains("Finished-Moving") && 
                 line.startsWith("Finished-Moving")) {
             try {
