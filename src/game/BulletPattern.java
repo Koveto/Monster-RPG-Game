@@ -6,7 +6,7 @@ import game.gameObjects.Rectangle;
 /**
  * BulletPattern
  * @author Kobe Goodwin
- * @version 8/30/2022
+ * @version 8/6/2023
  * 
  * A pattern of bullets for the player to dodge.
  */
@@ -49,6 +49,13 @@ public class BulletPattern {
                 new Path("t", "t", battleBox.getX(), battleBox.getY(), 0, 100, .1, true), -100, -100, 5);
         bullets = new Bullet[] {bullet};
         length = 4000;
+    }
+    
+    public void newTestAttack( Rectangle battleBox ) {
+        Bullet bullet = new Bullet(b.BULLET.getSprite(0, 0),
+                new Path("t", "t", battleBox.getX(), battleBox.getY(), 0, 100, .1, true), -100, -100, 5);
+        bullets = new Bullet[] {bullet};
+        length = 1000000;
     }
     
     public void start( ) {
