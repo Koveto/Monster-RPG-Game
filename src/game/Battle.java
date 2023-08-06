@@ -15,7 +15,7 @@ import java.awt.Color;
 /**
  * Battle
  * @author Kobe Goodwin
- * @version 8/2/2023
+ * @version 8/6/2023
  * 
  * Handles the properties of a battle.
  */
@@ -323,12 +323,14 @@ public class Battle {
                     player.setX(battleRect.getX() + battleRect.getWidth() - battleRect.getBorderWidth() - player.getSpritedObject().getSprite().getWidth());
             } else if (button == Game.UP) {
                 player.setY(player.getY() - b.PLAYER_SPEED);
-                if (!player.getRect().isInside(battleRect.getInnerRect()))
+                if (!player.getRect().isInside(battleRect.getInnerRect()) && (player.getX() != 405 || (player.getY() <= 252 && player.getX() == 405))) {
                     player.setY(battleRect.getY() + battleRect.getBorderWidth());
+                }
             } else if (button == Game.DOWN) {
                 player.setY(player.getY() + b.PLAYER_SPEED);
-                if (!player.getRect().isInside(battleRect.getInnerRect()))
+                if (!player.getRect().isInside(battleRect.getInnerRect()) && (player.getX() != 405 || (player.getX() == 405 && player.getY() >= 369))) {
                     player.setY(battleRect.getY() + battleRect.getHeight() - battleRect.getBorderWidth() - player.getSpritedObject().getSprite().getHeight());
+                }
             }
         }
         
@@ -463,6 +465,10 @@ public class Battle {
             patterns[0].start();
             patterns[1].newAttack(battleRect);
             patterns[1].start();
+            /*patterns[0].newTestAttack(battleRect);
+            patterns[1].newTestAttack(battleRect);
+            patterns[0].start();
+            patterns[1].start();*/
         }
     }
     
