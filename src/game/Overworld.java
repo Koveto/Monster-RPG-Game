@@ -5,15 +5,16 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 7/8/2023
+ * @version 8/9/2023
  */
 public class Overworld {
     
     private Player player;
     private Room room;
     private DialogueBox dialogueBox;
-    private int confirmDelay;
-    private boolean holdingUpOrDown, holdingRightOrLeft, isActivatingBattle;
+    private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo;
+    private boolean holdingUpOrDown, holdingRightOrLeft, isActivatingBattle,
+            isTransitioningRooms;
     
     public Overworld( Player player, Room room ) {
         
@@ -42,6 +43,13 @@ public class Overworld {
         if (button == Game.CONFIRM && confirmDelay == 0) confirmDelay = 10;
         if (dialogueBox.isShowing()) return;
         int PLAYER_SPEED = 3;
+        
+        /*if (isTransitioningRooms) {
+            if (player.isFacingDown()) player.setY(player.getY() - PLAYER_SPEED);
+            if (player.isFacingUp()) player.setY(player.getY() + PLAYER_SPEED);
+            if (player.isFacingLeft()) player.setX(player.getX() + PLAYER_SPEED);
+            if (player.isFacingRight()) player.setX(player.getX() - PLAYER_SPEED);
+        }*/
         
         if (button == Game.LEFT) {
             if (!holdingUpOrDown || (Game.getKeyListener().onlyLeft())) {
@@ -133,6 +141,20 @@ public class Overworld {
     }
     
     public boolean activatingBattle( ) { return isActivatingBattle; }
+    public boolean transitioningRooms( ) { return isTransitioningRooms; }
+    
+    public void transitionRooms( ) {
+        
+        room = new Room(player, dialogueBox, room.getTiles(), 
+            "maps\\room" + String.valueOf(idTransitioningTo) + "mapA.txt",
+            "maps\\room" + String.valueOf(idTransitioningTo) + "mapB.txt",
+            "maps\\room" + String.valueOf(idTransitioningTo) + "walls.txt",
+            "text\\dialogue.txt");
+        player.setX(xTransitioningTo);
+        player.setY(yTransitioningTo);
+        isTransitioningRooms = false;
+        
+    }
     
     public void checkDialogueTrigger( ) {
         
@@ -158,9 +180,17 @@ public class Overworld {
     public void checkEntityCollision( ) {
         
         for (Entity e : room.getEntities())
-        if (player.getRect().isColliding(e.getCollision())) {
-            player.setX(player.getX() - e.getDeltaX());
-            player.setY(player.getY() + e.getDeltaY());
+            if (player.getRect().isColliding(e.getCollision())) {
+                player.setX(player.getX() - e.getDeltaX());
+                player.setY(player.getY() + e.getDeltaY());
+            }
+        for (int i = 0; i < room.getRoomTransitions().length; i++) {
+            if (player.getRect().isColliding(room.getRoomTransitions()[i])) {
+                isTransitioningRooms = true;
+                idTransitioningTo = room.getTransitionIDs()[i];
+                xTransitioningTo = room.getTransitionXs()[i];
+                yTransitioningTo = room.getTransitionYs()[i];
+            }
         }
         
     }
