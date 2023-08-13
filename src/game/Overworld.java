@@ -12,7 +12,9 @@ public class Overworld {
     private Player player;
     private Room room;
     private DialogueBox dialogueBox;
-    private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo;
+    private final int TRANSITION_LENGTH = 10;
+    private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo,
+            roomTransitionCount;
     private boolean holdingUpOrDown, holdingRightOrLeft, isActivatingBattle,
             isTransitioningRooms;
     
@@ -44,12 +46,20 @@ public class Overworld {
         if (dialogueBox.isShowing()) return;
         int PLAYER_SPEED = 3;
         
-        /*if (isTransitioningRooms) {
-            if (player.isFacingDown()) player.setY(player.getY() - PLAYER_SPEED);
-            if (player.isFacingUp()) player.setY(player.getY() + PLAYER_SPEED);
-            if (player.isFacingLeft()) player.setX(player.getX() + PLAYER_SPEED);
-            if (player.isFacingRight()) player.setX(player.getX() - PLAYER_SPEED);
-        }*/
+        if (isTransitioningRooms) {
+            if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
+            if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
+            if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
+            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
+            return;
+        } else if (roomTransitionCount > 0) {
+            if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
+            if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
+            if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
+            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
+            roomTransitionCount--;
+            return;
+        }
         
         if (button == Game.LEFT) {
             if (!holdingUpOrDown || (Game.getKeyListener().onlyLeft())) {
@@ -152,6 +162,7 @@ public class Overworld {
             "text\\dialogue.txt");
         player.setX(xTransitioningTo);
         player.setY(yTransitioningTo);
+        roomTransitionCount = TRANSITION_LENGTH;
         isTransitioningRooms = false;
         
     }

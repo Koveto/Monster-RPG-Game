@@ -1,7 +1,7 @@
 // Walls
 // x, y, w, h
 //           x,y,w,h,id,playerX,playerY
-Transition: 200,120,300,10,1,200,200
+Transition: 200,120,300,10,1,260,400
 0,0,40,640
 0,0,200,120
 0,120,80,40

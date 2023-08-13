@@ -1,5 +1,5 @@
 // Ruins First Puzzle Room
-Fill:2
+Fill:1
 9,1,0
 18,2,0
 18,3,0
