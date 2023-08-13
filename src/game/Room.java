@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 7/13/2023
+ * @version 8/9/2023
  */
 public class Room {
     
@@ -19,7 +19,8 @@ public class Room {
     private TileSet tiles;
     private Map map1, map2;
     private Script script;
-    private Rectangle[] walls;
+    private Rectangle[] walls, transitions;
+    private int[] transIDs, xs, ys;
     private Entity[] entities;
     private ArrayList<DialogueTrigger> dt;
     
@@ -32,7 +33,12 @@ public class Room {
         this.tiles = tiles;
         map1 = new Map(new File(System.getProperty("user.dir") + "\\src\\game\\" + map1Path), tiles);
         map2 = new Map(new File(System.getProperty("user.dir") + "\\src\\game\\" + map2Path), tiles);
-        dt = new ArrayList<DialogueTrigger>();
+        dt = new ArrayList<>();
+        transIDs = new int[0];
+        xs = new int[0];
+        ys = new int[0];
+        walls = new Rectangle[0];
+        transitions = new Rectangle[0];
         entities = new Entity[] {
             new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
                     new Path("1", "1", 0, 1, 1, false), 100, 100, 50, 104, 
@@ -47,24 +53,33 @@ public class Room {
         };
         
         try {
-            ArrayList<Rectangle> rects = new ArrayList();
             Scanner scan = new Scanner(new File(System.getProperty("user.dir") + "\\src\\game\\" + wallPath));
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
-                if (line.contains("//")) continue;
+                if (line.contains("//") || line.equals("")) continue;
                 String[] splitString = line.split(",");
-                rects.add(new Rectangle(Integer.parseInt(splitString[0]),
-                                        Integer.parseInt(splitString[1]),
-                                        Integer.parseInt(splitString[2]),
-                                        Integer.parseInt(splitString[3])));
+                if (line.startsWith("Transition: ")) {
+                    transitions = Game.addToRectangleArray(transitions, 
+                            new Rectangle(Integer.parseInt(splitString[0].substring(12)),
+                                            Integer.parseInt(splitString[1]),
+                                            Integer.parseInt(splitString[2]),
+                                            Integer.parseInt(splitString[3])));
+                    transIDs = Game.addToIntArray(transIDs, Integer.parseInt(splitString[4]));
+                    xs = Game.addToIntArray(xs, Integer.parseInt(splitString[5]));
+                    ys = Game.addToIntArray(ys, Integer.parseInt(splitString[6]));
+                } else {
+                    walls = Game.addToRectangleArray(walls, 
+                            new Rectangle(Integer.parseInt(splitString[0]),
+                                            Integer.parseInt(splitString[1]),
+                                            Integer.parseInt(splitString[2]),
+                                            Integer.parseInt(splitString[3])));
+                }
+                
             }
-            walls = (Rectangle[]) rects.toArray(new Rectangle[] {});
         } catch (FileNotFoundException fnfe) {
             System.out.println("Wall path not found.");
-            walls = new Rectangle[] {};
         } catch (Exception e) {
             e.printStackTrace();
-            walls = new Rectangle[] {};
         }
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
@@ -98,7 +113,12 @@ public class Room {
         return triggers;
     }
     
+    public TileSet getTiles( ) { return tiles; }
     public Entity[] getEntities( ) { return entities; }
+    public int[] getTransitionIDs( ) { return transIDs; }
+    public int[] getTransitionXs( ) { return xs; }
+    public int[] getTransitionYs( ) { return ys; }
+    public Rectangle[] getRoomTransitions( ) { return transitions; }
     
     public GameObject[] getObjects( ) {
         
@@ -108,6 +128,9 @@ public class Room {
         for (Entity e : entities) {
             obj = Game.addToGOArray(obj, e);
         }
+        /*for (Rectangle r : walls) {
+            obj = Game.addToGOArray(obj, r);
+        }*/
         return obj;
         
     }

@@ -102,9 +102,9 @@ public class Game extends JFrame implements Runnable {
         room = new Room(player, new DialogueBox(),
                         new TileSet(new File(System.getProperty("user.dir") + "\\src\\game\\maps\\tiles.txt\\"), 
                                         new SpriteSheet(Game.loadImage("ss\\ruins.png"), 20, 20)),
-                        "maps\\map.txt\\",
-                        "maps\\map1.txt\\",
-                        "maps\\walls.txt\\",
+                        "maps\\room0mapA.txt\\",
+                        "maps\\room0mapB.txt\\",
+                        "maps\\room0walls.txt\\",
                         "text\\dialogue.txt\\");
         overworld = new Overworld(player, room);
         Game.getMusic1().play("Ruins", true);
@@ -318,16 +318,21 @@ public class Game extends JFrame implements Runnable {
         }
         
         
-        
+        if (overworld != null && overworld.transitioningRooms() && !ftb.isShowing()) {
+            ftb.show();
+            ftb.fadeIn(50);
+        }
         if (battle != null) { 
             if (battle.update() && !ftb.isShowing()) {
                 ftb.show();
                 ftb.fadeIn(25);
             } 
-        }
-        
+        }        
+        if (ftb.isShowing() && !ftb.isFadingIn() && !ftb.isFadingOut() && overworld != null) {
+            ftb.fadeOut(50);
+            overworld.transitionRooms();        }
         if (ftb.isShowing() && !ftb.isFadingIn()
-                && !ftb.isFadingOut()) {
+                && !ftb.isFadingOut() && overworld == null) {
             mode = NO_BATTLE;
             Game.getMusic1().resume();
             battle.getPlayer().getSpritedObject().show();
