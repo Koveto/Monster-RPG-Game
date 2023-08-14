@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 8/9/2023
+ * @version 8/14/2023
  */
 public class Overworld {
     
@@ -195,14 +195,15 @@ public class Overworld {
                 player.setX(player.getX() - e.getDeltaX());
                 player.setY(player.getY() + e.getDeltaY());
             }
-        for (int i = 0; i < room.getRoomTransitions().length; i++) {
-            if (player.getRect().isColliding(room.getRoomTransitions()[i])) {
-                isTransitioningRooms = true;
-                idTransitioningTo = room.getTransitionIDs()[i];
-                xTransitioningTo = room.getTransitionXs()[i];
-                yTransitioningTo = room.getTransitionYs()[i];
+        if (!(isTransitioningRooms || roomTransitionCount > 0))
+            for (int i = 0; i < room.getRoomTransitions().length; i++) {
+                if (player.getRect().isColliding(room.getRoomTransitions()[i])) {
+                    isTransitioningRooms = true;
+                    idTransitioningTo = room.getTransitionIDs()[i];
+                    xTransitioningTo = room.getTransitionXs()[i];
+                    yTransitioningTo = room.getTransitionYs()[i];
+                }
             }
-        }
         
     }
     

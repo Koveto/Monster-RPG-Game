@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 8/9/2023
+ * @version 8/14/2023
  */
 public class Room {
     
@@ -128,7 +128,7 @@ public class Room {
         for (Entity e : entities) {
             obj = Game.addToGOArray(obj, e);
         }
-        /*for (Rectangle r : walls) {
+        /*for (Rectangle r : transitions) {
             obj = Game.addToGOArray(obj, r);
         }*/
         return obj;
