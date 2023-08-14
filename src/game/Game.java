@@ -100,7 +100,7 @@ public class Game extends JFrame implements Runnable {
         
         battle = null;
         room = new Room(player, new DialogueBox(),
-                        new SpriteSheet(Game.loadImage("ss\\ruins.png"), 20, 20),
+                        new SpriteSheet(Game.loadImage("ss\\ruinsTiles.png"), 20, 20),
                         "maps\\room0mapA.txt\\",
                         "maps\\room0mapB.txt\\",
                         "maps\\room0walls.txt\\",
