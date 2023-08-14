@@ -6,7 +6,7 @@ import java.time.Clock;
 /**
  * SpriteSheet
  * @author Kobe Goodwin
- * @version 8/23/2022
+ * @version 8/13/2023
  * 
  * A container for several Sprites loaded from a sheet image.
  */
@@ -70,6 +70,18 @@ public class SpriteSheet {
      * @return  Sprite height
      */
     public int getSpriteHeight( ) {return SPRITE_SIZE_Y;}
+    
+    /**
+     * Accessor for Sheet Width
+     * @return  SpriteSheet width
+     */
+    public int getSheetWidth( ) {return SIZE_X;}
+    
+    /**
+     * Accessor for Sheet Height
+     * @return  SpriteSheet height
+     */
+    public int getSheetHeight( ) {return SIZE_Y;}
     
     /**
      * Loads sprites in the image for the X and Y sizes.

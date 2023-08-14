@@ -4,6 +4,8 @@ import game.Game;
 import game.RenderHandler;
 import game.TileSet;
 import game.gameObjects.GameObject;
+import game.Sprite;
+import game.SpriteSheet;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,58 +21,40 @@ import java.util.Scanner;
  */
 public class Map implements GameObject {
     
-    private TileSet tileSet;
-    private int fillTileID = -1;
+    private Sprite fillSprite;
     private ArrayList<MappedTile> mappedTiles = new ArrayList();
     
     /**
-     * Constructor
-     * @param mapFile   File with map data of the form...
-     * <p> Fill: [id]
-     * <p> [id], [x], [y]
-     * @param tileSet   TileSet of Tiles to plot.
+     * Map
+     * @param mapFile       File with tile mapping information
+     * @param spriteSheet   SpriteSheet to interpret tiles
      */
-    public Map( File mapFile, TileSet tileSet ) {
+    public Map( File mapFile, SpriteSheet spriteSheet ) {
         
-        this.tileSet = tileSet;
         try {
             Scanner scan = new Scanner(mapFile);
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
-                if (!line.startsWith("//")) {
-                    if (line.contains(":")) {
-                        String[] splitString = line.split(":");
-                        if (splitString[0].equalsIgnoreCase("Fill")) {
-                            fillTileID = Integer.parseInt(splitString[1]);
-                            continue;
-                        }
+                if (line.startsWith("//")) continue;
+                if (line.contains(":")) {
+                    String[] splitString = line.split(":");
+                    if (splitString[0].equalsIgnoreCase("Fill")) {
+                        fillSprite = spriteSheet.getSprite(Integer.parseInt(splitString[1]), Integer.parseInt(splitString[2]));
+                        continue;
                     }
-                    String[] splitString = line.split(",");
-                    if (splitString.length >= 3) {
-                        MappedTile mappedTile = new MappedTile(Integer.parseInt(splitString[0]),
-                                Integer.parseInt(splitString[1]), Integer.parseInt(splitString[2]));
-                        mappedTiles.add(mappedTile);
-                    }
+                }
+                String[] splitString = line.split(",");
+                if (splitString.length >= 3) {
+                    Sprite s = spriteSheet.getSprite(Integer.parseInt(splitString[0]), Integer.parseInt(splitString[1]));
+                    MappedTile mappedTile = new MappedTile(s,
+                            Integer.parseInt(splitString[2]), Integer.parseInt(splitString[3]));
+                    mappedTiles.add(mappedTile);
                 }
             }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
         
-    }
-
-    /**
-     * Adds a new tile at an x and y position.
-     * @param tileID    ID of tile to add
-     * @param x         X Position
-     * @param y         Y Position
-     */
-    public void addTile(int tileID, int x, int y) {
-
-        Rectangle camera = RenderHandler.getCamera();
-        System.out.println("clicked at " + x + ", " + y + ". Placing tile at " + Math.round((double) (x + camera.getX())/(16)) + ", " + Math.round( (double)(y + camera.getY())/(16)) + ", Camera at " + camera.getX() + ", " + camera.getY());
-        mappedTiles.add(new MappedTile(tileID, (int) Math.round((double) (x + camera.getX())/(16)), (int) Math.round( (double)(y + camera.getY())/(16))));
-
     }
     
     // No implementation
@@ -91,22 +75,26 @@ public class Map implements GameObject {
         int tileWidth = 20;
         int tileHeight = 20;
         
-        if (fillTileID >= 0) {
-            Rectangle camera = RenderHandler.getCamera();
-            for (int y = camera.getY(); y < camera.getY() + camera.getHeight(); y += tileHeight) {
-                for (int x = camera.getX(); x < camera.getX() + camera.getWidth(); x += tileWidth) {
-                    tileSet.renderTile(fillTileID, x, y);
-                }
+        Rectangle camera = RenderHandler.getCamera();
+        for (int y = camera.getY(); y < camera.getY() + camera.getHeight(); y += tileHeight) {
+            for (int x = camera.getX(); x < camera.getX() + camera.getWidth(); x += tileWidth) {
+                RenderHandler.renderSprite(fillSprite, x, y);
             }
         }
         
-        for (int tileIndex = 0; tileIndex < mappedTiles.size(); tileIndex++) {
+        for (int i = 0; i < mappedTiles.size(); i++) {
+            RenderHandler.renderSprite(mappedTiles.get(i).sprite, 
+                    mappedTiles.get(i).x * tileWidth * 2, 
+                    mappedTiles.get(i).y * tileHeight * 2, 2, 2);
+        }
+        /*for (int tileIndex = 0; tileIndex < mappedTiles.size(); tileIndex++) {
             MappedTile mappedTile = mappedTiles.get(tileIndex);
             int x = mappedTile.x * tileWidth;
             int y = mappedTile.y * tileHeight;
             //System.out.println("Placed at " + x + ", " + y);
+            //RenderHandler.renderSprite(mappedTile.sprite, x, y);
             tileSet.renderTile(mappedTile.id, mappedTile.x * tileWidth, mappedTile.y * tileHeight);
-        }
+        }*/
     }
     
     /**
@@ -122,7 +110,8 @@ public class Map implements GameObject {
      */
     private class MappedTile {
             
-        public int id, x, y;
+        public Sprite sprite;
+        public int x, y;
 
         /**
          * Constructor
@@ -130,8 +119,8 @@ public class Map implements GameObject {
          * @param x     X Position
          * @param y     Y Position
          */
-        public MappedTile( int id, int x, int y ) {
-            this.id = id;
+        public MappedTile( Sprite s, int x, int y ) {
+            this.sprite = s;
             this.x = x;
             this.y = y;
         }

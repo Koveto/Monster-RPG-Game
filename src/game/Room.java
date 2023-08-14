@@ -16,7 +16,7 @@ public class Room {
     
     private Player player;
     private DialogueBox dialogueBox;
-    private TileSet tiles;
+    private SpriteSheet tiles;
     private Map map1, map2;
     private Script script;
     private Rectangle[] walls, transitions;
@@ -25,7 +25,7 @@ public class Room {
     private ArrayList<DialogueTrigger> dt;
     
     public Room( Player player, DialogueBox dialogueBox,
-            TileSet tiles, String map1Path, String map2Path, String wallPath,
+            SpriteSheet tiles, String map1Path, String map2Path, String wallPath,
             String dialoguePath ) {
         
         this.player = player;
@@ -113,7 +113,7 @@ public class Room {
         return triggers;
     }
     
-    public TileSet getTiles( ) { return tiles; }
+    public SpriteSheet getTiles( ) { return tiles; }
     public Entity[] getEntities( ) { return entities; }
     public int[] getTransitionIDs( ) { return transIDs; }
     public int[] getTransitionXs( ) { return xs; }
