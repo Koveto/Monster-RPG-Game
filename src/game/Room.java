@@ -141,7 +141,7 @@ public class Room {
         for (Entity e : entities) {
             obj = Game.addToGOArray(obj, e);
         }
-        /*for (Rectangle r : cameraWalls) {
+        /*for (Rectangle r : walls) {
             obj = Game.addToGOArray(obj, r);
         }*/
         return obj;
