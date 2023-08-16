@@ -20,7 +20,7 @@ public class Room {
     private Map map1, map2;
     private Script script;
     private Rectangle[] walls, cameraWalls, transitions;
-    private int[] transIDs, xs, ys;
+    private int[] transIDs, xs, ys, transDirections;
     private Entity[] entities;
     private ArrayList<DialogueTrigger> dt;
     
@@ -37,6 +37,7 @@ public class Room {
         transIDs = new int[0];
         xs = new int[0];
         ys = new int[0];
+        transDirections = new int[0];
         walls = new Rectangle[0];
         transitions = new Rectangle[0];
         cameraWalls = new Rectangle[0];
@@ -71,6 +72,7 @@ public class Room {
                     transIDs = Game.addToIntArray(transIDs, Integer.parseInt(splitString[4]));
                     xs = Game.addToIntArray(xs, Integer.parseInt(splitString[5]));
                     ys = Game.addToIntArray(ys, Integer.parseInt(splitString[6]));
+                    transDirections = Game.addToIntArray(transDirections, Integer.parseInt(splitString[7]));
                 } else if (line.startsWith("Camera: ")) {
                     cameraWalls = Game.addToRectangleArray(cameraWalls, 
                             new Rectangle(Integer.parseInt(splitString[0].substring(8)),
@@ -131,6 +133,7 @@ public class Room {
     public int[] getTransitionIDs( ) { return transIDs; }
     public int[] getTransitionXs( ) { return xs; }
     public int[] getTransitionYs( ) { return ys; }
+    public int[] getTransitionDirections( ) { return transDirections; }
     public Rectangle[] getRoomTransitions( ) { return transitions; }
     
     public GameObject[] getObjects( ) {

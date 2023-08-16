@@ -1,6 +1,6 @@
 // Walls
 // x, y, w, h
-Transition: 240,460,80,10,0,260,80
+Transition: 240,460,80,10,0,260,80,2
 Camera: 0,-10,800,10
 Camera: 0,100,1,0
 Camera: 200,0,10,480

@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 8/15/2023
+ * @version 8/16/2023
  */
 public class Overworld {
     
@@ -16,7 +16,7 @@ public class Overworld {
     private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo,
             roomTransitionCount;
     private boolean holdingUpOrDown, holdingRightOrLeft, isActivatingBattle,
-            isTransitioningRooms, isTransitionHorizontal, hasUpdatedDirection;
+            isTransitioningRooms;
     
     public Overworld( Player player, Room room ) {
         
@@ -32,9 +32,6 @@ public class Overworld {
     
     public void interpretButtonPress( int button ) {
         
-        /*if (player.getLastDirection() == button && state != b.ENEMY_TURN) {
-            return;
-        }*/
         if (confirmDelay > 0) confirmDelay--;
         if (confirmDelay == 0 && button == Game.CONFIRM && dialogueBox.finishedScrolling()) {
             if (!dialogueBox.progress()) {
@@ -47,15 +44,6 @@ public class Overworld {
         int PLAYER_SPEED = 3;
         
         if (isTransitioningRooms) {
-            if (isTransitionHorizontal && !hasUpdatedDirection) {
-                if (Game.getKeyListener().left()) player.setDirection(3);
-                else player.setDirection(4);
-                hasUpdatedDirection = true;
-            } else if (!isTransitionHorizontal && !hasUpdatedDirection) {
-                if (Game.getKeyListener().up()) player.setDirection(1);
-                else player.setDirection(2);
-                hasUpdatedDirection = true;
-            }
             if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
@@ -66,7 +54,6 @@ public class Overworld {
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
             if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
-            hasUpdatedDirection = false;
             roomTransitionCount--;
             return;
         }
@@ -209,10 +196,10 @@ public class Overworld {
             for (int i = 0; i < room.getRoomTransitions().length; i++) {
                 if (player.getRect().isColliding(room.getRoomTransitions()[i])) {
                     isTransitioningRooms = true;
-                    isTransitionHorizontal = room.getTransitions()[i].getWidth() < room.getTransitions()[i].getHeight();
                     idTransitioningTo = room.getTransitionIDs()[i];
                     xTransitioningTo = room.getTransitionXs()[i];
                     yTransitioningTo = room.getTransitionYs()[i];
+                    player.setDirection(room.getTransitionDirections()[i]);
                 }
             }
         
