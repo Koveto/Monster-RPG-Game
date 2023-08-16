@@ -11,7 +11,7 @@ import game.listeners.KeyboardListener;
 /**
  * Player
  * @author Kobe Goodwin
- * @version 8/15/2023
+ * @version 8/16/2023
  * 
  * A Battler with that represents the player character. It responds to keyboard
  * inputs. The camera follows its rectangle collision box. Makes selections on 
@@ -191,6 +191,7 @@ public class Player extends Battler {
         if (x) {
             testCamera.setX(rect.getX() - (camera.getWidth() / 2));
             for (Rectangle r : cameraWalls) {
+                if (r.getWidth() < r.getHeight()) continue;
                 if (r.isColliding(testCamera)) testFlag = true;
             }
             if (!testFlag) camera.setX(rect.getX() - (camera.getWidth() / 2));
@@ -201,6 +202,7 @@ public class Player extends Battler {
             testCamera.setY(rect.getY() - (camera.getHeight() / 2));
             testFlag = false;
             for (Rectangle r : cameraWalls) {
+                if (r.getWidth() > r.getHeight()) continue;
                 if (r.isColliding(testCamera)) testFlag = true;
             }
             if (!testFlag) camera.setY(rect.getY() - (camera.getHeight() / 2));
