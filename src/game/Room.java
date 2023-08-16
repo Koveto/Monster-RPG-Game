@@ -26,7 +26,7 @@ public class Room {
     
     public Room( Player player, DialogueBox dialogueBox,
             SpriteSheet tiles, String map1Path, String map2Path, String wallPath,
-            String dialoguePath ) {
+            String entityPath, String dialoguePath ) {
         
         this.player = player;
         this.dialogueBox = dialogueBox;
@@ -41,18 +41,7 @@ public class Room {
         walls = new Rectangle[0];
         transitions = new Rectangle[0];
         cameraWalls = new Rectangle[0];
-        entities = new Entity[] {
-            new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
-                    new Path("1", "1", 0, 1, 1, false), 100, 100, 50, 104, 
-                    "text\\testEntity.txt\\"),
-            new Entity(Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 0, 4), 
-                    Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 4, 8), 
-                    Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 8, 12), 
-                    Arrays.copyOfRange(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprites(), 12, 16), 
-                    new Path("1", "t", 300, 200, 0, 50, 0.5, false), 
-                    300, false, true, 300, 200, 50, 70,
-                    "text\\testEntity.txt\\")
-        };
+        entities = new Entity[0];
         Rectangle camera = RenderHandler.getCamera();
         camera.setX(0);
         camera.setY(0);
@@ -90,6 +79,70 @@ public class Room {
             }
         } catch (FileNotFoundException fnfe) {
             System.out.println("Wall path not found.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            Scanner scan = new Scanner(new File(System.getProperty("user.dir") + "\\src\\game\\" + entityPath));
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine();
+                if (line.contains("//") || line.equals("")) continue;
+                if (line.equals("Single Sprite")) {
+                    line = scan.nextLine();
+                    String[] sub = line.split(",");
+                    Sprite s = new SpriteSheet(Game.loadImage(sub[0]), Integer.parseInt(sub[1]), 
+                            Integer.parseInt(sub[2])).getSprite(Integer.parseInt(sub[3]),
+                                    Integer.parseInt(sub[4]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Path p = new Path(sub[0], sub[1], Integer.parseInt(sub[2]),
+                        Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                        Boolean.parseBoolean(sub[5]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Entity e = new Entity(s, p, Integer.parseInt(sub[0]),
+                            Integer.parseInt(sub[1]), Integer.parseInt(sub[2]),
+                            Integer.parseInt(sub[3]), sub[4]);
+                    entities = Game.addToEntityArray(entities, e);
+                }
+                
+                if (line.equals("Multiple Sprites")) {
+                    line = scan.nextLine();
+                    String[] sub = line.split(",");
+                    Sprite[] s1 = Arrays.copyOfRange(new SpriteSheet(Game.loadImage(sub[0]), Integer.parseInt(sub[1]), 
+                            Integer.parseInt(sub[2])).getSprites(), Integer.parseInt(sub[3]),
+                                    Integer.parseInt(sub[4]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Sprite[] s2 = Arrays.copyOfRange(new SpriteSheet(Game.loadImage(sub[0]), Integer.parseInt(sub[1]), 
+                            Integer.parseInt(sub[2])).getSprites(), Integer.parseInt(sub[3]),
+                                    Integer.parseInt(sub[4]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Sprite[] s3 = Arrays.copyOfRange(new SpriteSheet(Game.loadImage(sub[0]), Integer.parseInt(sub[1]), 
+                            Integer.parseInt(sub[2])).getSprites(), Integer.parseInt(sub[3]),
+                                    Integer.parseInt(sub[4]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Sprite[] s4 = Arrays.copyOfRange(new SpriteSheet(Game.loadImage(sub[0]), Integer.parseInt(sub[1]), 
+                            Integer.parseInt(sub[2])).getSprites(), Integer.parseInt(sub[3]),
+                                    Integer.parseInt(sub[4]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Path p = new Path(sub[0], sub[1], Integer.parseInt(sub[2]),
+                        Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                        Integer.parseInt(sub[5]), Double.parseDouble(sub[6]),
+                        Boolean.parseBoolean(sub[7]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Entity e = new Entity(s1, s2, s3, s4, p, Integer.parseInt(sub[0]),
+                            Boolean.parseBoolean(sub[1]), Boolean.parseBoolean(sub[2]),
+                            Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                            Integer.parseInt(sub[5]), Integer.parseInt(sub[6]), sub[7]);
+                    entities = Game.addToEntityArray(entities, e);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -156,7 +156,8 @@ public class Overworld {
             "maps\\room" + String.valueOf(idTransitioningTo) + "mapA.txt",
             "maps\\room" + String.valueOf(idTransitioningTo) + "mapB.txt",
             "maps\\room" + String.valueOf(idTransitioningTo) + "walls.txt",
-            "text\\dialogue.txt");
+            "maps\\room" + String.valueOf(idTransitioningTo) + "entities.txt",
+                "text\\dialogue.txt");
         player.setX(xTransitioningTo);
         player.setY(yTransitioningTo);
         roomTransitionCount = TRANSITION_LENGTH;
