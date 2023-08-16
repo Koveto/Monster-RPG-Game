@@ -100,8 +100,7 @@ public class Game extends JFrame implements Runnable {
         
         battle = null;
         room = new Room(player, new DialogueBox(),
-                        new TileSet(new File(System.getProperty("user.dir") + "\\src\\game\\maps\\tiles.txt\\"), 
-                                        new SpriteSheet(Game.loadImage("ss\\ruins.png"), 20, 20)),
+                        new SpriteSheet(Game.loadImage("ss\\ruinsTiles.png"), 20, 20),
                         "maps\\room0mapA.txt\\",
                         "maps\\room0mapB.txt\\",
                         "maps\\room0walls.txt\\",
@@ -214,6 +213,23 @@ public class Game extends JFrame implements Runnable {
             temp[i] = array[i];
         }
         temp[array.length] = e;
+        return temp;
+        
+    }
+    
+    /**
+     * Appends Sprite to Sprite array
+     * @param array     Sprite array to append to
+     * @param s        Sprite to be appended
+     * @return      Sprite array with e appended
+     */
+    public static Sprite[] addToSpriteArray( Sprite[] array, Sprite s ) {
+        
+        Sprite[] temp = new Sprite[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        temp[array.length] = s;
         return temp;
         
     }

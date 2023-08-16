@@ -10,22 +10,22 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 8/9/2023
+ * @version 8/16/2023
  */
 public class Room {
     
     private Player player;
     private DialogueBox dialogueBox;
-    private TileSet tiles;
+    private SpriteSheet tiles;
     private Map map1, map2;
     private Script script;
-    private Rectangle[] walls, transitions;
+    private Rectangle[] walls, cameraWalls, transitions;
     private int[] transIDs, xs, ys;
     private Entity[] entities;
     private ArrayList<DialogueTrigger> dt;
     
     public Room( Player player, DialogueBox dialogueBox,
-            TileSet tiles, String map1Path, String map2Path, String wallPath,
+            SpriteSheet tiles, String map1Path, String map2Path, String wallPath,
             String dialoguePath ) {
         
         this.player = player;
@@ -39,6 +39,7 @@ public class Room {
         ys = new int[0];
         walls = new Rectangle[0];
         transitions = new Rectangle[0];
+        cameraWalls = new Rectangle[0];
         entities = new Entity[] {
             new Entity(new SpriteSheet(Game.loadImage("ss\\toriel.png"), 25, 52).getSprite(0, 0), 
                     new Path("1", "1", 0, 1, 1, false), 100, 100, 50, 104, 
@@ -51,6 +52,9 @@ public class Room {
                     300, false, true, 300, 200, 50, 70,
                     "text\\testEntity.txt\\")
         };
+        Rectangle camera = RenderHandler.getCamera();
+        camera.setX(0);
+        camera.setY(0);
         
         try {
             Scanner scan = new Scanner(new File(System.getProperty("user.dir") + "\\src\\game\\" + wallPath));
@@ -67,6 +71,12 @@ public class Room {
                     transIDs = Game.addToIntArray(transIDs, Integer.parseInt(splitString[4]));
                     xs = Game.addToIntArray(xs, Integer.parseInt(splitString[5]));
                     ys = Game.addToIntArray(ys, Integer.parseInt(splitString[6]));
+                } else if (line.startsWith("Camera: ")) {
+                    cameraWalls = Game.addToRectangleArray(cameraWalls, 
+                            new Rectangle(Integer.parseInt(splitString[0].substring(8)),
+                                            Integer.parseInt(splitString[1]),
+                                            Integer.parseInt(splitString[2]),
+                                            Integer.parseInt(splitString[3])));
                 } else {
                     walls = Game.addToRectangleArray(walls, 
                             new Rectangle(Integer.parseInt(splitString[0]),
@@ -101,6 +111,8 @@ public class Room {
         
     }
     
+    public Rectangle[] getCameraWalls( ) { return cameraWalls; }
+    
     public DialogueBox getDialogueBox( ) { return dialogueBox; }
     
     public ArrayList<DialogueTrigger> getDialogueTriggers( ) {
@@ -113,8 +125,9 @@ public class Room {
         return triggers;
     }
     
-    public TileSet getTiles( ) { return tiles; }
+    public SpriteSheet getTiles( ) { return tiles; }
     public Entity[] getEntities( ) { return entities; }
+    public Rectangle[] getTransitions( ) { return transitions; }
     public int[] getTransitionIDs( ) { return transIDs; }
     public int[] getTransitionXs( ) { return xs; }
     public int[] getTransitionYs( ) { return ys; }

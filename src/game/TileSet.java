@@ -8,15 +8,16 @@ import java.util.Scanner;
 /**
  * TileSet
  * @author Kobe Goodwin
- * @version 9/2/2022
+ * @version 8/13/2022
  * 
+ * Deprecated class.
  * A group of tiles interpreted from a file. Each has a name and a sprite,
  * identified by an ID number.
  */
 public class TileSet {
     
     private SpriteSheet spriteSheet;
-    private ArrayList<Tile> tiles;
+    private ArrayList<Sprite> tiles;
     private File tilesFile;
     
     /**
@@ -31,7 +32,7 @@ public class TileSet {
         tiles = new ArrayList();
         this.tilesFile = tilesFile;
         
-        try {
+        /*try {
             Scanner scan = new Scanner(tilesFile);
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
@@ -39,12 +40,12 @@ public class TileSet {
                 String[] array = line.split("-");
                 int x = Integer.parseInt(array[1]);
                 int y = Integer.parseInt(array[2]);
-                Tile tile = new Tile(array[0], spriteSheet.getSprite(x, y));
-                tiles.add(tile);
+                //Tile tile = new Tile(array[0], spriteSheet.getSprite(x, y));
+                tiles.add(spriteSheet.getSprite(x, y));
             }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
-        }
+        }*/
         
     }
     
@@ -54,14 +55,15 @@ public class TileSet {
      * @param x         X Position
      * @param y         Y Position
      */
-    public void renderTile( int tileID, int x, int y ) {
+    public void renderTile( int tileX, int tileY, int x, int y ) {
         
-        if (tileID >= 0 && tiles.size() > tileID) {
+        //RenderHandler.renderSprite(tiles.get(tileX + (tileY * )), x, y);
+        /*if (tileID >= 0 && tiles.size() > tileID) {
             RenderHandler.renderSprite(tiles.get(tileID).sprite, x * 2, y * 2, 2, 2);
         }
         else {
             System.out.println("Tile ID " + tileID + " out of range " + tiles.size());
-        }
+        }*/
         
     }
     

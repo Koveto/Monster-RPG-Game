@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 8/9/2023
+ * @version 8/15/2023
  */
 public class Overworld {
     
@@ -16,7 +16,7 @@ public class Overworld {
     private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo,
             roomTransitionCount;
     private boolean holdingUpOrDown, holdingRightOrLeft, isActivatingBattle,
-            isTransitioningRooms;
+            isTransitioningRooms, isTransitionHorizontal, hasUpdatedDirection;
     
     public Overworld( Player player, Room room ) {
         
@@ -47,6 +47,15 @@ public class Overworld {
         int PLAYER_SPEED = 3;
         
         if (isTransitioningRooms) {
+            if (isTransitionHorizontal && !hasUpdatedDirection) {
+                if (Game.getKeyListener().left()) player.setDirection(3);
+                else player.setDirection(4);
+                hasUpdatedDirection = true;
+            } else if (!isTransitionHorizontal && !hasUpdatedDirection) {
+                if (Game.getKeyListener().up()) player.setDirection(1);
+                else player.setDirection(2);
+                hasUpdatedDirection = true;
+            }
             if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
@@ -57,6 +66,7 @@ public class Overworld {
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
             if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
+            hasUpdatedDirection = false;
             roomTransitionCount--;
             return;
         }
@@ -195,20 +205,23 @@ public class Overworld {
                 player.setX(player.getX() - e.getDeltaX());
                 player.setY(player.getY() + e.getDeltaY());
             }
-        for (int i = 0; i < room.getRoomTransitions().length; i++) {
-            if (player.getRect().isColliding(room.getRoomTransitions()[i])) {
-                isTransitioningRooms = true;
-                idTransitioningTo = room.getTransitionIDs()[i];
-                xTransitioningTo = room.getTransitionXs()[i];
-                yTransitioningTo = room.getTransitionYs()[i];
+        if (!(isTransitioningRooms || roomTransitionCount > 0))
+            for (int i = 0; i < room.getRoomTransitions().length; i++) {
+                if (player.getRect().isColliding(room.getRoomTransitions()[i])) {
+                    isTransitioningRooms = true;
+                    isTransitionHorizontal = room.getTransitions()[i].getWidth() < room.getTransitions()[i].getHeight();
+                    idTransitioningTo = room.getTransitionIDs()[i];
+                    xTransitioningTo = room.getTransitionXs()[i];
+                    yTransitioningTo = room.getTransitionYs()[i];
+                }
             }
-        }
         
     }
     
     public GameObject[] getObjects( ) {
         
         checkEntityCollision();
+        player.updateCamera(RenderHandler.getCamera(), room.getCameraWalls(), true, true);
         
         GameObject[] temp = new GameObject[room.getObjects().length + dialogueBox.getObjects().length + 1];
         for (int i = 0; i < room.getObjects().length; i++) {

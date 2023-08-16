@@ -11,7 +11,7 @@ import game.listeners.KeyboardListener;
 /**
  * Player
  * @author Kobe Goodwin
- * @version 4/12/2023
+ * @version 8/16/2023
  * 
  * A Battler with that represents the player character. It responds to keyboard
  * inputs. The camera follows its rectangle collision box. Makes selections on 
@@ -92,6 +92,12 @@ public class Player extends Battler {
      * @param rect  New bounding rectangle
      */
     public void setRect( Rectangle rect ) {this.rect = rect;}
+    
+    /**
+     * Mutator for direction
+     * @param direction     New direction to face
+     */
+    public void setDirection( int direction ) {this.facing = direction;}
     
     public void switchToSoul( ) {
         
@@ -174,10 +180,33 @@ public class Player extends Battler {
     /**
      * Update camera to player's rectangle.
      * @param camera    Game camera to follow player.
+     * @param cameraWalls   Walls for camera not to go past.
+     * @param x         Move the camera by the x direction
+     * @param y         Move the camera by the y direction
      */
-    public void updateCamera(Rectangle camera) {
-        camera.setX(rect.getX() - (camera.getWidth() / 2));
-        camera.setY(rect.getY() - (camera.getHeight() / 2));
+    public void updateCamera(Rectangle camera, Rectangle[] cameraWalls, boolean x, boolean y) {
+        Rectangle testCamera = new Rectangle(camera.getX(),
+            camera.getY(), camera.getWidth(), camera.getHeight());
+        boolean testFlag = false;
+        if (x) {
+            testCamera.setX(rect.getX() - (camera.getWidth() / 2));
+            for (Rectangle r : cameraWalls) {
+                if (r.getWidth() < r.getHeight()) continue;
+                if (r.isColliding(testCamera)) testFlag = true;
+            }
+            if (!testFlag) camera.setX(rect.getX() - (camera.getWidth() / 2));
+        }
+        testCamera = new Rectangle(camera.getX(),
+            camera.getY(), camera.getWidth(), camera.getHeight());
+        if (y) {
+            testCamera.setY(rect.getY() - (camera.getHeight() / 2));
+            testFlag = false;
+            for (Rectangle r : cameraWalls) {
+                if (r.getWidth() > r.getHeight()) continue;
+                if (r.isColliding(testCamera)) testFlag = true;
+            }
+            if (!testFlag) camera.setY(rect.getY() - (camera.getHeight() / 2));
+        }
     }
     
     /**

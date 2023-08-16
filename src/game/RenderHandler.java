@@ -11,7 +11,7 @@ import java.awt.image.DataBufferInt;
 /**
  * RenderHandler
  * @author Kobe Goodwin
- * @version 9/4/2022
+ * @version 8/15/2023
  * 
  * Handles the rendering of various types of data to the screen.
  */

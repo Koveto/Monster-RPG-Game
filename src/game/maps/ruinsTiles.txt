@@ -1,0 +1,26 @@
+// Ruins Tiles
+Alpha-0-0
+LeftWall1-1-0
+MidWall1-2-0
+MidWall2-3-0
+RightWall1-4-0
+RectA1-5-0
+RectA2-6-0
+RectA3-7-0
+Tile1-8-0
+LeftWall2-9-0
+MidWall2-10-0
+RightWall2-11-0
+Black-12-0
+RectB1-13-0
+RectB2-14-0
+RectB3-15-0
+Tile2-0-1
+BottomLeftWall-1-1
+MidWall3-2-1
+CrackedWall-3-1
+BottomRightWall-4-1
+RectA4-5-1
+RectA5-6-1
+RectA6-7-1
+Tile3-8-1
