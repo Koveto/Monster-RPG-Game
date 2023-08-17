@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 8/16/2023
+ * @version 8/17/2023
  */
 public class Overworld {
     
@@ -157,6 +157,7 @@ public class Overworld {
             "maps\\room" + String.valueOf(idTransitioningTo) + "mapB.txt",
             "maps\\room" + String.valueOf(idTransitioningTo) + "walls.txt",
             "maps\\room" + String.valueOf(idTransitioningTo) + "entities.txt",
+            "maps\\room" + String.valueOf(idTransitioningTo) + "script.txt",
                 "text\\dialogue.txt");
         player.setX(xTransitioningTo);
         player.setY(yTransitioningTo);

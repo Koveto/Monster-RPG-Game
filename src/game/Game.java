@@ -106,6 +106,7 @@ public class Game extends JFrame implements Runnable {
                         "maps\\room0mapB.txt\\",
                         "maps\\room0walls.txt\\",
                         "maps\\room0entities.txt\\",
+                        "maps\\room0script.txt\\",
                         "text\\dialogue.txt\\");
         overworld = new Overworld(player, room);
         Game.getMusic1().play("Ruins", true);

@@ -23,7 +23,7 @@ import java.util.Scanner;
 /**
  * Script
  * @author Kobe Goodwin
- * @version 7/13/2023
+ * @version 8/17/2023
  */
 public class Script {
     
@@ -32,7 +32,6 @@ public class Script {
     private DialogueBox dialogueBox;
     private GameObject[] gameObjects;
     private GameObject current;
-    private Sprite storedSprite;
     private String scriptPath;
     private int index, delay;
     private int[] storedNums;

@@ -1,0 +1,6 @@
+// Script
+// xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
+Wait 1000
+Dialogue text\dialogue.txt\,0
+
+

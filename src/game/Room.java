@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 8/16/2023
+ * @version 8/17/2023
  */
 public class Room {
     
@@ -26,7 +26,7 @@ public class Room {
     
     public Room( Player player, DialogueBox dialogueBox,
             SpriteSheet tiles, String map1Path, String map2Path, String wallPath,
-            String entityPath, String dialoguePath ) {
+            String entityPath, String scriptPath, String dialoguePath ) {
         
         this.player = player;
         this.dialogueBox = dialogueBox;
@@ -149,9 +149,13 @@ public class Room {
         
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
         
-        script = new Script("text\\script.txt\\", this, null,
-                new GameObject[] {player, entities[0], entities[1]}, 
-                dialogueBox);
+        GameObject[] scriptObjects = new GameObject[0];
+        scriptObjects = Game.addToGOArray(scriptObjects, player);
+        for (int i = 0; i < entities.length; i++) {
+            scriptObjects = Game.addToGOArray(scriptObjects, entities[i]);
+        }
+        script = new Script(scriptPath, this, null,
+                scriptObjects, dialogueBox);
     
     }
     
