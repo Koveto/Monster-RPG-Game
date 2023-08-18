@@ -23,6 +23,7 @@ public class Room {
     private int[] transIDs, xs, ys, transDirections;
     private Entity[] entities;
     private ArrayList<DialogueTrigger> dt;
+    private boolean eventFlag;
     
     public Room( Player player, DialogueBox dialogueBox,
             SpriteSheet tiles, String map1Path, String map2Path, String wallPath,
@@ -174,7 +175,9 @@ public class Room {
     
     public DialogueBox getDialogueBox( ) { return dialogueBox; }
     
-    public ArrayList<DialogueTrigger> getDialogueTriggers( ) {
+    public ArrayList<DialogueTrigger> getDialogueTriggers( ) { return dt; }
+    
+    public ArrayList<DialogueTrigger> getEntityTriggers( ) {
         ArrayList<DialogueTrigger> triggers = new ArrayList();
         for (Entity e : entities) {
             for (DialogueTrigger d : e.getDialogueTriggers()) {
@@ -192,6 +195,12 @@ public class Room {
     public int[] getTransitionYs( ) { return ys; }
     public int[] getTransitionDirections( ) { return transDirections; }
     public Rectangle[] getRoomTransitions( ) { return transitions; }
+    public boolean isEventFlag( ) { return eventFlag; }
+    
+    public void flipEventFlag( ) { 
+        if (eventFlag) eventFlag = false;
+        else eventFlag = true;
+    }
     
     public GameObject[] getObjects( ) {
         
@@ -201,8 +210,9 @@ public class Room {
         for (Entity e : entities) {
             obj = Game.addToGOArray(obj, e);
         }
-        /*for (Rectangle r : walls) {
-            obj = Game.addToGOArray(obj, r);
+        //obj = Game.addToGOArray(obj, new Rectangle(240,450,100,100));
+        /*for (int i = 0; i < dt.size(); i++) {
+            obj = Game.addToGOArray(obj, dt.get(i).getInteractBox());
         }*/
         return obj;
         

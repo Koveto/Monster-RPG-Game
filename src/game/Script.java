@@ -11,6 +11,7 @@ import game.gameObjects.Player;
 import game.gameObjects.RatioBar;
 import game.gameObjects.Rectangle;
 import game.gameObjects.SpritedObject;
+import game.listeners.KeyboardListener;
 import game.shuntingyardresources.FileReader;
 import game.shuntingyardresources.InfixTranslator;
 import game.shuntingyardresources.LinkedQueue;
@@ -81,6 +82,18 @@ public class Script {
                 if (storedNums == null) storedNums = new int[0];
                 
                 if (line.startsWith("//")) continue;
+                
+                if (line.startsWith("Until")) {
+                    if (line.substring(6).startsWith("!")) {
+                        if (checkIf(line.substring(7)) != -1) return i - 1;
+                    } else {
+                        if (checkIf(line.substring(6)) == -1) return i - 1;
+                    }
+                }
+                
+                if (line.startsWith("Repeat Until")) {
+                    if (checkIf(line.substring(13)) == -1) return i - 2;
+                }
                 
                 if (line.startsWith("If")) {
                     if (line.charAt(3) == '!') {
@@ -199,9 +212,7 @@ public class Script {
                     }
                 }
                 
-                if (line.startsWith("Until")) {
-                    if (checkIf(line.substring(6)) == -1) return i - 1;
-                }
+                
                 
                 
                 
@@ -377,6 +388,8 @@ public class Script {
     
     private int checkIf( String line ) {
         
+        if (line.startsWith("True")) return 4;
+        if (line.startsWith("False")) return -1;
         if (line.contains("<")) {
             int temp = line.indexOf("<");
             int first = storedNums[Integer.parseInt(line.substring(temp - 3, temp - 1))];
@@ -420,6 +433,29 @@ public class Script {
             } catch (ClassCastException e) {}
         }
         if (line.startsWith("Stored") && storedBoolean) return 6;
+        if (line.startsWith("Event Flag")) {
+            if (room.isEventFlag()) return 10;
+        }
+        if (line.startsWith("Colliding")) {
+            String[] substrings = line.split(",");
+            Rectangle r = new Rectangle(Integer.parseInt(substrings[1]),
+                Integer.parseInt(substrings[2]), Integer.parseInt(substrings[3]),
+                Integer.parseInt(substrings[4]));
+            int length = line.split(" ")[0].length();
+            Player p = (Player) current;
+            if (p != null && p.getRect().isColliding(r)) return length;
+        }
+        if (line.startsWith("Interact")) {
+            String[] substrings = line.split(",");
+            Rectangle r = new Rectangle(Integer.parseInt(substrings[1]),
+                Integer.parseInt(substrings[2]), Integer.parseInt(substrings[3]),
+                Integer.parseInt(substrings[4]));
+            int length = line.split(" ")[0].length();
+            Player p = (Player) current;
+            if (p != null && p.getRect().isInside(r)
+                    && p.facing() == Integer.parseInt(substrings[5])
+                    && Game.getKeyListener().z()) return length;
+        }
         return -1;
     }
     

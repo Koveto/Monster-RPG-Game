@@ -11,3 +11,4 @@
 10,Damage,snd_damage.wav
 11,Vaporized,snd_vaporized.wav
 12,LevelUp,snd_levelup.wav
+13,Impact,snd_impact.wav

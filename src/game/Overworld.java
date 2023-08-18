@@ -167,15 +167,36 @@ public class Overworld {
     }
     
     public void checkDialogueTrigger( ) {
-        
-        if (room.getDialogueTriggers().get(0).isColliding(player) && Game.getKeyListener().z()) {
-            isActivatingBattle = true;
-            Game.getMusic1().stop();
-            Game.getMusic2().play("Battle", true);
-            player.setX(39);
-            player.setY(444);
-            player.switchToSoul();
+        for (int i = 0; i < room.getDialogueTriggers().size(); i++) {
+            if (confirmDelay == 0 && room.getDialogueTriggers().get(i).isColliding(player) && 
+                    !dialogueBox.isShowing() && Game.getKeyListener().z() && 
+                    player.facing() == room.getDialogueTriggers().get(i).getDirection()) {
+                dialogueBox.newMessage(room.getDialogueTriggers().get(i).getTexts(), 
+                        room.getDialogueTriggers().get(i).getFaces());
+                player.stopStepping();
+                break;
+            }
         }
+        
+        for (int i = 0; i < room.getEntityTriggers().size(); i++) {
+            if (confirmDelay == 0 && room.getEntityTriggers().get(i).isColliding(player) && 
+                    !dialogueBox.isShowing() && Game.getKeyListener().z() && 
+                    player.facing() == room.getEntityTriggers().get(i).getDirection()) {
+                dialogueBox.newMessage(room.getEntityTriggers().get(i).getTexts(), 
+                        room.getEntityTriggers().get(i).getFaces());
+                player.stopStepping();
+                break;
+            }
+        }
+            /*if (room.getTriggers().get(i).isColliding(player) && Game.getKeyListener().z()) {
+                isActivatingBattle = true;
+                Game.getMusic1().stop();
+                Game.getMusic2().play("Battle", true);
+                player.setX(39);
+                player.setY(444);
+                player.switchToSoul();
+            }*/
+        
         
         /*for (DialogueTrigger dt : room.getDialogueTriggers()) {
             if (confirmDelay == 0 && dt.isColliding(player) && !dialogueBox.isShowing() && Game.getKeyListener().z() && player.facing() == dt.getDirection()) {

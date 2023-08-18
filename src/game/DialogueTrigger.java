@@ -6,7 +6,7 @@ import game.gameObjects.Rectangle;
 /**
  * DialogueTrigger
  * @author Kobe Goodwin
- * @version 7/8/2023
+ * @version 8/17/2023
  */
 public class DialogueTrigger {
     
@@ -39,5 +39,7 @@ public class DialogueTrigger {
     public String[] getFaces( ) { return faces; }
     
     public int getDirection( ) { return direction; }
+    
+    public Rectangle getInteractBox( ) { return interactBox; }
     
 }

@@ -1,6 +1,8 @@
 // Script
 // xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
-Wait 1000
-Dialogue text\dialogue.txt\,0
-
-
+>  Object 00 (Player)
+Wait 100
+Until !Colliding,240,400,100,100,1
+Dialogue text\dialogue.txt\,1
+Until Interact,200,100,100,100,1
+Music Impact False
