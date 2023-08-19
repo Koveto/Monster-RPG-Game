@@ -1,6 +1,7 @@
 package game;
 
 import game.gameObjects.Rectangle;
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Scanner;
 /**
  * DialogueHandler
  * @author  Kobe Goodwin
- * @version 7/9/2023
+ * @version 8/19/2023
  */
 public class DialogueHandler {
     
@@ -111,6 +112,7 @@ public class DialogueHandler {
                         xywhd[i] = Integer.parseInt(splitString[i]);
                     }
                     texts = new String[0];
+                    faces = new String[0];
                 } else {
                     if (line.charAt(0) == '>') {
                         faces = Game.addToStringArray(faces, line.substring(2));

@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 8/17/2023
+ * @version 8/19/2023
  */
 public class Room {
     
@@ -211,6 +211,9 @@ public class Room {
             obj = Game.addToGOArray(obj, e);
         }
         //obj = Game.addToGOArray(obj, new Rectangle(240,450,100,100));
+        for (DialogueTrigger d : dt) {
+            obj = Game.addToGOArray(obj, d.getInteractBox());
+        }
         /*for (int i = 0; i < dt.size(); i++) {
             obj = Game.addToGOArray(obj, dt.get(i).getInteractBox());
         }*/

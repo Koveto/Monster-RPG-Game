@@ -1,4 +1,11 @@
 // Ruins Sign Room Entities
+Multiple Sprites
+ss\toriel.png,26,52,12,16
+ss\toriel.png,26,52,0,4
+ss\toriel.png,26,52,4,8
+ss\toriel.png,26,52,8,12
+6 * t,1,310,232,0,110,0.5,false
+150,false,true,310,232,50,70,text\testEntity.txt\
 Single Sprite
 ss\ruinsTiles.png,20,20,19,4
 1,1,0,1,1,false
@@ -10,8 +17,12 @@ ss\ruinsTiles.png,20,20,19,4
 Single Sprite
 ss\ruinsTiles.png,20,20,23,4
 1,1,0,1,1,false
-1243,101,40,40,text\testEntity.txt\
+1243,101,0,0,text\testEntity.txt\
 Single Sprite
 ss\ruinsTiles.png,20,20,23,4
 1,1,0,1,1,false
-1323,101,40,40,text\testEntity.txt\
+1323,101,0,0,text\testEntity.txt\
+Single Sprite
+ss\ruinsTiles.png,20,20,18,4
+1,1,0,1,1,false
+260,239,40,10,text\testEntity.txt\

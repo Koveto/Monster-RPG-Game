@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 7/9/2023
+ * @version 8/19/2023
  */
 public class DialogueBox {
     
@@ -57,7 +57,10 @@ public class DialogueBox {
         
         if (dialogue.length <= textIndex + 1) return false;
         textIndex++;
-        displayMessage( dialogue[textIndex], faces[textIndex] );
+        int temp = textIndex;
+        while (temp >= faces.length) temp--;
+        displayMessage( dialogue[textIndex], faces[temp] );
+        
         return true;
         
     }

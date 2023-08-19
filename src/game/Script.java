@@ -24,7 +24,7 @@ import java.util.Scanner;
 /**
  * Script
  * @author Kobe Goodwin
- * @version 8/17/2023
+ * @version 8/19/2023
  */
 public class Script {
     
@@ -313,6 +313,7 @@ public class Script {
                         p.startAt(Integer.parseInt(a), Integer.parseInt(b));
                     }
                     if (line.equals("Restart")) paso.getPath().restart();
+                    if (line.equals("Start Moving")) paso.startMoving();
                     if (line.equals("Stop Moving")) paso.stopMoving();
                 } catch (ClassCastException e) {}
                 
@@ -435,6 +436,9 @@ public class Script {
         if (line.startsWith("Stored") && storedBoolean) return 6;
         if (line.startsWith("Event Flag")) {
             if (room.isEventFlag()) return 10;
+        }
+        if (line.startsWith("Dialogue Finished")) {
+            if (!dialogueBox.isShowing()) return 17;
         }
         if (line.startsWith("Colliding")) {
             String[] substrings = line.split(",");
