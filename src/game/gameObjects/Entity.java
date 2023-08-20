@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Entity
  * @author Kobe Goodwin
- * @version 7/8/2023
+ * @version 8/20/2023
  */
 public class Entity extends PathedAnimatedSpritedObject {
     
@@ -21,9 +21,9 @@ public class Entity extends PathedAnimatedSpritedObject {
     private int deltaX, deltaY;
     
     public Entity( Sprite sprite, Path path, int x, int y, int w, int h,
-            String dialoguePath ) {
+            boolean doubleSize, String dialoguePath ) {
         
-        super(sprite, path, x, y);
+        super(sprite, path, x, y, doubleSize);
         collision = new Rectangle( x, y, w, h);
         dt = DialogueHandler.parseDialogueFile(dialoguePath);
         up = new Sprite[] {sprite};
@@ -73,6 +73,10 @@ public class Entity extends PathedAnimatedSpritedObject {
     public ArrayList<DialogueTrigger> getDialogueTriggers( ) { return dt; }
     
     public Rectangle getCollision( ) { return collision; }
+    
+    public void setDialogue( String dialoguePath ) {
+        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+    }
     
     @Override
     public void update( Game g ) {

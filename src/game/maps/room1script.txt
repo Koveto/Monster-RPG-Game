@@ -13,7 +13,15 @@ Start Moving
 Animate
 Until Path-Finished
 Pause
+Set Dialogue text\entity1.txt\
 Turn 2
 >  Object 00 (Player)
-Until Interact,200,100,100,100,1
-Music Impact False
+Until Interact,800,140,40,10,1
+>  Object 03 (First Switch)
+Sprite ss\ruinsSwitch.png\,74,55,1,0
+>  Object 01 (Toriel)
+Path 6 * t,1,970,230,0,55,0.5,false
+Turn 3
+Start Moving
+Resume
+//Music Impact False

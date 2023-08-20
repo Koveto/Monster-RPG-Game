@@ -1,7 +1,7 @@
 // Dialogue
 // # x, y, w, h, direction (up, down, left, right)
 // txt
-# 0,0,0,0,0
+# 940,280,19,50,4
 > Toriel_Smile
-* I was merely behind this@>pillar the whole time?
+* Go ahead, press the@>switch!
 # 0,0,0,0,0

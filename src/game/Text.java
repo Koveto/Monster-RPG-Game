@@ -15,7 +15,7 @@ import java.text.AttributedCharacterIterator;
 /**
  * Text
  * @author Kobe Goodwin
- * @version 6/30/2023
+ * @version 8/19/2023
  * 
  * A message to be drawn to the screen. 
  */

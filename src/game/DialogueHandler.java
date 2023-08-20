@@ -101,7 +101,7 @@ public class DialogueHandler {
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 if (line.contains("//")) continue;
-                if (line.charAt(0) == '#') {
+                if (line.length() > 0 && line.charAt(0) == '#') {
                     if (texts.length != 0) {
                         temp.add(new DialogueTrigger(new Rectangle(
                             xywhd[0], xywhd[1], xywhd[2], xywhd[3]),

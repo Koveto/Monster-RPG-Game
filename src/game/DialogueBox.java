@@ -144,6 +144,9 @@ public class DialogueBox {
     
     public GameObject[] getObjects( ) {
         
+        inner.setX(RenderHandler.getCamera().getX() + 33 + 6);
+        outer.setX(RenderHandler.getCamera().getX() + 33);
+        face.setX(RenderHandler.getCamera().getX() + 59);
         if (blinking) blink();
         if (show) return new GameObject[] {inner, outer, face};
         else return new GameObject[] {};

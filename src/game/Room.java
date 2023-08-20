@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 8/19/2023
+ * @version 8/20/2023
  */
 public class Room {
     
@@ -104,7 +104,8 @@ public class Room {
                     sub = line.split(",");
                     Entity e = new Entity(s, p, Integer.parseInt(sub[0]),
                             Integer.parseInt(sub[1]), Integer.parseInt(sub[2]),
-                            Integer.parseInt(sub[3]), sub[4]);
+                            Integer.parseInt(sub[3]), Boolean.parseBoolean(sub[4]),
+                            sub[5]);
                     entities = Game.addToEntityArray(entities, e);
                 }
                 
@@ -210,10 +211,13 @@ public class Room {
         for (Entity e : entities) {
             obj = Game.addToGOArray(obj, e);
         }
-        //obj = Game.addToGOArray(obj, new Rectangle(240,450,100,100));
-        for (DialogueTrigger d : dt) {
+        //obj = Game.addToGOArray(obj, new Rectangle(800,140,40,10));
+        /*for (DialogueTrigger d : dt) {
             obj = Game.addToGOArray(obj, d.getInteractBox());
-        }
+        }*/
+        /*for (Entity e : entities) {
+            obj = Game.addToGOArray(obj, e.getDialogueTriggers().get(0).getInteractBox());
+        }*/
         /*for (int i = 0; i < dt.size(); i++) {
             obj = Game.addToGOArray(obj, dt.get(i).getInteractBox());
         }*/

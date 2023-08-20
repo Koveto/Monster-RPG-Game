@@ -2,7 +2,7 @@
 Single Sprite
 ss\toriel.png,26,52,0,0
 1,1,0,1,1,false
-100,100,50,104,text\testEntity.txt\
+100,100,50,104,true,text\testEntity.txt\
 Multiple Sprites
 ss\toriel.png,26,52,0,4
 ss\toriel.png,26,52,4,8

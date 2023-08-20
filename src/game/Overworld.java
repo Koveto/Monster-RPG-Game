@@ -32,7 +32,7 @@ public class Overworld {
     
     public void interpretButtonPress( int button ) {
         
-        if (confirmDelay > 0) confirmDelay--;
+        if (confirmDelay > 0) confirmDelay--;   
         if (confirmDelay == 0 && button == Game.CONFIRM && dialogueBox.finishedScrolling()) {
             if (!dialogueBox.progress()) {
                 dialogueBox.hide();
@@ -182,6 +182,7 @@ public class Overworld {
             if (confirmDelay == 0 && room.getEntityTriggers().get(i).isColliding(player) && 
                     !dialogueBox.isShowing() && Game.getKeyListener().z() && 
                     player.facing() == room.getEntityTriggers().get(i).getDirection()) {
+                //room.getEntities()[i].
                 dialogueBox.newMessage(room.getEntityTriggers().get(i).getTexts(), 
                         room.getEntityTriggers().get(i).getFaces());
                 player.stopStepping();

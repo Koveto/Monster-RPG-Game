@@ -24,7 +24,7 @@ import java.util.Scanner;
 /**
  * Script
  * @author Kobe Goodwin
- * @version 8/19/2023
+ * @version 8/20/2023
  */
 public class Script {
     
@@ -285,6 +285,9 @@ public class Script {
                     if (line.startsWith("Turn")) {
                         e.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
                     }
+                    if (line.startsWith("Set Dialogue")) {
+                        e.setDialogue(line.substring(13));
+                    }
                 } catch (ClassCastException e) {}
                     
                 
@@ -456,7 +459,7 @@ public class Script {
                 Integer.parseInt(substrings[4]));
             int length = line.split(" ")[0].length();
             Player p = (Player) current;
-            if (p != null && p.getRect().isInside(r)
+            if (p != null && p.getRect().isColliding(r)
                     && p.facing() == Integer.parseInt(substrings[5])
                     && Game.getKeyListener().z()) return length;
         }
