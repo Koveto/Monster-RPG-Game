@@ -3,7 +3,7 @@
 // txt
 # 200,120,40,20,1
 > None
-* Stay on the path.
+* Stay on the path.@> a    
 # 260,279,40,10,1
 > None
 * "Press [Z] to read signs!"

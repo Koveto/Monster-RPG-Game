@@ -15,7 +15,7 @@ import java.text.AttributedCharacterIterator;
 /**
  * Text
  * @author Kobe Goodwin
- * @version 8/19/2023
+ * @version 8/24/2023
  * 
  * A message to be drawn to the screen. 
  */
@@ -158,7 +158,6 @@ public class Text {
             if (message.charAt(scrollIndex - 1) != ' ' && message.charAt(scrollIndex - 1) != '*'
                     && System.currentTimeMillis() - timeLastSound > DialogueHandler.DELAY_DIALOGUESOUND) {
                 if (sound != null) {
-                    //System.out.println(System.currentTimeMillis() - timeLastSound);
                     Game.getSound().play(sound, false);
                 }
                 timeLastSound = System.currentTimeMillis();
