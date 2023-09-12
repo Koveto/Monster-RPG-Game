@@ -286,7 +286,14 @@ public class Script {
                         e.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
                     }
                     if (line.startsWith("Set Dialogue")) {
-                        e.setDialogue(line.substring(13));
+                        String[] substrings = line.substring(13).split(",");
+                        e.setDialogue(substrings[0], Integer.parseInt(substrings[1]));
+                    }
+                    if (line.startsWith("Set Collision")) {
+                        String[] substrings = line.substring(14).split(",");
+                        e.setCollision(new Rectangle(Integer.parseInt(substrings[0]),
+                            Integer.parseInt(substrings[1]), Integer.parseInt(substrings[2]), 
+                            Integer.parseInt(substrings[3])));
                     }
                 } catch (ClassCastException e) {}
                     
@@ -364,6 +371,7 @@ public class Script {
                     if (line.equals("Animate")) {aso.animate();}
                     if (line.equals("Pause")) {aso.pause();}
                     if (line.equals("Resume")) {aso.resume();}
+                    if (line.equals("Next")) {aso.nextSprite();}
                 } catch (ClassCastException e) {}
                 
                 

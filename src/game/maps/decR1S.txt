@@ -1,17 +1,61 @@
 // Script
 // xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
->  Object 09 (Toriel)
+>  Object 07 (Toriel)
 Turn 1
->  Object 07 (River 1)
+>  Object 08 (River 1 1x1)
 Animate
->  Object 08 (River 2)
+>  Object 09 (River 1 2x1)
+Animate
+>  Object 10 (River 1 1x2)
+Animate
+>  Object 11 (River 1 2x2)
+Animate
+>  Object 12 (River 1 1x3)
+Animate
+>  Object 13 (River 1 2x3)
+Animate
+>  Object 14 (River 1 1x4)
+Animate
+>  Object 15 (River 1 2x4)
+Animate
+>  Object 16 (River 1 1x7)
+Animate
+>  Object 17 (River 1 2x7)
+Animate
+>  Object 18 (River 1 1x8)
+Animate
+>  Object 19 (River 1 2x8)
+Animate
+>  Object 20 (River 2 1x1)
+Animate
+>  Object 21 (River 2 2x1)
+Animate
+>  Object 22 (River 2 1x2)
+Animate
+>  Object 23 (River 2 2x2)
+Animate
+>  Object 24 (River 2 1x3)
+Animate
+>  Object 25 (River 2 2x3)
+Animate
+>  Object 26 (River 2 1x4)
+Animate
+>  Object 27 (River 2 2x4)
+Animate
+>  Object 28 (River 2 1x7)
+Animate
+>  Object 29 (River 2 2x7)
+Animate
+>  Object 30 (River 2 1x8)
+Animate
+>  Object 31 (River 2 2x8)
 Animate
 >  Object 00 (Player)
 Wait 100
 Until !Colliding,240,400,100,100,1
 Dialogue text\dialogue.txt\,1
 Until Dialogue Finished
->  Object 09 (Toriel)
+>  Object 07 (Toriel)
 Turn 3
 Start Moving
 Animate
@@ -26,7 +70,7 @@ Turn 2
 Until Interact,800,140,40,10,1
 >  Object 03 (First Switch)
 Sprite ss\ruinsSwitch.png\,74,55,1,0
->  Object 09 (Toriel)
+>  Object 07 (Toriel)
 Path 6 * t,1,970,230,0,82,0.5,false
 Turn 3
 Start Moving
@@ -51,7 +95,7 @@ Sprite ss\ruinsTiles.png,20,20,20,4
 Set Collision 0,0,0,0
 Dialogue text\dialogue.txt\,2
 Until Dialogue Finished
->  Object 09 (Toriel)
+>  Object 07 (Toriel)
 Path 6 * t,1,1462,230,0,40,0.5,false
 Turn 3
 Start Moving

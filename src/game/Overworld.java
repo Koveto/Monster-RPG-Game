@@ -240,7 +240,8 @@ public class Overworld {
         }
         temp[room.getObjects().length] = player;
         for (int i = 0; i < dialogueBox.getObjects().length; i++) {
-            temp[i + room.getObjects().length + 1] = dialogueBox.getObjects()[i];
+            if (i + room.getObjects().length + 1 < temp.length)
+                temp[i + room.getObjects().length + 1] = dialogueBox.getObjects()[i];
         }
         return temp;
         

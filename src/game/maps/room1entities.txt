@@ -1,4 +1,54 @@
 // Ruins Sign Room Entities
+//
+// Top Spike (1)
+Single Sprite
+ss\ruinsTiles.png,20,20,19,4
+1,1,0,1,1,false
+1520,275,40,40,true,text\testEntity.txt\
+//
+// Bottom Spike (2)
+Single Sprite
+ss\ruinsTiles.png,20,20,19,4
+1,1,0,1,1,false
+1520,315,40,40,true,text\testEntity.txt\
+//
+// First Switch (3)
+Single Sprite
+ss\ruinsSwitch.png,74,55,0,0
+1,1,0,1,1,false
+755,90,40,10,false,text\testEntity.txt\
+//
+// Second Switch (4)
+Single Sprite
+ss\ruinsSwitch.png,74,55,0,0
+1,1,0,1,1,false
+1195,90,40,10,false,text\testEntity.txt\
+//
+// Fake Switch (5)
+Single Sprite
+ss\ruinsTiles.png,20,20,23,4
+1,1,0,1,1,false
+1323,101,0,0,true,text\testEntity.txt\
+//
+// Sign (6)
+Single Sprite
+ss\ruinsTiles.png,20,20,18,4
+1,1,0,1,1,false
+260,239,40,10,true,text\testEntity.txt\
+//
+// River 1 (7)
+Animated Sprite
+ss\river.png\,40,160
+480,120,0,1,1,false
+266,false,true,0,0,0,0,text\testEntity.txt\
+//
+// River 2 (8)
+Animated Sprite
+ss\river.png\,40,160
+1040,120,0,1,1,false
+266,false,true,0,0,0,0,text\testEntity.txt\
+//
+// Toriel (9)
 Multiple Sprites
 ss\toriel.png,26,52,12,16
 ss\toriel.png,26,52,0,4
@@ -6,27 +56,3 @@ ss\toriel.png,26,52,4,8
 ss\toriel.png,26,52,8,12
 6 * t,1,310,232,0,110,0.5,false
 150,false,true,310,232,50,70,text\testEntity.txt\
-Single Sprite
-ss\ruinsTiles.png,20,20,19,4
-1,1,0,1,1,false
-1520,280,40,40,true,text\testEntity.txt\
-Single Sprite
-ss\ruinsSwitch.png,74,55,0,0
-1,1,0,1,1,false
-755,90,40,10,false,text\testEntity.txt\
-Single Sprite
-ss\ruinsTiles.png,20,20,19,4
-1,1,0,1,1,false
-1520,320,40,40,true,text\testEntity.txt\
-Single Sprite
-ss\ruinsTiles.png,20,20,23,4
-1,1,0,1,1,false
-1243,101,0,0,true,text\testEntity.txt\
-Single Sprite
-ss\ruinsTiles.png,20,20,23,4
-1,1,0,1,1,false
-1323,101,0,0,true,text\testEntity.txt\
-Single Sprite
-ss\ruinsTiles.png,20,20,18,4
-1,1,0,1,1,false
-260,239,40,10,true,text\testEntity.txt\

@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * DialogueHandler
  * @author  Kobe Goodwin
- * @version 8/19/2023
+ * @version 8/25/2023
  */
 public class DialogueHandler {
     
@@ -87,6 +87,16 @@ public class DialogueHandler {
                 
             
         }
+        
+    }
+    
+    public static ArrayList<DialogueTrigger> parseEntityDialogue( String dialoguePath, int index ) {
+        
+        ArrayList<DialogueTrigger> temp = parseDialogueFile(dialoguePath);
+        DialogueTrigger d = temp.get(index);
+        temp = new ArrayList();
+        temp.add(d);
+        return temp;
         
     }
     

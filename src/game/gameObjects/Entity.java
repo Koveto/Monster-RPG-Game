@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Entity
  * @author Kobe Goodwin
- * @version 8/20/2023
+ * @version 9/10/2023
  */
 public class Entity extends PathedAnimatedSpritedObject {
     
@@ -73,9 +73,11 @@ public class Entity extends PathedAnimatedSpritedObject {
     public ArrayList<DialogueTrigger> getDialogueTriggers( ) { return dt; }
     
     public Rectangle getCollision( ) { return collision; }
+
+    public void setCollision( Rectangle r ) { collision = r; }
     
-    public void setDialogue( String dialoguePath ) {
-        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+    public void setDialogue( String dialoguePath, int index ) {
+        dt = DialogueHandler.parseEntityDialogue(dialoguePath, index);
     }
     
     @Override

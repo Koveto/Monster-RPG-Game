@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 8/20/2023
+ * @version 9/11/2023
  */
 public class Room {
     
@@ -144,6 +144,35 @@ public class Room {
                             Integer.parseInt(sub[5]), Integer.parseInt(sub[6]), sub[7]);
                     entities = Game.addToEntityArray(entities, e);
                 }
+                if (line.equals("Animated Sprite")) {
+                    line = scan.nextLine();
+                    Sprite[] s = new Sprite[0];
+                    String[] sub = line.split(",");
+                    while (sub.length == 5) {
+                        s = Game.addToSpriteArray(s, new Sprite(new SpriteSheet(Game.loadImage(sub[0]), 
+                            Integer.parseInt(sub[1]), Integer.parseInt(sub[2])).getSprite(
+                                Integer.parseInt(sub[3]), Integer.parseInt(sub[4]))));
+                        line = scan.nextLine();
+                        sub = line.split(",");
+                    }
+                    if (sub.length == 3) {
+                        s = new SpriteSheet(Game.loadImage(sub[0]), Integer.parseInt(sub[1]), 
+                            Integer.parseInt(sub[2])).getSprites();
+                        line = scan.nextLine();
+                        sub = line.split(",");
+                    }
+                    Path p = new Path(sub[0], sub[1], Integer.parseInt(sub[2]),
+                        Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                        Boolean.parseBoolean(sub[5]));
+                    line = scan.nextLine();
+                    sub = line.split(",");
+                    Entity e = new Entity(s, p, Integer.parseInt(sub[0]),
+                            Boolean.parseBoolean(sub[1]), Boolean.parseBoolean(sub[2]), 
+                            Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                            Integer.parseInt(sub[5]), Integer.parseInt(sub[6]),
+                            sub[7]);
+                    entities = Game.addToEntityArray(entities, e);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,7 +240,7 @@ public class Room {
         for (Entity e : entities) {
             obj = Game.addToGOArray(obj, e);
         }
-        //obj = Game.addToGOArray(obj, new Rectangle(800,140,40,10));
+        //obj = Game.addToGOArray(obj, new Rectangle(1440,280,19,50));
         /*for (DialogueTrigger d : dt) {
             obj = Game.addToGOArray(obj, d.getInteractBox());
         }*/

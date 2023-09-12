@@ -2,6 +2,14 @@
 // # x, y, w, h, direction (up, down, left, right)
 // txt
 # 940,280,19,50,4
+> Toriel_Neutral
+* The first switch is over@>on the wall.
+//* Do you need some help..?* Press the switch on the wall.
+//* Come on, you can do it!
+//* Go on, press the switch on the left.
+//* You do know which way left is, do you not?
+//* Press the switch that I labelled for you.
+# 1440,280,19,50,4
 > Toriel_Smile
-* Go ahead, press the@>switch!
+* It's right there!
 # 0,0,0,0,0

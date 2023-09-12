@@ -156,14 +156,14 @@ public class DialogueBox {
     public Text[] getText( ) {
         
         if (show) {
-            if (texts[1].isFinishedScrolling()) {
-                texts[2].setScroll(true);
-                return texts;
-            }
-            if (texts[0].isFinishedScrolling()) {
+            if (texts[0].isFinishedScrolling() && !texts[1].isFinishedScrolling()) {
                 texts[1].setScroll(true);
                 return new Text[] {texts[0], texts[1]};
             } 
+            if (texts[0].isFinishedScrolling() && texts[1].isFinishedScrolling()) {
+                texts[2].setScroll(true);
+                return texts;
+            }
             return new Text[] {texts[0]};
             
         }
