@@ -4,12 +4,15 @@
 # 940,280,19,50,4
 > Toriel_Neutral
 * The first switch is over@>on the wall.
-//* Do you need some help..?* Press the switch on the wall.
-//* Come on, you can do it!
-//* Go on, press the switch on the left.
-//* You do know which way left is, do you not?
-//* Press the switch that I labelled for you.
+# 940,280,19,50,4
+> Toriel_Neutral
+* Do you need some help..?@* Press the switch on the@>wall.
+* Come on, you can do it!
 # 1440,280,19,50,4
-> Toriel_Smile
-* It's right there!
+> Toriel_Neutral
+* Go on, press the switch@>on the left.
+# 1440,280,19,50,4
+> Toriel_Neutral
+* You do know which way@>left is, do you not?
+* Press the switch that I@>labelled for you.
 # 0,0,0,0,0

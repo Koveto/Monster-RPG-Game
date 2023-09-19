@@ -11,21 +11,23 @@ import java.util.ArrayList;
 /**
  * Entity
  * @author Kobe Goodwin
- * @version 9/10/2023
+ * @version 9/13/2023
  */
 public class Entity extends PathedAnimatedSpritedObject {
     
     private Rectangle collision;
-    private ArrayList<DialogueTrigger> dt;
+    private DialogueTrigger dt;
     private Sprite[] up, down, left, right;
-    private int deltaX, deltaY;
+    private String currentPath;
+    private int deltaX, deltaY, dialogueIndex;
     
     public Entity( Sprite sprite, Path path, int x, int y, int w, int h,
             boolean doubleSize, String dialoguePath ) {
         
         super(sprite, path, x, y, doubleSize);
         collision = new Rectangle( x, y, w, h);
-        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
         up = new Sprite[] {sprite};
         down = new Sprite[] {sprite};
         left = new Sprite[] {sprite};
@@ -39,7 +41,8 @@ public class Entity extends PathedAnimatedSpritedObject {
         
         super(sprites, path, timePerSwitchMillis, hideWhenFinished, loopAnimation);
         collision = new Rectangle( x, y, w, h);
-        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
         up = sprites;
         down = sprites;
         left = sprites;
@@ -54,7 +57,8 @@ public class Entity extends PathedAnimatedSpritedObject {
         
         super(up, path, timePerSwitchMillis, hideWhenFinished, loopAnimation);
         collision = new Rectangle( x, y, w, h);
-        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
         this.up = up;
         this.down = down;
         this.left = left;
@@ -70,16 +74,22 @@ public class Entity extends PathedAnimatedSpritedObject {
         setSprite(getSprites()[0]);
     }
     
-    public ArrayList<DialogueTrigger> getDialogueTriggers( ) { return dt; }
+    public DialogueTrigger getDialogueTrigger( ) { return dt; }
     
     public Rectangle getCollision( ) { return collision; }
 
     public void setCollision( Rectangle r ) { collision = r; }
     
     public void setDialogue( String dialoguePath, int index ) {
+        dialogueIndex = index;
+        currentPath = dialoguePath;
         dt = DialogueHandler.parseEntityDialogue(dialoguePath, index);
     }
     
+    public void updateDialogue( ) {
+        setDialogue(currentPath, dialogueIndex + 1);
+    }
+
     @Override
     public void update( Game g ) {
         
@@ -91,9 +101,7 @@ public class Entity extends PathedAnimatedSpritedObject {
             collision.setY(getPath().getY());
             deltaX = collision.getX() - beforeX;
             deltaY = collision.getY() - beforeY;
-            for (int i = 0; i < dt.size(); i++) {
-                dt.get(i).setInteractBox(deltaX, deltaY);
-            }
+            dt.setInteractBox(deltaX, deltaY);
         }
         
     }

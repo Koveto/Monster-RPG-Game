@@ -11,14 +11,7 @@ Wait 100
 Until !Colliding,240,400,100,100,1
 Dialogue text\dialogue.txt\,1
 Until Dialogue Finished
->  Object 09 (Toriel)
-Turn 3
-Start Moving
-Animate
-Until Path-Finished
-Pause
-Set Dialogue text\entity1.txt\,0
-Turn 2
+R  Add script text\toriel.txt\,9
 >  Object 00 (Player)
 //
 //
@@ -27,13 +20,13 @@ Until Interact,800,140,40,10,1
 >  Object 03 (First Switch)
 Sprite ss\ruinsSwitch.png\,74,55,1,0
 >  Object 09 (Toriel)
-Path 6 * t,1,970,230,0,82,0.5,false
+Path 6 * t,1,970,232,0,82,0.5,false
 Turn 3
 Start Moving
 Resume
 Until Path-Finished
 Pause
-Set Dialogue text\entity1.txt\,1
+Set Dialogue text\entity1.txt\,2
 Turn 2
 >  Object 00 (Player)
 //

@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 9/11/2023
+ * @version 9/13/2023
  */
 public class Room {
     
@@ -18,7 +18,7 @@ public class Room {
     private DialogueBox dialogueBox;
     private SpriteSheet tiles;
     private Map map1, map2;
-    private Script script;
+    private Script[] scripts;
     private Rectangle[] walls, cameraWalls, transitions;
     private int[] transIDs, xs, ys, transDirections;
     private Entity[] entities;
@@ -185,7 +185,10 @@ public class Room {
         for (int i = 0; i < entities.length; i++) {
             scriptObjects = Game.addToGOArray(scriptObjects, entities[i]);
         }
-        script = new Script(scriptPath, this, null,
+        /*script = new Script(scriptPath, this, null,
+                scriptObjects, dialogueBox);*/
+        scripts = new Script[1];
+        scripts[0] = new Script(scriptPath, this, null,
                 scriptObjects, dialogueBox);
     
     }
@@ -210,9 +213,7 @@ public class Room {
     public ArrayList<DialogueTrigger> getEntityTriggers( ) {
         ArrayList<DialogueTrigger> triggers = new ArrayList();
         for (Entity e : entities) {
-            for (DialogueTrigger d : e.getDialogueTriggers()) {
-                triggers.add(d);
-            }
+            triggers.add(e.getDialogueTrigger());
         }
         return triggers;
     }
@@ -234,7 +235,9 @@ public class Room {
     
     public GameObject[] getObjects( ) {
         
-        script.update();
+        for (Script s : scripts)
+            s.update();
+        //script.update();
         
         GameObject[] obj = new GameObject[] {map1, map2};
         for (Entity e : entities) {
@@ -253,6 +256,35 @@ public class Room {
         return obj;
         
     }
-    
+
+    public void setScriptFlag( boolean flag, int index ) {
+        if (index > scripts.length - 1) index = scripts.length - 1;
+        scripts[index].setRoomFlag(flag);
+    }
+
+    public void addScript( String scriptPath, int entityIndex ) {
+        
+        Script[] temp = new Script[scripts.length + 1];
+        for (int i = 0; i < scripts.length; i++) {
+            temp[i] = scripts[i];
+        }
+        temp[scripts.length] = new Script(scriptPath, this, null, new GameObject[] {player, entities[entityIndex]}, dialogueBox);
+        scripts = temp;
+
+    }
+
+    public void removeScript( int entityIndex ) {
+
+        Script[] temp = new Script[scripts.length - 1];
+        for (int i = 0, k = 0; i < temp.length; i++) {
+            if (i != entityIndex) {
+                temp[k] = scripts[i];
+                k++;
+            }
+        }
+        scripts = temp;
+
+    }
+
     
 }

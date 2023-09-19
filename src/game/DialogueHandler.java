@@ -90,13 +90,9 @@ public class DialogueHandler {
         
     }
     
-    public static ArrayList<DialogueTrigger> parseEntityDialogue( String dialoguePath, int index ) {
+    public static DialogueTrigger parseEntityDialogue( String dialoguePath, int index ) {
         
-        ArrayList<DialogueTrigger> temp = parseDialogueFile(dialoguePath);
-        DialogueTrigger d = temp.get(index);
-        temp = new ArrayList();
-        temp.add(d);
-        return temp;
+        return parseDialogueFile(dialoguePath).get(index);
         
     }
     

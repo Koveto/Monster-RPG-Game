@@ -34,13 +34,21 @@ Hide
 >  Object 02 (Enemy HP Bar)
 Hide
 >  Object 01 (Enemy)
-If !Alive Store True
-If Stored Music Vaporized False
+If !Alive
+Store True
+End If
+If Stored
+Music Vaporized False
+End If
 >  Object 04 (Enemy PASO)
-If Stored Darken to black 0.9F
+If Stored
+Darken to black 0.9F
+End If
 Until Finished-Moving
 >  Object 01 (Enemy)
-If Alive No longer hurt
+If Alive
+No longer hurt
+End If
 >  Object 05 (Attack Field)
 Animate
 Darken to black 0.85F
@@ -48,7 +56,9 @@ Darken to black 0.85F
 Pause
 Hide
 B  Resize battle rect
-If Stored B  End battle
+If Stored
+B  End battle
+End If
 Wait 500
 Scroll Speed 5
 >  Object 08 (Text Bubble)

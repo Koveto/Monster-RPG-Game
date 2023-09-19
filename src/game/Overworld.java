@@ -185,6 +185,7 @@ public class Overworld {
                 //room.getEntities()[i].
                 dialogueBox.newMessage(room.getEntityTriggers().get(i).getTexts(), 
                         room.getEntityTriggers().get(i).getFaces());
+                room.setScriptFlag(true, i);
                 player.stopStepping();
                 break;
             }
