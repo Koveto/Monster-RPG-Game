@@ -25,7 +25,7 @@ public class Player extends Battler {
     private String name;
     private int lastDirection, textCooldown, facing, stepCount;
     private long invincTime;
-    private boolean invulnerable;
+    private boolean invulnerable, isCameraShake;
     
     /**
      * Constructor
@@ -80,6 +80,10 @@ public class Player extends Battler {
     public boolean isFacingDown( ) { return facing == Game.DOWN; }
     public boolean isFacingLeft( ) { return facing == Game.LEFT; }
     public boolean isFacingRight( ) { return facing == Game.RIGHT; }
+
+    public boolean isCameraShake( ) { return isCameraShake; }
+
+    public void setIsCameraShake( boolean shake ) { isCameraShake = shake; }
      
     /**
      * Mutator for name

@@ -1,7 +1,7 @@
 // Walls
 // x, y, w, h
 //           x,y,w,h,id,playerX,playerY
-Transition: 240,100,80,10,1,260,430,1
+Transition: 240,100,80,10,1,260,375,1
 Camera: 0,0,640,480
 Camera: 0,0,10,480
 40,0,40,640

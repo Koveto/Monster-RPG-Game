@@ -141,6 +141,27 @@ public class DialogueBox {
         }
         
     }
+
+    public void switchVertical( boolean toTopOfScreen ) {
+        if (toTopOfScreen) {
+            int FROM_TOP = 9;
+            outer.setY(FROM_TOP);
+            inner.setY(FROM_TOP + 6);
+            face.setY(FROM_TOP + 35);
+            texts[0].setY(FROM_TOP + 50);
+            texts[1].setY(FROM_TOP + 50 + 37);
+            texts[2].setY(FROM_TOP + 50 + 37 + 39);
+        } else {
+            outer.setY(320);
+            inner.setY(320 + 6);
+            face.setY(320 + 35);
+            texts[0].setY(320 + 50);
+            texts[1].setY(320 + 50 + 37);
+            texts[2].setY(320 + 50 + 37 + 39);
+        }
+    }
+
+    public Rectangle getOuterRect( ) { return outer; }
     
     public GameObject[] getObjects( ) {
         

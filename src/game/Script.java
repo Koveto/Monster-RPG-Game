@@ -24,7 +24,7 @@ import java.util.Scanner;
 /**
  * Script
  * @author Kobe Goodwin
- * @version 9/13/2023
+ * @version 9/18/2023
  */
 public class Script {
     
@@ -301,6 +301,9 @@ public class Script {
                     room.addScript(sub[0], Integer.parseInt(sub[1]) - 1);
                     //room.addScript(sub[0], Integer.parseInt(sub[1]) - 1);
                 }
+                if (line.startsWith("R  Update dialogue box vertical")) {
+                    room.updateDialogueBoxVertical();
+                }
                 
                 
                 
@@ -342,6 +345,9 @@ public class Script {
                     if (line.startsWith("Switch to overworld")) p.switchToOverworld();
                     if (line.startsWith("Switch to soul")) p.switchToSoul();
                     if (line.startsWith("Turn")) p.turnDirection(Integer.parseInt(String.valueOf(line.charAt(5))));
+                    if (line.startsWith("Stop Stepping")) p.stopStepping();
+                    if (line.startsWith("Is Camera Shake")) p.setIsCameraShake(Boolean.parseBoolean(line.substring(16)));
+                    
                 } catch (ClassCastException e) {}
                 
                 

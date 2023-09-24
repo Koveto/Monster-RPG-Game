@@ -9,7 +9,9 @@ Animate
 >  Object 00 (Player)
 Wait 100
 Until !Colliding,240,400,100,100,1
+R  Update dialogue box vertical
 Dialogue text\dialogue.txt\,1
+Stop Stepping
 Until Dialogue Finished
 R  Add script text\toriel.txt\,9
 >  Object 00 (Player)
@@ -20,7 +22,7 @@ Until Interact,800,140,40,10,1
 >  Object 03 (First Switch)
 Sprite ss\ruinsSwitch.png\,74,55,1,0
 >  Object 09 (Toriel)
-Path 6 * t,1,970,232,0,82,0.5,false
+Path 9 * t,1,970,232,0,54,0.5,false
 Turn 3
 Start Moving
 Resume
@@ -33,6 +35,7 @@ Turn 2
 //
 //
 Until Interact,1240,140,40,10,1
+Stop Stepping
 Music Impact False
 >  Object 04 (Second Switch)
 Sprite ss\ruinsSwitch.png\,74,55,1,0
@@ -42,7 +45,10 @@ Set Collision 0,0,0,0
 >  Object 02 (Bottom Spike)
 Sprite ss\ruinsTiles.png,20,20,20,4
 Set Collision 0,0,0,0
+R  Update dialogue box vertical
 Dialogue text\dialogue.txt\,2
+>  Object 00 (Player)
+Is Camera Shake True
 Until Dialogue Finished
 >  Object 09 (Toriel)
 Path 6 * t,1,1462,230,0,40,0.5,false

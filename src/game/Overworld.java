@@ -5,13 +5,15 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 8/17/2023
+ * @version 9/24/2023
  */
 public class Overworld {
     
     private Player player;
     private Room room;
     private DialogueBox dialogueBox;
+    private CompoundPathQueue cameraShake;
+    private CompoundPath cameraShakePath;
     private final int TRANSITION_LENGTH = 10;
     private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo,
             roomTransitionCount;
@@ -25,6 +27,7 @@ public class Overworld {
         this.dialogueBox = room.getDialogueBox();
         holdingUpOrDown = false;
         isActivatingBattle = false;
+        cameraShake = null;
         
     }
     
@@ -41,19 +44,20 @@ public class Overworld {
         }
         if (button == Game.CONFIRM && confirmDelay == 0) confirmDelay = 10;
         if (dialogueBox.isShowing()) return;
-        int PLAYER_SPEED = 3;
+        int PLAYER_SPEED = 4;
         
         if (isTransitioningRooms) {
-            if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
+            /*if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
-            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
+            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);*/
+            player.stopStepping();
             return;
         } else if (roomTransitionCount > 0) {
-            if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
+            /*if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
-            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
+            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);*/
             roomTransitionCount--;
             return;
         }
@@ -143,8 +147,6 @@ public class Overworld {
             if (button == Game.UP) player.turnDirection(Game.UP);
             else if (button == Game.DOWN) player.turnDirection(Game.DOWN);
         }
-        
-        
     }
     
     public boolean activatingBattle( ) { return isActivatingBattle; }
@@ -165,7 +167,7 @@ public class Overworld {
         isTransitioningRooms = false;
         
     }
-    
+
     public void checkDialogueTrigger( ) {
         for (int i = 0; i < room.getDialogueTriggers().size(); i++) {
             if (confirmDelay == 0 && room.getDialogueTriggers().get(i).isColliding(player) && 
@@ -174,6 +176,7 @@ public class Overworld {
                 dialogueBox.newMessage(room.getDialogueTriggers().get(i).getTexts(), 
                         room.getDialogueTriggers().get(i).getFaces());
                 player.stopStepping();
+                room.updateDialogueBoxVertical();
                 break;
             }
         }
@@ -187,6 +190,7 @@ public class Overworld {
                         room.getEntityTriggers().get(i).getFaces());
                 room.setScriptFlag(true, i);
                 player.stopStepping();
+                room.updateDialogueBoxVertical();
                 break;
             }
         }
@@ -233,7 +237,7 @@ public class Overworld {
     public GameObject[] getObjects( ) {
         
         checkEntityCollision();
-        player.updateCamera(RenderHandler.getCamera(), room.getCameraWalls(), true, true);
+        handleCamera();
         
         GameObject[] temp = new GameObject[room.getObjects().length + dialogueBox.getObjects().length + 1];
         for (int i = 0; i < room.getObjects().length; i++) {
@@ -249,5 +253,40 @@ public class Overworld {
     }
     
     public Text[] getText( ) { return dialogueBox.getText(); }
+
+    public void handleCamera( ) { 
+        
+        if (!player.isCameraShake()) player.updateCamera(RenderHandler.getCamera(), room.getCameraWalls(), true, true);
+        else if (player.isCameraShake() && cameraShake == null) {
+            Rectangle c = RenderHandler.getCamera();
+            int DISTANCE = 6;
+            CompoundPath[] paths = new CompoundPath[DISTANCE];
+            for (int i = DISTANCE; i >= 1; i--) {
+                CompoundPath path = new CompoundPath( c.getX(), c.getY(), false, 
+                    new Path("t", "0", c.getX(), c.getY(), 0, i, i, false),
+                    new Path("-1 * t", "0", c.getX(), c.getY(), 0, i * 2, i, false),
+                    new Path("t", "0", c.getX(), c.getY(), 0, i, i, false));
+                paths[DISTANCE - i] = path;
+            }
+            cameraShake = new CompoundPathQueue(paths);
+            cameraShake.start();
+            cameraShakePath = cameraShake.get();
+            cameraShakePath.start();
+        }
+        if (cameraShake != null && cameraShake.update()) {
+            cameraShakePath = cameraShake.get();
+        }
+        if (cameraShakePath != null && cameraShakePath.isMoving()) {
+            RenderHandler.getCamera().setX(cameraShakePath.getX());
+            RenderHandler.getCamera().setY(cameraShakePath.getY());
+            cameraShakePath.increment();
+        }
+        if (cameraShakePath != null && !cameraShake.isMoving()) {
+            player.setIsCameraShake(false);
+            cameraShakePath = null;
+            cameraShake = null;
+        }
+
+    }
     
 }

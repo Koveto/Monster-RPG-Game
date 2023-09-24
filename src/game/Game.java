@@ -356,7 +356,7 @@ public class Game extends JFrame implements Runnable {
         
         if (overworld != null && overworld.transitioningRooms() && !ftb.isShowing()) {
             ftb.show();
-            ftb.fadeIn(50);
+            ftb.fadeIn(80);
         }
         if (battle != null) { 
             if (battle.update() && !ftb.isShowing()) {
@@ -365,7 +365,7 @@ public class Game extends JFrame implements Runnable {
             } 
         }        
         if (ftb.isShowing() && !ftb.isFadingIn() && !ftb.isFadingOut() && overworld != null) {
-            ftb.fadeOut(50);
+            ftb.fadeOut(80);
             overworld.transitionRooms();        }
         if (ftb.isShowing() && !ftb.isFadingIn()
                 && !ftb.isFadingOut() && overworld == null) {

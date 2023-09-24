@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 9/13/2023
+ * @version 9/23/2023
  */
 public class Room {
     
@@ -243,12 +243,13 @@ public class Room {
         for (Entity e : entities) {
             obj = Game.addToGOArray(obj, e);
         }
+        //if (entities.length >= 8) System.out.println(entities[8].getX());
         //obj = Game.addToGOArray(obj, new Rectangle(1440,280,19,50));
         /*for (DialogueTrigger d : dt) {
             obj = Game.addToGOArray(obj, d.getInteractBox());
         }*/
         /*for (Entity e : entities) {
-            obj = Game.addToGOArray(obj, e.getDialogueTriggers().get(0).getInteractBox());
+            obj = Game.addToGOArray(obj, e.getDialogueTrigger().getInteractBox());
         }*/
         /*for (int i = 0; i < dt.size(); i++) {
             obj = Game.addToGOArray(obj, dt.get(i).getInteractBox());
@@ -284,6 +285,11 @@ public class Room {
         }
         scripts = temp;
 
+    }
+
+    public void updateDialogueBoxVertical( ) {
+        if (player.getY() > Game.HEIGHT / 2) dialogueBox.switchVertical(true);
+        else dialogueBox.switchVertical(false);
     }
 
     
