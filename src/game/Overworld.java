@@ -17,15 +17,13 @@ public class Overworld {
     private final int TRANSITION_LENGTH = 10;
     private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo,
             roomTransitionCount;
-    private boolean holdingUpOrDown, holdingRightOrLeft, isActivatingBattle,
-            isTransitioningRooms;
+    private boolean isActivatingBattle, isTransitioningRooms;
     
     public Overworld( Player player, Room room ) {
         
         this.player = player;
         this.room = room;
         this.dialogueBox = room.getDialogueBox();
-        holdingUpOrDown = false;
         isActivatingBattle = false;
         cameraShake = null;
         
@@ -44,53 +42,73 @@ public class Overworld {
         }
         if (button == Game.CONFIRM && confirmDelay == 0) confirmDelay = 10;
         if (dialogueBox.isShowing()) return;
-        int PLAYER_SPEED = 4;
+        int PLAYER_SPEED = 7;
         
         if (isTransitioningRooms) {
-            /*if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
+            if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
-            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);*/
-            player.stopStepping();
+            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
             return;
         } else if (roomTransitionCount > 0) {
-            /*if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
+            if (player.isFacingDown()) player.setY(player.getY() + PLAYER_SPEED);
             if (player.isFacingUp()) player.setY(player.getY() - PLAYER_SPEED);
             if (player.isFacingLeft()) player.setX(player.getX() - PLAYER_SPEED);
-            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);*/
+            if (player.isFacingRight()) player.setX(player.getX() + PLAYER_SPEED);
             roomTransitionCount--;
             return;
         }
+
+        boolean holdingUpOrDown = Game.getKeyListener().up() || Game.getKeyListener().down();
+        boolean holdingRightOrLeft = Game.getKeyListener().left() || Game.getKeyListener().right();
         
+        int lastX = player.getX();
+        int lastY = player.getY();
         if (button == Game.LEFT) {
             if (!holdingUpOrDown || (Game.getKeyListener().onlyLeft())) {
                 player.turnDirection(Game.LEFT);
                 holdingRightOrLeft = true;
             }
             player.setX(player.getX() - PLAYER_SPEED);
+            player.startStepping();
             for (int i = 0; i < room.getWalls().length; i++) {
                 if (player.getRect().isColliding(room.getWalls()[i])) {
                     player.setX(player.getX() + PLAYER_SPEED);
-                    if (Game.getKeyListener().onlyLeft()) player.stopStepping();
+                    if (Game.getKeyListener().onlyLeft()) {
+                        player.stopStepping();
+                    } else if (Game.getKeyListener().upAndLeft()
+                        && player.isFacingLeft()) {
+                        player.turnDirection(Game.UP);
+                    } else if (Game.getKeyListener().downAndLeft()
+                        && player.isFacingLeft()) {
+                        player.turnDirection(Game.DOWN);
+                    }
                     break;
                 }
             }
-            player.startStepping();
-        } else if (button == Game.RIGHT) {
+        } if (button == Game.RIGHT) {
             if (!holdingUpOrDown || (Game.getKeyListener().onlyRight())) {
                 player.turnDirection(Game.RIGHT);
                 holdingRightOrLeft = true;
             }
             player.setX(player.getX() + PLAYER_SPEED);
+            player.startStepping();
             for (int i = 0; i < room.getWalls().length; i++) {
                 if (player.getRect().isColliding(room.getWalls()[i])) {
                     player.setX(player.getX() - PLAYER_SPEED);
-                    if (Game.getKeyListener().onlyRight()) player.stopStepping();
+                    if (Game.getKeyListener().onlyRight()) {
+                        player.stopStepping();
+                    } else if (Game.getKeyListener().upAndRight()
+                        && player.isFacingRight()) {
+                        player.turnDirection(Game.UP);
+                    } else if (Game.getKeyListener().downAndRight()
+                        && player.isFacingRight()) {
+                        player.turnDirection(Game.DOWN);
+                    }
                     break;
                 }
             }
-            player.startStepping();
-        } else if (button == Game.UP) {
+        } if (button == Game.UP) {
             if (Game.getKeyListener().down() && !(Game.getKeyListener().left() || Game.getKeyListener().right())) {
                 player.stopStepping();
                 return;
@@ -100,15 +118,17 @@ public class Overworld {
                 holdingUpOrDown = true;
             }
             player.setY(player.getY() - PLAYER_SPEED);
+            player.startStepping();
             for (int i = 0; i < room.getWalls().length; i++) {
                 if (player.getRect().isColliding(room.getWalls()[i])) {
                     player.setY(player.getY() + PLAYER_SPEED);
-                    if (Game.getKeyListener().onlyUp()) player.stopStepping();
+                    if (Game.getKeyListener().onlyUp()) {
+                        player.stopStepping();
+                    }
                     break;
                 }
             }
-            player.startStepping();
-        } else if (button == Game.DOWN) {
+        } if (button == Game.DOWN) {
             if (Game.getKeyListener().up() && !(Game.getKeyListener().left() || Game.getKeyListener().right())) {
                 player.stopStepping();
                 return;
@@ -118,15 +138,18 @@ public class Overworld {
                 holdingUpOrDown = true;
             }
             player.setY(player.getY() + PLAYER_SPEED);
+            player.startStepping();
             for (int i = 0; i < room.getWalls().length; i++) {
                 if (player.getRect().isColliding(room.getWalls()[i])) {
                     player.setY(player.getY() - PLAYER_SPEED);
-                    if (Game.getKeyListener().onlyDown()) player.stopStepping();
+                    if (Game.getKeyListener().onlyDown()) {
+                        player.stopStepping();
+                    }
                     break;
                 }
             }
-            player.startStepping();
-        } else if (button == Game.NO_KEYS) {
+        } 
+        if (button == Game.NO_KEYS) {
             holdingUpOrDown = false;
             holdingRightOrLeft = false;
             player.stopStepping();
@@ -147,6 +170,32 @@ public class Overworld {
             if (button == Game.UP) player.turnDirection(Game.UP);
             else if (button == Game.DOWN) player.turnDirection(Game.DOWN);
         }
+        /*if (player.isFacingUp() && (player.getY() == lastY) && 
+            Game.getKeyListener().left()) player.turnDirection(Game.LEFT);*/
+        if (player.isFacingUp() && (player.getY() == lastY) && 
+            Game.getKeyListener().right() && (player.getX() == lastX)
+            && button == Game.UP) {
+                player.turnDirection(Game.RIGHT);
+                player.startStepping();
+            }
+        if (player.isFacingUp() && (player.getY() == lastY) && 
+            Game.getKeyListener().left() && (player.getX() == lastX)
+            && button == Game.UP) {
+                player.turnDirection(Game.LEFT);
+                player.startStepping();
+            }
+        if (player.isFacingDown() && (player.getY() == lastY) && 
+            Game.getKeyListener().right() && (player.getX() == lastX)
+            && button == Game.DOWN) {
+                player.turnDirection(Game.RIGHT);
+                player.startStepping();
+            }
+        if (player.isFacingDown() && (player.getY() == lastY) && 
+            Game.getKeyListener().left() && (player.getX() == lastX)
+            && button == Game.DOWN) {
+                player.turnDirection(Game.LEFT);
+                player.startStepping();
+            }
     }
     
     public boolean activatingBattle( ) { return isActivatingBattle; }
@@ -240,10 +289,24 @@ public class Overworld {
         handleCamera();
         
         GameObject[] temp = new GameObject[room.getObjects().length + dialogueBox.getObjects().length + 1];
+        GameObject[] addOverPlayer = new GameObject[0];
         for (int i = 0; i < room.getObjects().length; i++) {
-            temp[i] = room.getObjects()[i];
+            try {
+                Entity e = (Entity) room.getObjects()[i];
+                if (e.getRenderOverPlayer() != -1 && 
+                    player.getY() + player.getSpritedObject().getSprite().getHeight() <= e.getRenderOverPlayer()) {
+                    addOverPlayer = Game.addToGOArray(addOverPlayer, e);
+                } else {
+                    temp[i - addOverPlayer.length] = room.getObjects()[i];
+                }
+            } catch (Exception e) {
+                temp[i - addOverPlayer.length] = room.getObjects()[i];
+            }
         }
-        temp[room.getObjects().length] = player;
+        temp[room.getObjects().length - addOverPlayer.length] = player;
+        for (int i = 0; i < addOverPlayer.length; i++) {
+            temp[room.getObjects().length - addOverPlayer.length + 1 + i] = addOverPlayer[i];
+        }
         for (int i = 0; i < dialogueBox.getObjects().length; i++) {
             if (i + room.getObjects().length + 1 < temp.length)
                 temp[i + room.getObjects().length + 1] = dialogueBox.getObjects()[i];

@@ -1,4 +1,21 @@
 // Ruins Sign Room Entities
+// 
+// Single Sprite
+// spriteSheet, spriteWidth, spriteHeight, spriteX, spriteY
+// xComponent, yComponent, startT, endT, increment, loop
+// OPTION A: x, y, w, h, doubleSize, dialoguePath
+// OPTION B: x, y, collisionX, collisionY, w, h, renderOverPlayer, doubleSize, dialoguePath
+//
+// Animated Sprite
+// OPTION A: spriteSheet, spriteWidth, spriteHeight, spriteX, spriteY
+// OPTION B: spriteSheet, spriteWidth, spriteHeight
+// xComponent, yComponent, startT, endT, increment, loop
+// timePerSwitchMillis, hideWhenFinished, loopAnimation, x, y, w, h, dialoguePath
+//
+// Multiple Sprites
+// REPEAT: spriteSheet, spriteWidth, spriteHeight, spriteX, spriteY
+// xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
+// timePerSwitchMillis, hideWhenFinished, loopAnimation, x, y, w, h, dialoguePath
 //
 // Top Spike (1)
 Single Sprite
@@ -34,7 +51,7 @@ ss\ruinsTiles.png,20,20,23,4
 Single Sprite
 ss\ruinsTiles.png,20,20,18,4
 1,1,0,1,1,false
-260,239,40,10,true,text\testEntity.txt\
+260,239,260,255,40,1,255,true,text\testEntity.txt\
 //
 // River 1 (7)
 Animated Sprite

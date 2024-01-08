@@ -3,15 +3,13 @@ package game.gameObjects;
 import game.Game;
 import static game.Game.loadImage;
 import game.MovingPath;
-import game.RenderHandler;
 import game.Sprite;
 import game.SpriteSheet;
-import game.listeners.KeyboardListener;
 
 /**
  * Player
  * @author Kobe Goodwin
- * @version 8/16/2023
+ * @version 10/15/2023
  * 
  * A Battler with that represents the player character. It responds to keyboard
  * inputs. The camera follows its rectangle collision box. Makes selections on 
@@ -19,7 +17,7 @@ import game.listeners.KeyboardListener;
  */
 public class Player extends Battler {
     
-    private final int STEP_SWITCH1 = 10, STEP_SWITCH2 = 20, STEP_SWITCH3 = 30, STEP_SWITCH4 = 40;
+    private final int STEP_SWITCH1 = 5, STEP_SWITCH2 = 10, STEP_SWITCH3 = 15, STEP_SWITCH4 = 20;
     
     private Rectangle rect;
     private String name;
@@ -46,7 +44,7 @@ public class Player extends Battler {
         this.name = name;
         this.lastDirection = 0;
         this.textCooldown = 0;
-        rect = new Rectangle(xPosition, yPosition, 19 * 2, 29 * 2);
+        rect = new Rectangle(xPosition, yPosition + 60, 19 * 2, 29 * 2);
         invulnerable = false;
         facing = 1;
         stepCount = 0;
@@ -72,6 +70,10 @@ public class Player extends Battler {
      */
     public int getLastDirection( ) {return lastDirection;}
     
+    /**
+     * Accessor for facing
+     * @return Player facing Up (1), Down (2), Left (3), Right (4)
+     */
     public int facing( ) { return facing; }
     
     public boolean isVulnerable( ) {return !invulnerable;}
@@ -133,13 +135,8 @@ public class Player extends Battler {
         super.setY(y);
         rect.setY(y);
     }
-    
-    public void startStepping( ) {
-        if (stepCount == 0) stepCount++;
-    }
-    
-    public void stopStepping( ) {
-        stepCount = 0;
+
+    public void setSpriteToDefault( ) {
         if (facing == Game.UP)
             getSpritedObject().setSprite(getSpritedObject().getSprites()[7]);
         else if (facing == Game.DOWN)
@@ -148,6 +145,29 @@ public class Player extends Battler {
             getSpritedObject().setSprite(getSpritedObject().getSprites()[3]);
         else if (facing == Game.RIGHT)
             getSpritedObject().setSprite(getSpritedObject().getSprites()[5]);
+    }
+
+    public void setSpriteToStep( ) {
+        if (facing == Game.UP)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[8]);
+        else if (facing == Game.DOWN)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[1]);
+        else if (facing == Game.LEFT)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[4]);
+        else if (facing == Game.RIGHT)
+            getSpritedObject().setSprite(getSpritedObject().getSprites()[6]);
+    }
+    
+    public void startStepping( ) {
+        if (stepCount == 0) {
+            stepCount++;
+            setSpriteToStep();
+        }
+    }
+    
+    public void stopStepping( ) {
+        stepCount = 0;
+        setSpriteToDefault();
     }
     
     private void step( ) {
@@ -180,6 +200,8 @@ public class Player extends Battler {
      * @param lastDirection     New direction
      */
     public void setLastDirection( int lastDirection ) {this.lastDirection = lastDirection;}
+
+    public int getStepping( ) {return stepCount;}
     
     /**
      * Update camera to player's rectangle.
@@ -248,14 +270,7 @@ public class Player extends Battler {
         
         if (facing == direction) return;
         facing = direction;
-        if (direction == Game.UP)
-            getSpritedObject().setSprite(getSpritedObject().getSprites()[8]);
-        else if (direction == Game.DOWN)
-            getSpritedObject().setSprite(getSpritedObject().getSprites()[1]);
-        else if (direction == Game.LEFT)
-            getSpritedObject().setSprite(getSpritedObject().getSprites()[4]);
-        else if (direction == Game.RIGHT)
-            getSpritedObject().setSprite(getSpritedObject().getSprites()[6]);
+        setSpriteToStep();
         
     }
     

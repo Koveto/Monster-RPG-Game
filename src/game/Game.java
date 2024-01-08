@@ -356,7 +356,7 @@ public class Game extends JFrame implements Runnable {
         
         if (overworld != null && overworld.transitioningRooms() && !ftb.isShowing()) {
             ftb.show();
-            ftb.fadeIn(80);
+            ftb.fadeIn(160);
         }
         if (battle != null) { 
             if (battle.update() && !ftb.isShowing()) {
@@ -365,7 +365,7 @@ public class Game extends JFrame implements Runnable {
             } 
         }        
         if (ftb.isShowing() && !ftb.isFadingIn() && !ftb.isFadingOut() && overworld != null) {
-            ftb.fadeOut(80);
+            ftb.fadeOut(160);
             overworld.transitionRooms();        }
         if (ftb.isShowing() && !ftb.isFadingIn()
                 && !ftb.isFadingOut() && overworld == null) {
@@ -473,7 +473,7 @@ public class Game extends JFrame implements Runnable {
         BufferStrategy bufferStrategy;
         
         long lastTime = System.nanoTime();
-        final double NANO_SECOND_CONVERSION = 1000000000 / 60.0; // FPS
+        final double NANO_SECOND_CONVERSION = 1000000000 / 30.0; // FPS
         double deltaSeconds = 0.0;
         
         while (true) 

@@ -22,6 +22,8 @@ Until Interact,800,140,40,10,1
 >  Object 03 (First Switch)
 Sprite ss\ruinsSwitch.png\,74,55,1,0
 >  Object 09 (Toriel)
+While !Position At 967,233
+End While
 Path 9 * t,1,970,232,0,54,0.5,false
 Turn 3
 Start Moving

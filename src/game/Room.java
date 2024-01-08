@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 9/23/2023
+ * @version 9/24/2023
  */
 public class Room {
     
@@ -97,15 +97,24 @@ public class Room {
                                     Integer.parseInt(sub[4]));
                     line = scan.nextLine();
                     sub = line.split(",");
-                    Path p = new Path(sub[0], sub[1], Integer.parseInt(sub[2]),
-                        Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                    Path p = new Path(sub[0], sub[1], Double.parseDouble(sub[2]),
+                        Double.parseDouble(sub[3]), Double.parseDouble(sub[4]),
                         Boolean.parseBoolean(sub[5]));
                     line = scan.nextLine();
                     sub = line.split(",");
-                    Entity e = new Entity(s, p, Integer.parseInt(sub[0]),
-                            Integer.parseInt(sub[1]), Integer.parseInt(sub[2]),
-                            Integer.parseInt(sub[3]), Boolean.parseBoolean(sub[4]),
-                            sub[5]);
+                    Entity e = null;
+                    if (sub.length == 6)
+                        e = new Entity(s, p, Integer.parseInt(sub[0]),
+                                Integer.parseInt(sub[1]), Integer.parseInt(sub[2]),
+                                Integer.parseInt(sub[3]), Boolean.parseBoolean(sub[4]),
+                                sub[5]);
+                    else {
+                        e = new Entity(s, p, Integer.parseInt(sub[0]),
+                                Integer.parseInt(sub[1]), Integer.parseInt(sub[2]),
+                                Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                                Integer.parseInt(sub[5]), Integer.parseInt(sub[6]),
+                                Boolean.parseBoolean(sub[7]), sub[8]);
+                    }
                     entities = Game.addToEntityArray(entities, e);
                 }
                 
@@ -133,8 +142,8 @@ public class Room {
                     line = scan.nextLine();
                     sub = line.split(",");
                     Path p = new Path(sub[0], sub[1], Integer.parseInt(sub[2]),
-                        Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
-                        Integer.parseInt(sub[5]), Double.parseDouble(sub[6]),
+                        Integer.parseInt(sub[3]), Double.parseDouble(sub[4]),
+                        Double.parseDouble(sub[5]), Double.parseDouble(sub[6]),
                         Boolean.parseBoolean(sub[7]));
                     line = scan.nextLine();
                     sub = line.split(",");
@@ -161,8 +170,8 @@ public class Room {
                         line = scan.nextLine();
                         sub = line.split(",");
                     }
-                    Path p = new Path(sub[0], sub[1], Integer.parseInt(sub[2]),
-                        Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                    Path p = new Path(sub[0], sub[1], Double.parseDouble(sub[2]),
+                        Double.parseDouble(sub[3]), Double.parseDouble(sub[4]),
                         Boolean.parseBoolean(sub[5]));
                     line = scan.nextLine();
                     sub = line.split(",");

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Entity
  * @author Kobe Goodwin
- * @version 9/13/2023
+ * @version 9/24/2023
  */
 public class Entity extends PathedAnimatedSpritedObject {
     
@@ -19,7 +19,7 @@ public class Entity extends PathedAnimatedSpritedObject {
     private DialogueTrigger dt;
     private Sprite[] up, down, left, right;
     private String currentPath;
-    private int deltaX, deltaY, dialogueIndex;
+    private int deltaX, deltaY, dialogueIndex, renderOverPlayer;
     
     public Entity( Sprite sprite, Path path, int x, int y, int w, int h,
             boolean doubleSize, String dialoguePath ) {
@@ -32,6 +32,23 @@ public class Entity extends PathedAnimatedSpritedObject {
         down = new Sprite[] {sprite};
         left = new Sprite[] {sprite};
         right = new Sprite[] {sprite};
+        renderOverPlayer = -1;
+        
+    }
+
+    public Entity( Sprite sprite, Path path, int x, int y, 
+            int collisionX, int collisionY, int w, int h,
+            int renderOverPlayer, boolean doubleSize, String dialoguePath ) {
+        
+        super(sprite, path, x, y, doubleSize);
+        collision = new Rectangle( collisionX, collisionY, w, h);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
+        up = new Sprite[] {sprite};
+        down = new Sprite[] {sprite};
+        left = new Sprite[] {sprite};
+        right = new Sprite[] {sprite};
+        this.renderOverPlayer = renderOverPlayer;
         
     }
     
@@ -47,6 +64,7 @@ public class Entity extends PathedAnimatedSpritedObject {
         down = sprites;
         left = sprites;
         right = sprites;
+        renderOverPlayer = -1;
         
     }
     
@@ -63,6 +81,7 @@ public class Entity extends PathedAnimatedSpritedObject {
         this.down = down;
         this.left = left;
         this.right = right;
+        renderOverPlayer = -1;
         
     }
     
@@ -77,6 +96,8 @@ public class Entity extends PathedAnimatedSpritedObject {
     public DialogueTrigger getDialogueTrigger( ) { return dt; }
     
     public Rectangle getCollision( ) { return collision; }
+
+    public int getRenderOverPlayer( ) { return renderOverPlayer; }
 
     public void setCollision( Rectangle r ) { collision = r; }
     
