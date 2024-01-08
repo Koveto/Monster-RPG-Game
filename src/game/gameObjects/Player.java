@@ -200,8 +200,6 @@ public class Player extends Battler {
      * @param lastDirection     New direction
      */
     public void setLastDirection( int lastDirection ) {this.lastDirection = lastDirection;}
-
-    public int getStepping( ) {return stepCount;}
     
     /**
      * Update camera to player's rectangle.

@@ -6,7 +6,6 @@ import game.Game;
 import game.MovingPath;
 import game.Path;
 import game.Sprite;
-import java.util.ArrayList;
 
 /**
  * Entity

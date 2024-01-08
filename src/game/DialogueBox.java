@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 8/19/2023
+ * @version 1/7/2024
  */
 public class DialogueBox {
     
@@ -132,12 +132,10 @@ public class DialogueBox {
         if (blinkCount == blinkTime) {
             face.setSprites(DialogueHandler.getFaceGraphic(blinkChar.concat("_Blink")));
         } else if (blinkCount >= blinkTime + DialogueHandler.DELAY_BLINKINCREMENT) {
-            if (face.getSpriteIndex() == 2) {
-                Random r = new Random();
-                blinkTime = r.nextInt(DialogueHandler.DELAY_RANDOMBLINK) + DialogueHandler.DELAY_BLINK;
-                blinkCount = 0;
-                face.setSprites(DialogueHandler.getFaceGraphic(blinkChar));
-            }
+            Random r = new Random();
+            blinkTime = r.nextInt(DialogueHandler.DELAY_RANDOMBLINK) + DialogueHandler.DELAY_BLINK;
+            blinkCount = 0;
+            face.setSprites(DialogueHandler.getFaceGraphic(blinkChar));
         }
         
     }

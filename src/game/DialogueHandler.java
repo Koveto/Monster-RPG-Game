@@ -17,7 +17,7 @@ public class DialogueHandler {
     public static   int X_DEFAULT = 59,
                         X_FACE = 200,
                         X_INDENT = 236,
-                        DELAY_BLINK = 5000,
+                        DELAY_BLINK = 3000,
                         DELAY_RANDOMBLINK = 1000,
                         DELAY_BLINKINCREMENT = 525,
                         DELAY_DIALOGUESOUND = 50;
