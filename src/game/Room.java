@@ -207,7 +207,8 @@ public class Room {
         Rectangle[] toReturn = walls;
         toReturn = Game.addToRectangleArray(walls, entities[0].getCollision());
         for (Entity e : entities) {
-            toReturn = Game.addToRectangleArray(toReturn, e.getCollision());
+            if (e.getPath().isFinished())
+                toReturn = Game.addToRectangleArray(toReturn, e.getCollision());
         }
         return toReturn;
         

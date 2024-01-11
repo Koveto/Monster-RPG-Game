@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 1/7/2024
+ * @version 1/11/2024
  */
 public class Overworld {
     
@@ -170,8 +170,6 @@ public class Overworld {
             if (button == Game.UP) player.turnDirection(Game.UP);
             else if (button == Game.DOWN) player.turnDirection(Game.DOWN);
         }
-        /*if (player.isFacingUp() && (player.getY() == lastY) && 
-            Game.getKeyListener().left()) player.turnDirection(Game.LEFT);*/
         if (player.isFacingUp() && (player.getY() == lastY) && 
             Game.getKeyListener().right() && (player.getX() == lastX)
             && button == Game.UP) {
@@ -234,7 +232,6 @@ public class Overworld {
             if (confirmDelay == 0 && room.getEntityTriggers().get(i).isColliding(player) && 
                     !dialogueBox.isShowing() && Game.getKeyListener().z() && 
                     player.facing() == room.getEntityTriggers().get(i).getDirection()) {
-                //room.getEntities()[i].
                 dialogueBox.newMessage(room.getEntityTriggers().get(i).getTexts(), 
                         room.getEntityTriggers().get(i).getFaces());
                 room.setScriptFlag(true, i);
@@ -267,8 +264,48 @@ public class Overworld {
         
         for (Entity e : room.getEntities())
             if (player.getRect().isColliding(e.getCollision())) {
-                player.setX(player.getX() - e.getDeltaX());
-                player.setY(player.getY() + e.getDeltaY());
+                if (player.isFacingRight() && !e.getPath().isFinished()) {
+                    player.setX(player.getX() - e.getDeltaX());
+                    if (e.getDeltaX() == 0)
+                        player.setY(player.getY() - 7);
+                } 
+                if (player.isFacingLeft() && !e.getPath().isFinished()) {
+                    player.setX(player.getX() + e.getDeltaX());
+                    if (e.getDeltaX() == 0)
+                        player.setX(player.getX() + 7);
+                }
+                if (player.isFacingUp() && !e.getPath().isFinished()) {
+                    player.setY(player.getY() + e.getDeltaY());
+                    if (e.getDeltaY() == 0)
+                        player.setY(player.getY() + 7);
+                }
+                if (player.isFacingDown() && !e.getPath().isFinished()) {
+                    player.setY(player.getY() - e.getDeltaY());
+                    if (e.getDeltaY() == 0)
+                        player.setY(player.getY() - 7);
+                }
+                if (player.getRect().isColliding(e.getCollision())) {
+                    Rectangle rectDown = new Rectangle(player.getRect().getX(), player.getRect().getY() + 7,
+                    player.getRect().getWidth(), player.getRect().getHeight());
+                    Rectangle rectUp = new Rectangle(player.getRect().getX(), player.getRect().getY() - 7,
+                    player.getRect().getWidth(), player.getRect().getHeight());
+                    Rectangle rectRight = new Rectangle(player.getRect().getX() + 7, player.getRect().getY(),
+                    player.getRect().getWidth(), player.getRect().getHeight());
+                    Rectangle rectLeft = new Rectangle(player.getRect().getX() - 7, player.getRect().getY(),
+                    player.getRect().getWidth(), player.getRect().getHeight());
+                    if (!rectDown.isColliding(e.getCollision())) {
+                        player.setY(player.getY() + 7);
+                    }
+                    if (!rectUp.isColliding(e.getCollision())) {
+                        player.setY(player.getY() - 7);
+                    }
+                    if (!rectRight.isColliding(e.getCollision())) {
+                        player.setX(player.getX() + 7);
+                    }
+                    if (!rectLeft.isColliding(e.getCollision())) {
+                        player.setX(player.getX() - 7);
+                    }
+                }
             }
         if (!(isTransitioningRooms || roomTransitionCount > 0))
             for (int i = 0; i < room.getRoomTransitions().length; i++) {
@@ -287,7 +324,7 @@ public class Overworld {
         
         checkEntityCollision();
         handleCamera();
-        
+
         GameObject[] temp = new GameObject[room.getObjects().length + dialogueBox.getObjects().length + 1];
         GameObject[] addOverPlayer = new GameObject[0];
         for (int i = 0; i < room.getObjects().length; i++) {
