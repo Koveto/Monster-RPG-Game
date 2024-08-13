@@ -274,36 +274,30 @@ public class Game extends JFrame implements Runnable {
             return null;
         }
     }
-    
+
     /**
-     * Operations performed each deltaSecond in run(). First calls the update()
-     * method on each GameObject in the BATTLE or NO_BATTLE mode. Then the
-     * update() method on Game objects such as the fade to black. Determines
-     * if a battle is beginning and handles the mode change. Handles keyboard
-     * inputs for each respective mode. Calls method in battle appropriate for
-     * its state. Handles fade to black between modes.
+     * Calls the update method of each GameObject. Updates the
+     * fade to black SpritedObject.
      */
-    public void update( )
-    {
+    public void updateGameObjects( ) {
+
         GameObject[] objects = new GameObject[] {};
         if (mode == BATTLE) objects = battle.getObjects();
         if (mode == NO_BATTLE) objects = overworld.getObjects();
         for (GameObject object : objects) {
             object.update(this);
         }
-        
         ftb.update(this);
-        
-        if (mode == NO_BATTLE) {
-            overworld.checkDialogueTrigger();
-        }
-        
-        if (overworld != null && overworld.activatingBattle()) {
-            mode = BATTLE;
-            battle = new Battle(overworld.getPlayer(), Encounter.getWhimsun());
-            overworld = null;
-        }
-        
+
+    }
+
+    /**
+     * Determines which keys are being pressed, and calls the correct
+     * interpretButtonPress method depending on whether a battle is
+     * in progress or not.
+     */
+    public void interpretButtonPress( ) {
+
         boolean direction = false;
         
         if (keyListener.noKeys()) {
@@ -321,11 +315,6 @@ public class Game extends JFrame implements Runnable {
             }
             else overworld.interpretButtonPress(Game.DOWN);
             direction = true;
-            /*battle = new Battle(overworld.getPlayer(), Encounter.getWhimsun());
-            overworld.getPlayer().switchToSoul();
-            overworld.getPlayer().setX(39);
-            overworld.getPlayer().setY(444);
-            mode = BATTLE;*/
         }
         if (keyListener.left()) {
             if (mode == BATTLE) {
@@ -352,8 +341,15 @@ public class Game extends JFrame implements Runnable {
         } else {
             Game.setScrollSpeed(TextHandler.DEFAULT_SCROLL_SPEED);
         }
-        
-        
+
+    }
+
+    /**
+     * Handles the game fading in and out between rooms and battles.
+     */
+    public void fadeInOut( ) {
+
+        // Fade in
         if (overworld != null && overworld.transitioningRooms() && !ftb.isShowing()) {
             ftb.show();
             ftb.fadeIn(160);
@@ -364,6 +360,8 @@ public class Game extends JFrame implements Runnable {
                 ftb.fadeIn(25);
             } 
         }        
+
+        // Fade out
         if (ftb.isShowing() && !ftb.isFadingIn() && !ftb.isFadingOut() && overworld != null) {
             ftb.fadeOut(160);
             overworld.transitionRooms();        }
@@ -373,13 +371,94 @@ public class Game extends JFrame implements Runnable {
             Game.getMusic1().resume();
             battle.getPlayer().getSpritedObject().show();
             battle.getPlayer().switchToOverworld();
-            //battle.getPlayer().getSpritedObject().setSprites(new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29).getSprites());
             battle.getPlayer().setX(200);
             battle.getPlayer().setY(200);
             overworld = new Overworld(battle.getPlayer(), room);
             battle = null;
             ftb.fadeOut(25);
         }
+
+    }
+    
+    /**
+     * Operations performed each deltaSecond in run(). First calls the update()
+     * method on each GameObject in the BATTLE or NO_BATTLE mode. Then the
+     * update() method on Game objects such as the fade to black. Determines
+     * if a battle is beginning and handles the mode change. Handles keyboard
+     * inputs for each respective mode. Calls method in battle appropriate for
+     * its state. Handles fade to black between modes.
+     */
+    public void update( )
+    {
+        updateGameObjects();
+        
+        // Is dialogue being triggered?
+        if (mode == NO_BATTLE) {
+            overworld.checkDialogueTrigger();
+        }
+        
+        // Is a battle activating?
+        if (overworld != null && overworld.activatingBattle()) {
+            mode = BATTLE;
+            battle = new Battle(overworld.getPlayer(), Encounter.getWhimsun());
+            overworld = null;
+        }
+        
+        interpretButtonPress();
+        fadeInOut();
+
+    }
+
+    /**
+     * Given a Graphics object, renders Game Objects to screen.
+     * @param graphics  Graphics object
+     */
+    public void renderGameObjects( Graphics graphics ) {
+
+        if (mode == BATTLE) {
+            for (GameObject o : battle.getOpaqueObjects()) {
+                o.render();
+            }
+        }
+        if (mode == NO_BATTLE) {
+            for (GameObject o : overworld.getObjects()) {
+                o.render();
+            }
+        }
+
+    }
+
+    /**
+     * Given a Graphics object, renders Text to the screen.
+     */
+    public void renderText( Graphics graphics ) {
+
+        if (mode == BATTLE) {
+            for (Text t : battle.getText()) {
+                RenderHandler.renderText(graphics, t);
+            }
+        }
+        if (mode == NO_BATTLE) {
+            for (Text t : overworld.getText()) {
+                RenderHandler.renderText(graphics, t);
+            }
+        }
+
+    }
+
+    /**
+     * Renders semi-transparent objects to the screen
+     * @param graphics  Graphics object
+     */
+    public void renderTransparency( Graphics graphics ) {
+
+        if (mode == BATTLE) {
+            for (GameObject o : battle.getTransparentObjects()) {
+                o.render(graphics);
+            }
+        }
+        ftb.render(graphics); // fade-to-black
+
     }
 
     /**
@@ -394,37 +473,13 @@ public class Game extends JFrame implements Runnable {
         BufferStrategy bufferStrategy = canvas.getBufferStrategy();
         Graphics graphics = bufferStrategy.getDrawGraphics();
         
-        graphics.setColor(Color.black);
+        graphics.setColor(Color.black); // Fill screen black
         graphics.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
         
-        if (mode == BATTLE){
-        for (GameObject o : battle.getOpaqueObjects()) {
-            o.render();
-        }}
-        if (mode == NO_BATTLE) {
-            for (GameObject o : overworld.getObjects()) {
-                o.render();
-            }
-        }
-        
-        RenderHandler.render(graphics);
-        
-        if (mode == BATTLE) {
-        for (Text t : battle.getText()) {
-            RenderHandler.renderText(graphics, t);
-        }
-        }
-        if (mode == NO_BATTLE) {
-            for (Text t : overworld.getText()) {
-                RenderHandler.renderText(graphics, t);
-            }
-        }
-        
-        if (mode == BATTLE) {
-        for (GameObject o : battle.getTransparentObjects()) {
-            o.render(graphics);
-        }}
-        ftb.render(graphics);
+        renderGameObjects(graphics); // Player, npcs, etc
+        RenderHandler.render(graphics); // Tiles in view
+        renderText(graphics); // Text
+        renderTransparency(graphics); // Semi-transparent
         
         graphics.dispose();
         bufferStrategy.show(); // Switches buffers
