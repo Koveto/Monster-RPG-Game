@@ -5,7 +5,7 @@ import game.gameObjects.*;
 /**
  * Overworld
  * @author Kobe Goodwin
- * @version 1/11/2024
+ * @version 1/23/2024
  */
 public class Overworld {
     
@@ -17,7 +17,7 @@ public class Overworld {
     private final int TRANSITION_LENGTH = 10;
     private int confirmDelay, idTransitioningTo, xTransitioningTo, yTransitioningTo,
             roomTransitionCount;
-    private boolean isActivatingBattle, isTransitioningRooms;
+    private boolean isActivatingBattle, isTransitioningRooms, DEBUG;
     
     public Overworld( Player player, Room room ) {
         
@@ -26,6 +26,7 @@ public class Overworld {
         this.dialogueBox = room.getDialogueBox();
         isActivatingBattle = false;
         cameraShake = null;
+        DEBUG = false;
         
     }
     
@@ -326,6 +327,7 @@ public class Overworld {
         handleCamera();
 
         GameObject[] temp = new GameObject[room.getObjects().length + dialogueBox.getObjects().length + 1];
+        if (DEBUG) temp = new GameObject[(room.getObjects().length * 2) - 2 + dialogueBox.getObjects().length + 1];
         GameObject[] addOverPlayer = new GameObject[0];
         for (int i = 0; i < room.getObjects().length; i++) {
             try {
@@ -340,14 +342,33 @@ public class Overworld {
                 temp[i - addOverPlayer.length] = room.getObjects()[i];
             }
         }
-        temp[room.getObjects().length - addOverPlayer.length] = player;
-        for (int i = 0; i < addOverPlayer.length; i++) {
-            temp[room.getObjects().length - addOverPlayer.length + 1 + i] = addOverPlayer[i];
+        if (DEBUG) {
+            for (int i = 0; i < room.getObjects().length; i++) {
+                try {
+                    Entity e = (Entity) room.getObjects()[i];
+                    Rectangle r = new Rectangle(e.getCollision().getX(), e.getCollision().getY(), e.getCollision().getWidth(), e.getCollision().getHeight(), TextHandler.BLUE.getRGB());
+                    temp[i + room.getObjects().length - 2 - addOverPlayer.length] = r;
+                } catch (Exception e) {}
+            }
+            temp[((room.getObjects().length - 2) * 2) + 2 - addOverPlayer.length] = player;
+            for (int i = 0; i < addOverPlayer.length; i++) {
+                temp[((room.getObjects().length - 2) * 2) + 3 - addOverPlayer.length + i] = addOverPlayer[i];
+            }
+            for (int i = 0; i < dialogueBox.getObjects().length; i++) {
+                if (i + ((room.getObjects().length - 2) * 2) + 3 + addOverPlayer.length < temp.length)
+                    temp[i + ((room.getObjects().length - 2) * 2) + 3 + addOverPlayer.length] = dialogueBox.getObjects()[i];
+            }
         }
-        for (int i = 0; i < dialogueBox.getObjects().length; i++) {
-            if (i + room.getObjects().length + 1 < temp.length)
-                temp[i + room.getObjects().length + 1] = dialogueBox.getObjects()[i];
-        }
+        else {
+            temp[room.getObjects().length - addOverPlayer.length] = player;
+            for (int i = 0; i < addOverPlayer.length; i++) {
+                temp[room.getObjects().length - addOverPlayer.length + 1 + i] = addOverPlayer[i];
+            }
+            for (int i = 0; i < dialogueBox.getObjects().length; i++) {
+                if (i + room.getObjects().length + 1 < temp.length)
+                    temp[i + room.getObjects().length + 1] = dialogueBox.getObjects()[i];
+            }
+        } 
         return temp;
         
     }

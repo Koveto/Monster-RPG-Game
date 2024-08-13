@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Room
  * @author Kobe Goodwin
- * @version 9/24/2023
+ * @version 1/16/2023
  */
 public class Room {
     
@@ -147,10 +147,19 @@ public class Room {
                         Boolean.parseBoolean(sub[7]));
                     line = scan.nextLine();
                     sub = line.split(",");
-                    Entity e = new Entity(s1, s2, s3, s4, p, Integer.parseInt(sub[0]),
+                    Entity e = null;
+                    if (sub.length == 8)
+                        e = new Entity(s1, s2, s3, s4, p, Integer.parseInt(sub[0]),
                             Boolean.parseBoolean(sub[1]), Boolean.parseBoolean(sub[2]),
                             Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
                             Integer.parseInt(sub[5]), Integer.parseInt(sub[6]), sub[7]);
+                    else
+                        e = new Entity(s1, s2, s3, s4, p, Integer.parseInt(sub[0]),
+                            Boolean.parseBoolean(sub[1]), Boolean.parseBoolean(sub[2]),
+                            Integer.parseInt(sub[3]), Integer.parseInt(sub[4]),
+                            Integer.parseInt(sub[5]), Integer.parseInt(sub[6]), 
+                            Integer.parseInt(sub[7]), Integer.parseInt(sub[8]),
+                            Integer.parseInt(sub[9]), sub[10]);
                     entities = Game.addToEntityArray(entities, e);
                 }
                 if (line.equals("Animated Sprite")) {

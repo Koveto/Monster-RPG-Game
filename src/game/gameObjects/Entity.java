@@ -10,7 +10,7 @@ import game.Sprite;
 /**
  * Entity
  * @author Kobe Goodwin
- * @version 9/24/2023
+ * @version 1/23/2024
  */
 public class Entity extends PathedAnimatedSpritedObject {
     
@@ -83,6 +83,23 @@ public class Entity extends PathedAnimatedSpritedObject {
         renderOverPlayer = -1;
         
     }
+
+    public Entity( Sprite[] up, Sprite[] down, Sprite[] left, Sprite[] right, 
+            MovingPath path, int timePerSwitchMillis,
+            boolean hideWhenFinished, boolean loopAnimation, int x, int y,
+            int collisionX, int collisionY, int w, int h, int renderOverPlayer, String dialoguePath ) {
+        
+        super(up, path, timePerSwitchMillis, hideWhenFinished, loopAnimation);
+        collision = new Rectangle( collisionX, collisionY, w, h);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
+        this.up = up;
+        this.down = down;
+        this.left = left;
+        this.right = right;
+        this.renderOverPlayer = renderOverPlayer;
+        
+    }
     
     public int getDeltaX( ) { return deltaX; }
     public int getDeltaY( ) { return deltaY; }
@@ -117,10 +134,10 @@ public class Entity extends PathedAnimatedSpritedObject {
         if (getPath().isMoving()) {
             int beforeX = collision.getX();
             int beforeY = collision.getY();
-            collision.setX(getPath().getX());
-            collision.setY(getPath().getY());
-            deltaX = collision.getX() - beforeX;
-            deltaY = collision.getY() - beforeY;
+            deltaX = getPath().getX() - beforeX;
+            deltaY = getPath().getY() - beforeY;
+            collision.setX(collision.getX() + deltaX);
+            collision.setY(collision.getY() + deltaY);
             dt.setInteractBox(deltaX, deltaY);
         }
         
