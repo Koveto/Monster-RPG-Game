@@ -7,7 +7,7 @@ import java.awt.Color;
 /**
  * AnimatedSpritedObject
  * @author Kobe Goodwin
- * @version 8/24/2022
+ * @version 9/11/2023
  * 
  * A SpritedObject with the capability to store an array of Sprites to be
  * displayed and animated at a specified speed. All Sprites will be animated at
@@ -132,6 +132,13 @@ public class AnimatedSpritedObject extends SpritedObject {
      * @return Sprite index.
      */
     public int getSpriteIndex( ) { return index; }
+
+    /**
+     * Progresses the Sprite by one.
+     */
+    public void nextSprite( ) {
+        setSprite(getSprites()[nextSpriteIndex()]);
+    }
     
     /**
      * Determines the next valid index of a Sprite in SPRITES.

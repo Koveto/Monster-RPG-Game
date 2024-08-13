@@ -6,30 +6,48 @@ import game.Game;
 import game.MovingPath;
 import game.Path;
 import game.Sprite;
-import java.util.ArrayList;
 
 /**
  * Entity
  * @author Kobe Goodwin
- * @version 7/8/2023
+ * @version 1/23/2024
  */
 public class Entity extends PathedAnimatedSpritedObject {
     
     private Rectangle collision;
-    private ArrayList<DialogueTrigger> dt;
+    private DialogueTrigger dt;
     private Sprite[] up, down, left, right;
-    private int deltaX, deltaY;
+    private String currentPath;
+    private int deltaX, deltaY, dialogueIndex, renderOverPlayer;
     
     public Entity( Sprite sprite, Path path, int x, int y, int w, int h,
-            String dialoguePath ) {
+            boolean doubleSize, String dialoguePath ) {
         
-        super(sprite, path, x, y);
+        super(sprite, path, x, y, doubleSize);
         collision = new Rectangle( x, y, w, h);
-        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
         up = new Sprite[] {sprite};
         down = new Sprite[] {sprite};
         left = new Sprite[] {sprite};
         right = new Sprite[] {sprite};
+        renderOverPlayer = -1;
+        
+    }
+
+    public Entity( Sprite sprite, Path path, int x, int y, 
+            int collisionX, int collisionY, int w, int h,
+            int renderOverPlayer, boolean doubleSize, String dialoguePath ) {
+        
+        super(sprite, path, x, y, doubleSize);
+        collision = new Rectangle( collisionX, collisionY, w, h);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
+        up = new Sprite[] {sprite};
+        down = new Sprite[] {sprite};
+        left = new Sprite[] {sprite};
+        right = new Sprite[] {sprite};
+        this.renderOverPlayer = renderOverPlayer;
         
     }
     
@@ -39,11 +57,13 @@ public class Entity extends PathedAnimatedSpritedObject {
         
         super(sprites, path, timePerSwitchMillis, hideWhenFinished, loopAnimation);
         collision = new Rectangle( x, y, w, h);
-        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
         up = sprites;
         down = sprites;
         left = sprites;
         right = sprites;
+        renderOverPlayer = -1;
         
     }
     
@@ -54,11 +74,30 @@ public class Entity extends PathedAnimatedSpritedObject {
         
         super(up, path, timePerSwitchMillis, hideWhenFinished, loopAnimation);
         collision = new Rectangle( x, y, w, h);
-        dt = DialogueHandler.parseDialogueFile(dialoguePath);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
         this.up = up;
         this.down = down;
         this.left = left;
         this.right = right;
+        renderOverPlayer = -1;
+        
+    }
+
+    public Entity( Sprite[] up, Sprite[] down, Sprite[] left, Sprite[] right, 
+            MovingPath path, int timePerSwitchMillis,
+            boolean hideWhenFinished, boolean loopAnimation, int x, int y,
+            int collisionX, int collisionY, int w, int h, int renderOverPlayer, String dialoguePath ) {
+        
+        super(up, path, timePerSwitchMillis, hideWhenFinished, loopAnimation);
+        collision = new Rectangle( collisionX, collisionY, w, h);
+        dt = DialogueHandler.parseDialogueFile(dialoguePath).get(0);
+        currentPath = dialoguePath;
+        this.up = up;
+        this.down = down;
+        this.left = left;
+        this.right = right;
+        this.renderOverPlayer = renderOverPlayer;
         
     }
     
@@ -70,10 +109,24 @@ public class Entity extends PathedAnimatedSpritedObject {
         setSprite(getSprites()[0]);
     }
     
-    public ArrayList<DialogueTrigger> getDialogueTriggers( ) { return dt; }
+    public DialogueTrigger getDialogueTrigger( ) { return dt; }
     
     public Rectangle getCollision( ) { return collision; }
+
+    public int getRenderOverPlayer( ) { return renderOverPlayer; }
+
+    public void setCollision( Rectangle r ) { collision = r; }
     
+    public void setDialogue( String dialoguePath, int index ) {
+        dialogueIndex = index;
+        currentPath = dialoguePath;
+        dt = DialogueHandler.parseEntityDialogue(dialoguePath, index);
+    }
+    
+    public void updateDialogue( ) {
+        setDialogue(currentPath, dialogueIndex + 1);
+    }
+
     @Override
     public void update( Game g ) {
         
@@ -81,13 +134,11 @@ public class Entity extends PathedAnimatedSpritedObject {
         if (getPath().isMoving()) {
             int beforeX = collision.getX();
             int beforeY = collision.getY();
-            collision.setX(getPath().getX());
-            collision.setY(getPath().getY());
-            deltaX = collision.getX() - beforeX;
-            deltaY = collision.getY() - beforeY;
-            for (int i = 0; i < dt.size(); i++) {
-                dt.get(i).setInteractBox(deltaX, deltaY);
-            }
+            deltaX = getPath().getX() - beforeX;
+            deltaY = getPath().getY() - beforeY;
+            collision.setX(collision.getX() + deltaX);
+            collision.setY(collision.getY() + deltaY);
+            dt.setInteractBox(deltaX, deltaY);
         }
         
     }

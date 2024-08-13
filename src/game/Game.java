@@ -5,6 +5,7 @@ package game;
 import game.gameObjects.SpritedObject;
 import game.gameObjects.Player;
 import game.gameObjects.DoublySpritedObject;
+import game.gameObjects.Entity;
 import game.gameObjects.GameObject;
 import game.gameObjects.Rectangle;
 import game.listeners.MouseEventListener;
@@ -104,6 +105,8 @@ public class Game extends JFrame implements Runnable {
                         "maps\\room0mapA.txt\\",
                         "maps\\room0mapB.txt\\",
                         "maps\\room0walls.txt\\",
+                        "maps\\room0entities.txt\\",
+                        "maps\\room0script.txt\\",
                         "text\\dialogue.txt\\");
         overworld = new Overworld(player, room);
         Game.getMusic1().play("Ruins", true);
@@ -158,6 +161,23 @@ public class Game extends JFrame implements Runnable {
     public static String[] addToStringArray( String[] array, String e ) {
         
         String[] temp = new String[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        temp[array.length] = e;
+        return temp;
+        
+    }
+    
+    /**
+     * Appends Entity to a Entity array.
+     * @param array Array or Strings to append to
+     * @param e     New String to append
+     * @return  String array with e appended
+     */
+    public static Entity[] addToEntityArray( Entity[] array, Entity e ) {
+        
+        Entity[] temp = new Entity[array.length + 1];
         for (int i = 0; i < array.length; i++) {
             temp[i] = array[i];
         }
@@ -336,7 +356,7 @@ public class Game extends JFrame implements Runnable {
         
         if (overworld != null && overworld.transitioningRooms() && !ftb.isShowing()) {
             ftb.show();
-            ftb.fadeIn(50);
+            ftb.fadeIn(160);
         }
         if (battle != null) { 
             if (battle.update() && !ftb.isShowing()) {
@@ -345,7 +365,7 @@ public class Game extends JFrame implements Runnable {
             } 
         }        
         if (ftb.isShowing() && !ftb.isFadingIn() && !ftb.isFadingOut() && overworld != null) {
-            ftb.fadeOut(50);
+            ftb.fadeOut(160);
             overworld.transitionRooms();        }
         if (ftb.isShowing() && !ftb.isFadingIn()
                 && !ftb.isFadingOut() && overworld == null) {
@@ -453,7 +473,7 @@ public class Game extends JFrame implements Runnable {
         BufferStrategy bufferStrategy;
         
         long lastTime = System.nanoTime();
-        final double NANO_SECOND_CONVERSION = 1000000000 / 60.0; // FPS
+        final double NANO_SECOND_CONVERSION = 1000000000 / 30.0; // FPS
         double deltaSeconds = 0.0;
         
         while (true) 

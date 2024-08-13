@@ -10,7 +10,7 @@ import java.awt.Graphics;
 /**
  * SpritedObject
  * @author Kobe Goodwin
- * @version 8/31/2022
+ * @version 8/19/2023
  * 
  * A GameObject with a sprite rendered at a given x and y position.
  */
@@ -24,7 +24,7 @@ public class SpritedObject implements GameObject {
     private float brightnessToggleFactor, toFullBrightFactor, colorToggleFactor,
             darkenToBlackFactor;
     private boolean show, isFlashing, isTogglingBrightness, isFadingIn, isFadingOut, 
-            isBrighteningToFull, isChangingColor, isDarkeningToBlack;
+            isBrighteningToFull, isChangingColor, isDarkeningToBlack, doubleSize;
     private double transparency;
     
     private final int COUNT_UNTIL_BRIGHTEN = 15;
@@ -55,6 +55,36 @@ public class SpritedObject implements GameObject {
         this.tempCount = 0;
         this.brightnessIndex = -1;
         this.brightestIndex = findBrightestIndex(sprite.getPixels());
+        doubleSize = (!Game.isBattle());
+        
+        
+    }
+    
+    /**
+     * Constructor
+     * @param sprite    Sprite to display
+     * @param x         X Position
+     * @param y         Y Position
+     * @param doubleSpriteSize  doubles Sprite size
+     */
+    public SpritedObject( Sprite sprite, int x, int y, boolean doubleSpriteSize ) {
+        
+        this.sprite = sprite;
+        //System.out.println("init:" + (this instanceof RatioBar) + sprite.getPixels().length);
+        this.x = x;
+        this.y = y;
+        this.show = true;
+        this.isFlashing = false;
+        this.flashCount = 0;
+        this.timesToToggleBrightness = 0;
+        this.brightnessToggleFactor = 0;
+        this.brightnessToggleCount = 0;
+        this.transparency = 1;
+        this.defaultPixels = sprite.getPixels();
+        this.tempCount = 0;
+        this.brightnessIndex = -1;
+        this.brightestIndex = findBrightestIndex(sprite.getPixels());
+        this.doubleSize = doubleSpriteSize;
         
         
     }
@@ -157,6 +187,8 @@ public class SpritedObject implements GameObject {
     public boolean isFlashing( ) {return this.isFlashing;}
     
     public boolean isChangingColor( ) {return this.isChangingColor;}
+    
+    public void setDoubleSize( boolean doubleSize ) { this.doubleSize = doubleSize; }
     
     /**
      * Darkens and brightens the Sprite.
@@ -445,7 +477,7 @@ public class SpritedObject implements GameObject {
      */
     @Override
     public void render( ) {
-        if (show) RenderHandler.renderSprite(sprite, x, y, (Game.isBattle()) ? 1 : 2, (Game.isBattle()) ? 1 : 2);
+        if (show) RenderHandler.renderSprite(sprite, x, y, (doubleSize) ? 2 : 1, (doubleSize) ? 2 : 1);
     }
     
     /**

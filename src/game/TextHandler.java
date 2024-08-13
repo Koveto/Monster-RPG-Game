@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * TextHandler
  * @author Kobe Goodwin
- * @version 6/30/2023
+ * @version 8/25/2023
  * 
  * Handles the formatting, wrapping, and parsing of Texts.
  */
@@ -156,11 +156,18 @@ public class TextHandler {
         String currentLine = "";
         int currentIndex = 0;
         int afterIndex = 0;
+        int numSpaces = -1;
         while (scan.hasNext()) {
             String token = scan.next();
-            
             currentIndex = message.indexOf(token, currentIndex) + token.length();
             String restOfMessage = message.substring(currentIndex, message.length());
+            if (numSpaces == -1) {
+                numSpaces++;
+                String current = message.substring(0,currentIndex);
+                int temp2 = 0;
+                while (current.charAt(temp2) == ' ') {temp2++;}
+                numSpaces = temp2;
+            }
             Scanner tempScan = new Scanner(restOfMessage);
             String nextToken = "";
             if (tempScan.hasNext())
@@ -183,7 +190,8 @@ public class TextHandler {
                 currentLine += token + between;
             }
         }
-        return toReturn;
+        if (numSpaces == -1) return message;
+        return " ".repeat(numSpaces) + toReturn;
         
     }
     

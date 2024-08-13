@@ -11,6 +11,7 @@ import game.gameObjects.Player;
 import game.gameObjects.RatioBar;
 import game.gameObjects.Rectangle;
 import game.gameObjects.SpritedObject;
+import game.listeners.KeyboardListener;
 import game.shuntingyardresources.FileReader;
 import game.shuntingyardresources.InfixTranslator;
 import game.shuntingyardresources.LinkedQueue;
@@ -23,7 +24,7 @@ import java.util.Scanner;
 /**
  * Script
  * @author Kobe Goodwin
- * @version 7/13/2023
+ * @version 9/18/2023
  */
 public class Script {
     
@@ -32,12 +33,11 @@ public class Script {
     private DialogueBox dialogueBox;
     private GameObject[] gameObjects;
     private GameObject current;
-    private Sprite storedSprite;
     private String scriptPath;
-    private int index, delay;
+    private int index, delay, whileIndex;
     private int[] storedNums;
     private long last = 0;
-    private boolean storedBoolean;
+    private boolean storedBoolean, roomFlag;
     
     public Script( String scriptPath, Room room, Battle battle, 
             GameObject[] gameObjects, DialogueBox dialogueBox ) {
@@ -48,20 +48,27 @@ public class Script {
         this.gameObjects = gameObjects;
         this.dialogueBox = dialogueBox;
         index = parseScriptFile(scriptPath, 0);
+        whileIndex = -1;
         storedNums = new int[0];
         
     }
+
+    public void setRoomFlag( boolean flag ) { roomFlag = flag; }
     
     public void update( ) {
         
         if (index == -1) return;
         if (System.currentTimeMillis() - last < delay) return;
-        index = parseScriptFile(scriptPath, index);
+        if (whileIndex != -1) index = parseScriptFile(scriptPath, whileIndex);
+        else index = parseScriptFile(scriptPath, index);
         
     }
     
     private int parseScriptFile( String scriptPath, int lineNum ) {
         
+        /*System.out.println(lineNum);
+        System.out.println(whileIndex);
+        System.out.println();*/
         try {
             File f = new File(System.getProperty("user.dir") + "\\src\\game\\" + scriptPath);
             Scanner scan = new Scanner(f);
@@ -83,20 +90,82 @@ public class Script {
                 
                 if (line.startsWith("//")) continue;
                 
-                if (line.startsWith("If")) {
-                    if (line.charAt(3) == '!') {
-                        int len = checkIf(line.substring(4));
-                        if (len == -1) {
-                            String next = line.split(" ")[2];
-                            line = line.substring(line.indexOf(next));
-                        } else continue;
+                if (line.startsWith("Until")) {
+                    if (line.substring(6).startsWith("!")) {
+                        if (checkIf(line.substring(7)) != -1) {
+                            if (whileIndex != -1) return whileIndex;
+                            return i - 1;
+                        }
                     } else {
-                        int len = checkIf(line.substring(3));
-                        if (len != -1) {
-                            line = line.substring(4 + len);
-                        } else continue;
+                        if (checkIf(line.substring(6)) == -1) {
+                            if (whileIndex != -1) return whileIndex;
+                            return i - 1;
+                        }
                     }
                 }
+                
+                if (line.startsWith("Repeat Until")) {
+                    if (checkIf(line.substring(13)) == -1) return i - 2;
+                }
+
+                if (line.startsWith("If")) {
+                    int ifReturn = -1;
+                    if (line.startsWith("If !")) {
+                        ifReturn = checkIf(line.substring(4));
+                    } else {
+                        ifReturn = checkIf(line.substring(3));
+                    }
+                    
+                    if ((!line.startsWith("If !") && ifReturn == -1) || (line.startsWith("If !") && ifReturn != -1)) {
+                        // false
+                        int temp = i;
+                        while (scan.hasNextLine()) {
+                            line = scan.nextLine();
+
+                            temp++;
+                            if (line.startsWith("End If")) {
+                                i = temp;
+                                break;
+                            }
+                            /*if (line.startsWith("End If")) {
+                                //if (whileIndex != -1) return whileIndex;
+                                return temp;
+                            }*/
+                        }
+                    } else {
+                        // true
+                        continue;
+                    }
+                }
+
+                if (line.startsWith("While")) {
+                    int whileReturn = -1;
+                    if (line.startsWith("While !")) {
+                        whileReturn = checkIf(line.substring(7));
+                    } else {
+                        whileReturn = checkIf(line.substring(6));
+                    }
+                    
+                    if ((!line.startsWith("While !") && whileReturn == -1) || (line.startsWith("While !") && whileReturn != -1)) {
+                        //System.out.println("f");
+                        whileIndex = -1;
+                        int temp = i;
+                        while (scan.hasNextLine()) {
+                            line = scan.nextLine();
+
+                            temp++;
+                            if (line.startsWith("End While")) {
+                                return temp;
+                            }
+                        }
+                    } else {
+                        //System.out.println("t");
+                        whileIndex = i - 1;
+                        continue;
+                    }
+                }
+
+                if (line.startsWith("End While")) return whileIndex;
                 
                 if (line.startsWith(">  Object")) {
                     current = gameObjects[Integer.parseInt(line.substring(10, 12))];
@@ -200,9 +269,7 @@ public class Script {
                     }
                 }
                 
-                if (line.startsWith("Until")) {
-                    if (checkIf(line.substring(6)) == -1) return i - 1;
-                }
+                
                 
                 
                 
@@ -221,6 +288,21 @@ public class Script {
                     battle.waitOnTextBubble();
                 } if (line.startsWith("B  Start battle box growing")) {
                     battle.startBattleBoxGrowing();
+                }
+
+
+
+
+                // ROOM METHODS
+                if (line.startsWith("Room Flag Up")) roomFlag = true;
+                if (line.startsWith("Room Flag Down")) roomFlag = false;
+                if (line.startsWith("R  Add script")) {
+                    String[] sub = line.substring(14).split(",");
+                    room.addScript(sub[0], Integer.parseInt(sub[1]) - 1);
+                    //room.addScript(sub[0], Integer.parseInt(sub[1]) - 1);
+                }
+                if (line.startsWith("R  Update dialogue box vertical")) {
+                    room.updateDialogueBoxVertical();
                 }
                 
                 
@@ -263,6 +345,9 @@ public class Script {
                     if (line.startsWith("Switch to overworld")) p.switchToOverworld();
                     if (line.startsWith("Switch to soul")) p.switchToSoul();
                     if (line.startsWith("Turn")) p.turnDirection(Integer.parseInt(String.valueOf(line.charAt(5))));
+                    if (line.startsWith("Stop Stepping")) p.stopStepping();
+                    if (line.startsWith("Is Camera Shake")) p.setIsCameraShake(Boolean.parseBoolean(line.substring(16)));
+                    
                 } catch (ClassCastException e) {}
                 
                 
@@ -273,7 +358,17 @@ public class Script {
                 try {
                     Entity e = (Entity) current;
                     if (line.startsWith("Turn")) {
-                        e.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
+                        if (e != null) e.turn(Integer.parseInt(String.valueOf(line.charAt(5))));
+                    }
+                    if (line.startsWith("Set Dialogue")) {
+                        String[] substrings = line.substring(13).split(",");
+                        if (e != null) e.setDialogue(substrings[0], Integer.parseInt(substrings[1]));
+                    }
+                    if (line.startsWith("Set Collision")) {
+                        String[] substrings = line.substring(14).split(",");
+                        if (e != null) e.setCollision(new Rectangle(Integer.parseInt(substrings[0]),
+                            Integer.parseInt(substrings[1]), Integer.parseInt(substrings[2]), 
+                            Integer.parseInt(substrings[3])));
                     }
                 } catch (ClassCastException e) {}
                     
@@ -303,6 +398,7 @@ public class Script {
                         p.startAt(Integer.parseInt(a), Integer.parseInt(b));
                     }
                     if (line.equals("Restart")) paso.getPath().restart();
+                    if (line.equals("Start Moving")) paso.startMoving();
                     if (line.equals("Stop Moving")) paso.stopMoving();
                 } catch (ClassCastException e) {}
                 
@@ -350,6 +446,7 @@ public class Script {
                     if (line.equals("Animate")) {aso.animate();}
                     if (line.equals("Pause")) {aso.pause();}
                     if (line.equals("Resume")) {aso.resume();}
+                    if (line.equals("Next")) {aso.nextSprite();}
                 } catch (ClassCastException e) {}
                 
                 
@@ -378,14 +475,15 @@ public class Script {
     
     private int checkIf( String line ) {
         
+        if (line.startsWith("True")) return 4;
+        if (line.startsWith("False")) return -1;
         if (line.contains("<")) {
             int temp = line.indexOf("<");
             int first = storedNums[Integer.parseInt(line.substring(temp - 3, temp - 1))];
             int second = storedNums[Integer.parseInt(line.substring(temp + 2,temp + 4))];
             if (first < second) return 7;
         }
-        if (line.contains("Finished-Moving") && 
-                line.startsWith("Finished-Moving")) {
+        if (line.startsWith("Finished-Moving")) {
             try {
                 PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
                 if (paso.finishedMoving()) {
@@ -393,34 +491,69 @@ public class Script {
                 }
             } catch (ClassCastException e) {}
         }
-        if (line.contains("Finished-Animating") && 
-                line.startsWith("Finished-Animating")) {
+        if (line.startsWith("Finished-Animating")) {
             try {
                 AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
                 if (aso.finishedAnimating()) {return 18;}
             } catch (ClassCastException e) {}
         }
-        if (line.contains("Is-Animating") && 
-                line.startsWith("Is-Animating")) {
+        if (line.startsWith("Is-Animating")) {
             try {
                 AnimatedSpritedObject aso = (AnimatedSpritedObject) current;
                 if (aso.isAnimating()) {return 12;}
             } catch (ClassCastException e) {}
         }
-        if (line.contains("Path-Finished") && 
-                line.startsWith("Path-Finished")) {
+        if (line.startsWith("Path-Finished")) {
             try {
                 PathedAnimatedSpritedObject paso = (PathedAnimatedSpritedObject) current;
                 if (paso.getPath().isFinished()) {return 13;}
             } catch (ClassCastException e) {}
         }
-        if (line.contains("Alive") && line.startsWith("Alive")) {
+        if (line.startsWith("Alive")) {
             try {
                 Battler b = (Battler) current;
                 if (b.isAlive()) {return 5;}
             } catch (ClassCastException e) {}
         }
         if (line.startsWith("Stored") && storedBoolean) return 6;
+        if (line.startsWith("Event Flag")) {
+            if (room.isEventFlag()) return 10;
+        }
+        if (line.startsWith("Room Flag")) {
+            if (roomFlag) return 8;
+        }
+        if (line.startsWith("Dialogue Finished")) {
+            if (!dialogueBox.isShowing()) return 17;
+        }
+        if (line.startsWith("Position At")) {
+            String[] substrings = line.split(",");
+            boolean xEq = current.getX() == Integer.parseInt(substrings[0].substring(12));
+            int firstSpace = substrings[1].indexOf(" ");
+            if (firstSpace == -1) firstSpace = substrings[1].length() - 1;
+            boolean yEq = current.getY() == Integer.parseInt(substrings[1]);
+            //if (!(xEq && yEq)) System.out.println(current.getY());
+            if (xEq && yEq) return substrings[0].length() + 1 + substrings[1].substring(0, firstSpace).length();
+        }
+        if (line.startsWith("Colliding")) {
+            String[] substrings = line.split(",");
+            Rectangle r = new Rectangle(Integer.parseInt(substrings[1]),
+                Integer.parseInt(substrings[2]), Integer.parseInt(substrings[3]),
+                Integer.parseInt(substrings[4]));
+            int length = line.split(" ")[0].length();
+            Player p = (Player) current;
+            if (p != null && p.getRect().isColliding(r)) return length;
+        }
+        if (line.startsWith("Interact")) {
+            String[] substrings = line.split(",");
+            Rectangle r = new Rectangle(Integer.parseInt(substrings[1]),
+                Integer.parseInt(substrings[2]), Integer.parseInt(substrings[3]),
+                Integer.parseInt(substrings[4]));
+            int length = line.split(" ")[0].length();
+            Player p = (Player) current;
+            if (p != null && p.getRect().isColliding(r)
+                    && p.facing() == Integer.parseInt(substrings[5])
+                    && Game.getKeyListener().z()) return length;
+        }
         return -1;
     }
     

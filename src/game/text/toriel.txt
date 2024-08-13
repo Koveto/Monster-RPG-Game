@@ -1,0 +1,25 @@
+// Script
+// xComponent, yComponent, respectToX, respectToY, startT, endT, increment, loop
+>  Object 01 (Toriel)
+Turn 3
+Start Moving
+Animate
+//
+While !Position At 974,233
+If Path-Finished
+If !Stored
+Pause
+Set Dialogue text\entity1.txt\,0
+Turn 2
+Store True
+End If
+End If
+If Room Flag
+Set Dialogue text\entity1.txt\,1
+Room Flag Down
+End If
+End While
+//
+Until Room Flag
+Set Dialogue text\entity1.txt\,3
+Room Flag Down

@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 7/9/2023
+ * @version 1/7/2024
  */
 public class DialogueBox {
     
@@ -57,7 +57,10 @@ public class DialogueBox {
         
         if (dialogue.length <= textIndex + 1) return false;
         textIndex++;
-        displayMessage( dialogue[textIndex], faces[textIndex] );
+        int temp = textIndex;
+        while (temp >= faces.length) temp--;
+        displayMessage( dialogue[textIndex], faces[temp] );
+        
         return true;
         
     }
@@ -129,18 +132,40 @@ public class DialogueBox {
         if (blinkCount == blinkTime) {
             face.setSprites(DialogueHandler.getFaceGraphic(blinkChar.concat("_Blink")));
         } else if (blinkCount >= blinkTime + DialogueHandler.DELAY_BLINKINCREMENT) {
-            if (face.getSpriteIndex() == 2) {
-                Random r = new Random();
-                blinkTime = r.nextInt(DialogueHandler.DELAY_RANDOMBLINK) + DialogueHandler.DELAY_BLINK;
-                blinkCount = 0;
-                face.setSprites(DialogueHandler.getFaceGraphic(blinkChar));
-            }
+            Random r = new Random();
+            blinkTime = r.nextInt(DialogueHandler.DELAY_RANDOMBLINK) + DialogueHandler.DELAY_BLINK;
+            blinkCount = 0;
+            face.setSprites(DialogueHandler.getFaceGraphic(blinkChar));
         }
         
     }
+
+    public void switchVertical( boolean toTopOfScreen ) {
+        if (toTopOfScreen) {
+            int FROM_TOP = 9;
+            outer.setY(FROM_TOP);
+            inner.setY(FROM_TOP + 6);
+            face.setY(FROM_TOP + 35);
+            texts[0].setY(FROM_TOP + 50);
+            texts[1].setY(FROM_TOP + 50 + 37);
+            texts[2].setY(FROM_TOP + 50 + 37 + 39);
+        } else {
+            outer.setY(320);
+            inner.setY(320 + 6);
+            face.setY(320 + 35);
+            texts[0].setY(320 + 50);
+            texts[1].setY(320 + 50 + 37);
+            texts[2].setY(320 + 50 + 37 + 39);
+        }
+    }
+
+    public Rectangle getOuterRect( ) { return outer; }
     
     public GameObject[] getObjects( ) {
         
+        inner.setX(RenderHandler.getCamera().getX() + 33 + 6);
+        outer.setX(RenderHandler.getCamera().getX() + 33);
+        face.setX(RenderHandler.getCamera().getX() + 59);
         if (blinking) blink();
         if (show) return new GameObject[] {inner, outer, face};
         else return new GameObject[] {};
@@ -150,14 +175,14 @@ public class DialogueBox {
     public Text[] getText( ) {
         
         if (show) {
-            if (texts[1].isFinishedScrolling()) {
-                texts[2].setScroll(true);
-                return texts;
-            }
-            if (texts[0].isFinishedScrolling()) {
+            if (texts[0].isFinishedScrolling() && !texts[1].isFinishedScrolling()) {
                 texts[1].setScroll(true);
                 return new Text[] {texts[0], texts[1]};
             } 
+            if (texts[0].isFinishedScrolling() && texts[1].isFinishedScrolling()) {
+                texts[2].setScroll(true);
+                return texts;
+            }
             return new Text[] {texts[0]};
             
         }

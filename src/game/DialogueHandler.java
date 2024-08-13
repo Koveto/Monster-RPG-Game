@@ -1,6 +1,7 @@
 package game;
 
 import game.gameObjects.Rectangle;
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -9,14 +10,14 @@ import java.util.Scanner;
 /**
  * DialogueHandler
  * @author  Kobe Goodwin
- * @version 7/9/2023
+ * @version 8/25/2023
  */
 public class DialogueHandler {
     
     public static   int X_DEFAULT = 59,
                         X_FACE = 200,
                         X_INDENT = 236,
-                        DELAY_BLINK = 5000,
+                        DELAY_BLINK = 3000,
                         DELAY_RANDOMBLINK = 1000,
                         DELAY_BLINKINCREMENT = 525,
                         DELAY_DIALOGUESOUND = 50;
@@ -89,6 +90,12 @@ public class DialogueHandler {
         
     }
     
+    public static DialogueTrigger parseEntityDialogue( String dialoguePath, int index ) {
+        
+        return parseDialogueFile(dialoguePath).get(index);
+        
+    }
+    
     public static ArrayList<DialogueTrigger> parseDialogueFile( String dialoguePath ) {
         
         ArrayList<DialogueTrigger> temp = new ArrayList();
@@ -100,7 +107,7 @@ public class DialogueHandler {
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 if (line.contains("//")) continue;
-                if (line.charAt(0) == '#') {
+                if (line.length() > 0 && line.charAt(0) == '#') {
                     if (texts.length != 0) {
                         temp.add(new DialogueTrigger(new Rectangle(
                             xywhd[0], xywhd[1], xywhd[2], xywhd[3]),
@@ -111,6 +118,7 @@ public class DialogueHandler {
                         xywhd[i] = Integer.parseInt(splitString[i]);
                     }
                     texts = new String[0];
+                    faces = new String[0];
                 } else {
                     if (line.charAt(0) == '>') {
                         faces = Game.addToStringArray(faces, line.substring(2));
