@@ -40,9 +40,40 @@ public class RenderHandler
     public static void render( Graphics graphics )
     {   
         graphics.drawImage(view, 0, 0, view.getWidth(), view.getHeight(), null);
-        
     }
     
+    /**
+     * Renders each line of a Text object to the screen
+     * @param graphics  Graphics object
+     * @param text      Text rendering
+     * @param lines     List of lines
+     * @param i         Index of list to render
+     */
+    private static void renderLine( Graphics graphics, Text text, String[] lines, int i ) {
+
+        boolean isYellowText = false;
+        boolean isBlueText = false;
+        String[] yellowDivisions = lines[i].split(TextHandler.YELLOW_CODE);
+        String[] blueDivisions = lines[i].split(TextHandler.BLUE_CODE);
+        if (yellowDivisions.length > 1 || lines[i].endsWith(TextHandler.YELLOW_CODE))
+            isYellowText = renderUniqueTextColor(graphics, text, yellowDivisions, TextHandler.YELLOW, isYellowText, lines[i], i);
+        else if (blueDivisions.length > 1 || lines[i].endsWith(TextHandler.BLUE_CODE))
+            isBlueText = renderUniqueTextColor(graphics, text, blueDivisions, TextHandler.BLUE, isBlueText, lines[i], i);
+        else {
+            if (isYellowText) {
+                graphics.setColor(TextHandler.YELLOW);
+            } else if (isBlueText) {
+                graphics.setColor(TextHandler.BLUE);
+            } else {
+                graphics.setColor(text.getColor());
+            }
+            graphics.drawString(lines[i], text.getX(), 
+                text.getY() + (i * graphics.getFontMetrics().getHeight())
+                + (i * text.getNewLineSpace()));
+        }
+
+    }
+
     /**
      * Renders a Text object to the screen.
      * @param graphics  Graphics to draw to.
@@ -53,27 +84,8 @@ public class RenderHandler
         graphics.setFont(text.getFont());
         graphics.setColor(text.getColor());
         String[] lines = TextHandler.formatMessage(graphics, text).split("\n");
-        boolean isYellowText = false;
-        boolean isBlueText = false;
         for (int i = 0; i < lines.length; i++) {
-            String[] yellowDivisions = lines[i].split(TextHandler.YELLOW_CODE);
-            String[] blueDivisions = lines[i].split(TextHandler.BLUE_CODE);
-            if (yellowDivisions.length > 1 || lines[i].endsWith(TextHandler.YELLOW_CODE))
-                isYellowText = renderUniqueTextColor(graphics, text, yellowDivisions, TextHandler.YELLOW, isYellowText, lines[i], i);
-            else if (blueDivisions.length > 1 || lines[i].endsWith(TextHandler.BLUE_CODE))
-                isBlueText = renderUniqueTextColor(graphics, text, blueDivisions, TextHandler.BLUE, isBlueText, lines[i], i);
-            else {
-                if (isYellowText) {
-                    graphics.setColor(TextHandler.YELLOW);
-                } else if (isBlueText) {
-                    graphics.setColor(TextHandler.BLUE);
-                } else {
-                    graphics.setColor(text.getColor());
-                }
-                graphics.drawString(lines[i], text.getX(), 
-                    text.getY() + (i * graphics.getFontMetrics().getHeight())
-                    + (i * text.getNewLineSpace()));
-            }
+            renderLine(graphics, text, lines, i);
         }
     }
     
