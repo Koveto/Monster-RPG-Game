@@ -2,18 +2,18 @@ package game;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 
 /**
  * TextHandler
  * @author Kobe Goodwin
- * @version 8/25/2023
+ * @version 8/25/2024
  * 
  * Handles the formatting, wrapping, and parsing of Texts.
  */
@@ -53,6 +53,7 @@ public class TextHandler {
     
     public static final int DEFAULT_WRAP = 500,
                             INDENT_WRAP = 400,
+                            FACE_WRAP = 375,
                             SHORT_WRAP = 200,
                             BUBBLE_WRAP = 100;
     
@@ -116,7 +117,7 @@ public class TextHandler {
      * @return      Array of Texts interpreted from file.
      * @throws FileNotFoundException    if file cannot be opened.
      */
-    public static Text[] parseText( String path ) throws FileNotFoundException {
+    public static Text[] retrieveTextsFromFile( String path ) throws FileNotFoundException {
         
         ArrayList<Text> text = new ArrayList<>();
         Scanner scan = new Scanner(new File(path));
@@ -136,7 +137,7 @@ public class TextHandler {
      * @param text      Text to format
      * @return          Formatted message
      */
-    public static String formatMessage( Graphics graphics, Text text ) {
+    public static String applyScrollWrap( Graphics graphics, Text text ) {
         
         String message = text.applyScroll(wrapMessage(graphics, text.getMessage(), text.getWrapSize()));
         return message;
@@ -151,45 +152,66 @@ public class TextHandler {
      */
     public static String wrapMessage( Graphics graphics, String message, int wrapSize ) {
         
+        // *   Do   you   need   some   help..?   *   Press   the   switch   on   the   wall.
         Scanner scan = new Scanner(message);
-        String toReturn = "";
+        String toReturn = ""; // Includes newLines
         String currentLine = "";
         int currentIndex = 0;
         int afterIndex = 0;
         int numSpaces = -1;
         while (scan.hasNext()) {
-            String token = scan.next();
+            String token = scan.next(); // "*"", "Do","you"..."help..?","*","Press"..."wall."
             currentIndex = message.indexOf(token, currentIndex) + token.length();
+            // "*   Do   you   need   some   help..?   *   Press   the   switch   on   the   wall."
+            //   ^    ^     ^      ^      ^         ^   ^       ^     ^        ^    ^     ^       ^
             String restOfMessage = message.substring(currentIndex, message.length());
+            // "   Do   you   need   some   help..?   *   Press   the   switch   on   the   wall."
             if (numSpaces == -1) {
                 numSpaces++;
                 String current = message.substring(0,currentIndex);
                 int temp2 = 0;
                 while (current.charAt(temp2) == ' ') {temp2++;}
                 numSpaces = temp2;
+            // Counts the number of spaces before message so they can be added again later
+            // Makes "      - TORIEL" work
             }
             Scanner tempScan = new Scanner(restOfMessage);
             String nextToken = "";
             if (tempScan.hasNext())
-                nextToken = tempScan.next();
+                nextToken = tempScan.next(); // "Do","you"...""
             if (nextToken.equals("")) {
                 afterIndex = message.length();
             } else {
                 afterIndex = message.indexOf(nextToken, currentIndex);
+            // *   Do   you   need   some   help..?   *   Press   the   switch   on   the   wall.
+            //     ^    ^     ^      ^      ^         ^   ^       ^     ^        ^    ^     ^    ^
             }
-            String between = message.substring(currentIndex, afterIndex);
+            String between = message.substring(currentIndex, afterIndex); // "   ","   "...""
             if (graphics.getFontMetrics().stringWidth(currentLine) + 
                     graphics.getFontMetrics().stringWidth(token) > wrapSize) {
-                toReturn += "\n" + token + between;
+                if (token.contains("*"))
+                    toReturn += "\n" + token + between;
+                    // "*   Do   you   need   some   help..?
+                    //  *   Press   "
+                else
+                    toReturn += "\n      " + token + between;
+                    // "*   To   make   progress   here,
+                    //      you   will   need   "
                 currentLine = token + between;
             } else if (token.equals(NEWLINE)) {
                 toReturn += "\n";
                 currentLine = "";
+                // Where the message is: 
+                // *   Splendid!   /N   *   I   am   proud   of   you,   little   one.
+                // toReturn: "*   Splendid!
+                //           "
             } else {
                 toReturn += token + between;
                 currentLine += token + between;
+                // "*   Do   you   "
             }
         }
+        scan.close();
         if (numSpaces == -1) return message;
         return " ".repeat(numSpaces) + toReturn;
         

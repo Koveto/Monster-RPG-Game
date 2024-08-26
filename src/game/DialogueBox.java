@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * DialogueBox
  * @author Kobe Goodwin
- * @version 1/7/2024
+ * @version 8/25/2024
  */
 public class DialogueBox {
     
@@ -95,7 +95,7 @@ public class DialogueBox {
             }
             for (Text t : texts) {
                 t.setX(DialogueHandler.X_FACE);
-                t.setWrap(TextHandler.INDENT_WRAP);
+                t.setWrap(TextHandler.FACE_WRAP);
             }
             face.show();
             face.animate();

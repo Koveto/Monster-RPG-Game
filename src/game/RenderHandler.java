@@ -11,7 +11,7 @@ import java.awt.image.DataBufferInt;
 /**
  * RenderHandler
  * @author Kobe Goodwin
- * @version 8/15/2023
+ * @version 8/25/2024
  * 
  * Handles the rendering of various types of data to the screen.
  */
@@ -83,7 +83,7 @@ public class RenderHandler
         
         graphics.setFont(text.getFont());
         graphics.setColor(text.getColor());
-        String[] lines = TextHandler.formatMessage(graphics, text).split("\n");
+        String[] lines = TextHandler.applyScrollWrap(graphics, text).split("\n");
         for (int i = 0; i < lines.length; i++) {
             renderLine(graphics, text, lines, i);
         }

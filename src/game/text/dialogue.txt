@@ -12,8 +12,8 @@
 * Maybe?
 # 0,0,0,0,0
 > Toriel_Smile
-* To make progress here,@>you will need to trigger@>several switches.
-* Do not worry, I have@>labelled the ones that@>you need to flip.
+* To make progress here, you will need to trigger several switches.
+* Do not worry, I have labelled the ones that you need to flip.
 # 760,120,10,30,1
 > None
 * Please press this switch.@@> - TORIEL
@@ -25,6 +25,6 @@
 * This switch doesn't even work...
 # 0,0,0,0,0
 > Toriel_Smile
-* Splendid!@* I am proud of you,@>little one.
-* Let us move to the@>next room.
+* Splendid! /N * I am proud of you, little one.
+* Let us move to the next room.
 # 0,0,0,0,0
