@@ -2,6 +2,6 @@
 // # x, y, w, h, direction (up, down, left, right)
 // txt
 # 0,0,0,0,0
-> Toriel_Smile
+> Toriel_Smile,Toriel
 * I was merely behind this@>pillar the whole time?
 # 0,0,0,0,0

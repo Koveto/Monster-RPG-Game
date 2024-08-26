@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * DialogueHandler
  * @author  Kobe Goodwin
- * @version 8/25/2023
+ * @version 8/26/2024
  */
 public class DialogueHandler {
     
@@ -104,6 +104,7 @@ public class DialogueHandler {
             int[] xywhd = new int[5];
             String[] texts = new String[0];
             String[] faces = new String[0];
+            String[] sounds = new String[0];
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 if (line.contains("//")) continue;
@@ -111,7 +112,7 @@ public class DialogueHandler {
                     if (texts.length != 0) {
                         temp.add(new DialogueTrigger(new Rectangle(
                             xywhd[0], xywhd[1], xywhd[2], xywhd[3]),
-                            texts, faces, xywhd[4]));
+                            texts, faces, sounds, xywhd[4]));
                     }
                     String[] splitString = line.substring(2).split(",");
                     for (int i = 0; i < splitString.length; i++) {
@@ -119,9 +120,12 @@ public class DialogueHandler {
                     }
                     texts = new String[0];
                     faces = new String[0];
+                    sounds = new String[0];
                 } else {
                     if (line.charAt(0) == '>') {
-                        faces = Game.addToStringArray(faces, line.substring(2));
+                        String[] splitString = line.substring(2).split(",");
+                        faces = Game.addToStringArray(faces, splitString[0]);
+                        sounds = Game.addToStringArray(sounds, splitString[1]);
                     } else {
                         texts = Game.addToStringArray(texts, line);
                     }

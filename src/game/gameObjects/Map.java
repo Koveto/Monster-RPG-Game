@@ -2,8 +2,6 @@ package game.gameObjects;
 
 import game.Game;
 import game.RenderHandler;
-import game.TileSet;
-import game.gameObjects.GameObject;
 import game.Sprite;
 import game.SpriteSheet;
 import java.awt.Graphics;
@@ -15,7 +13,7 @@ import java.util.Scanner;
 /**
  * Map
  * @author Kobe Goodwin
- * @version 7/18/2023
+ * @version 8/26/2024
  * 
  * Plots a TileSet to the screen from a file specifying x and y positions.
  */

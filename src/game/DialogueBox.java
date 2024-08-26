@@ -16,7 +16,7 @@ public class DialogueBox {
     private AnimatedSpritedObject face;
     private Rectangle inner, outer;
     private Text[] texts;
-    private String[] dialogue, faces;
+    private String[] dialogue, faces, sounds;
     private String blinkChar;
     private boolean show, usingFace, blinking;
     private int textIndex, blinkCount, blinkTime;
@@ -33,6 +33,7 @@ public class DialogueBox {
             new Text("Default flavor text", 200, 446, true, TextHandler.WHITE, TextHandler.DIALOGUE_FONT, "Text", TextHandler.DEFAULT_WRAP, true, 0)};
         dialogue = new String[0];
         faces = new String[0];
+        sounds = new String[0];
         show = false;
         
     }
@@ -59,29 +60,31 @@ public class DialogueBox {
         textIndex++;
         int temp = textIndex;
         while (temp >= faces.length) temp--;
-        displayMessage( dialogue[textIndex], faces[temp] );
+        displayMessage( dialogue[textIndex], faces[temp], sounds[temp] );
         
         return true;
         
     }
     
-    public void newMessage( String[] dialogue, String[] faces ) {
+    public void newMessage( String[] dialogue, String[] faces, String[] sounds ) {
         
         this.dialogue = dialogue;
         this.faces = faces;
+        this.sounds = sounds;
         textIndex = 0;
         blinking = false;
         blinkCount = 0;
-        displayMessage( dialogue[0], faces[0] );
+        displayMessage( dialogue[0], faces[0], sounds[0] );
         
     }
     
-    public void displayMessage( String message, String newFace ) {
+    public void displayMessage( String message, String newFace, String sound ) {
         
        if (newFace.equals("None")) {
             for (Text t : texts) {
                 t.setX(DialogueHandler.X_DEFAULT);
                 t.setWrap(TextHandler.DEFAULT_WRAP);
+                t.setSound(sound);
             }
             face.hide();
             face.pause();
@@ -96,6 +99,7 @@ public class DialogueBox {
             for (Text t : texts) {
                 t.setX(DialogueHandler.X_FACE);
                 t.setWrap(TextHandler.FACE_WRAP);
+                t.setSound(sound);
             }
             face.show();
             face.animate();

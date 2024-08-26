@@ -1,21 +1,12 @@
 package game;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.image.BufferStrategy;
-import java.awt.image.ImageObserver;
-import java.text.AttributedCharacterIterator;
 
 /**
  * Text
  * @author Kobe Goodwin
- * @version 8/24/2023
+ * @version 8/26/2024
  * 
  * A message to be drawn to the screen. 
  */
@@ -145,16 +136,40 @@ public class Text {
         return scrollIndex >= message.length();
         
     }
+
+    /**
+     * Mutator for dialogue sound
+     * @param sound See a_music for identifiers
+     */
+    public void setSound( String sound ) {
+
+        this.sound = sound;
+
+    }
     
     /**
-     * Retrieves the message at its current scroll position.
+     * Shortens the message at its current scroll position.
      * @return  String containing message at its current scroll position.
      */
     public String applyScroll( String message ) {
         
+        // Example message:
+        // "*   To   make   progress   here,
+        //        you   will   need   to   trigger
+        //        several   switches."
+
+        // Trivial case, return full message
         if (scrollIndex == message.length() || !scrollingText) return message;
+
+        // If enough time has passed...
         if (System.nanoTime() - timeLastScroll > ((long) Game.scrollSpeed) * 10000000) {
-            scrollIndex++;
+            
+            // Increase the scrollIndex until it's not a space
+            scrollIndex++; 
+            while (scrollIndex > 0 && message.charAt(scrollIndex - 1) == ' ' && scrollIndex < message.length())
+                scrollIndex++;
+
+            // Play dialogue sound effect
             if (message.charAt(scrollIndex - 1) != ' ' && message.charAt(scrollIndex - 1) != '*'
                     && System.currentTimeMillis() - timeLastSound > DialogueHandler.DELAY_DIALOGUESOUND) {
                 if (sound != null) {
@@ -164,10 +179,17 @@ public class Text {
             }
             timeLastScroll = System.nanoTime();
         }
+
+        // Don't separate color codes ("* To make /Y progress here," highlghts "progress" yellow)
         if (message.substring(0, scrollIndex).endsWith("/") && message.charAt(scrollIndex) == 'Y'
                 || message.substring(0, scrollIndex).endsWith("/") && message.charAt(scrollIndex) == 'B') {
             return message.substring(0, scrollIndex - 1);
         } 
+
+        // Example output 1
+        // *   To
+        // Example output 2
+        // *   To   m
         return message.substring(0, scrollIndex);
         
     }

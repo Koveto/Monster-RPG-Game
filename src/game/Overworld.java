@@ -222,7 +222,8 @@ public class Overworld {
                     !dialogueBox.isShowing() && Game.getKeyListener().z() && 
                     player.facing() == room.getDialogueTriggers().get(i).getDirection()) {
                 dialogueBox.newMessage(room.getDialogueTriggers().get(i).getTexts(), 
-                        room.getDialogueTriggers().get(i).getFaces());
+                        room.getDialogueTriggers().get(i).getFaces(),
+                        room.getDialogueTriggers().get(i).getSounds());
                 player.stopStepping();
                 room.updateDialogueBoxVertical();
                 break;
@@ -234,7 +235,8 @@ public class Overworld {
                     !dialogueBox.isShowing() && Game.getKeyListener().z() && 
                     player.facing() == room.getEntityTriggers().get(i).getDirection()) {
                 dialogueBox.newMessage(room.getEntityTriggers().get(i).getTexts(), 
-                        room.getEntityTriggers().get(i).getFaces());
+                        room.getEntityTriggers().get(i).getFaces(),
+                        room.getEntityTriggers().get(i).getSounds());
                 room.setScriptFlag(true, i);
                 player.stopStepping();
                 room.updateDialogueBoxVertical();

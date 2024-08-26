@@ -8,12 +8,10 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
-
 /**
  * TextHandler
  * @author Kobe Goodwin
- * @version 8/25/2024
+ * @version 8/26/2024
  * 
  * Handles the formatting, wrapping, and parsing of Texts.
  */
@@ -57,11 +55,11 @@ public class TextHandler {
                             SHORT_WRAP = 200,
                             BUBBLE_WRAP = 100;
     
-    public static final int DEFAULT_SCROLL_SPEED = 2,
-                            FAST_SCROLL_SPEED = 1,
+    public static final int DEFAULT_SCROLL_SPEED = 4,
+                            FAST_SCROLL_SPEED = 2,
                             SKIP_SCROLL_SPEED = 0,
-                            SLOW_SCROLL_SPEED = 5,
-                            SLOWEST_SCROLL_SPEED = 1;
+                            SLOW_SCROLL_SPEED = 10,
+                            SLOWEST_SCROLL_SPEED = 15;
     
     
     /**
@@ -126,7 +124,7 @@ public class TextHandler {
         }
         Text[] arr = new Text[text.size()];
         arr = text.toArray(arr);
-        
+        scan.close();
         return arr;
         
     }
@@ -183,6 +181,7 @@ public class TextHandler {
                 afterIndex = message.length();
             } else {
                 afterIndex = message.indexOf(nextToken, currentIndex);
+            tempScan.close();
             // *   Do   you   need   some   help..?   *   Press   the   switch   on   the   wall.
             //     ^    ^     ^      ^      ^         ^   ^       ^     ^        ^    ^     ^    ^
             }

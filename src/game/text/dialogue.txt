@@ -2,29 +2,29 @@
 // # x, y, w, h, direction (up, down, left, right)
 // txt
 # 200,120,40,20,1
-> None
+> None,Text
 * Stay on the path. 
 # 260,279,40,10,1
-> None
+> None,Text
 * "Press [Z] to read signs!"
 # 0,0,0,0,0
-> Toriel_Smile
+> Toriel_Smile,Toriel
 * Maybe?
 # 0,0,0,0,0
-> Toriel_Smile
+> Toriel_Smile,Toriel
 * To make progress here, you will need to trigger several switches.
 * Do not worry, I have labelled the ones that you need to flip.
 # 760,120,10,30,1
-> None
+> None,Text
 * Please press this switch.@@> - TORIEL
 # 1200,120,10,30,1
-> None
+> None,Text
 * Please press this switch@  too.@> - TORIEL
 # 1320,120,10,30,1
-> None
+> None,Text
 * This switch doesn't even work...
 # 0,0,0,0,0
-> Toriel_Smile
+> Toriel_Smile,Toriel
 * Splendid! /N * I am proud of you, little one.
 * Let us move to the next room.
 # 0,0,0,0,0

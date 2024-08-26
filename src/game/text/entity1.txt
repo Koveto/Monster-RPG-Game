@@ -2,19 +2,19 @@
 // # x, y, w, h, direction (up, down, left, right)
 // txt
 # 940,280,19,50,4
-> Toriel_Neutral
+> Toriel_Neutral,Toriel
 * The first switch is over on the wall.
 # 940,280,19,50,4
-> Toriel_Thought
+> Toriel_Thought,Toriel
 * Do you need some help..? * Press the switch on the wall.
-> Toriel_Smile
+> Toriel_Smile,Toriel
 * Come on, you can do it!
 # 1440,280,19,50,4
-> Toriel_Neutral
+> Toriel_Neutral,Toriel
 * Go on, press the switch on the left.
 # 1440,280,19,50,4
-> Toriel_Thought
+> Toriel_Thought,Toriel
 * You do know which way left is, do you not?
-> Toriel_Smile
+> Toriel_Smile,Toriel
 * Press the switch that I labelled for you.
 # 0,0,0,0,0

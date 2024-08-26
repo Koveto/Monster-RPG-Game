@@ -24,7 +24,7 @@ import java.util.Scanner;
 /**
  * Script
  * @author Kobe Goodwin
- * @version 9/18/2023
+ * @version 8/26/2024
  */
 public class Script {
     
@@ -199,7 +199,7 @@ public class Script {
                         }
                     }
                     int num = Integer.parseInt(substrings[1]);
-                    dialogueBox.newMessage(newDt.get(num).getTexts(), newDt.get(num).getFaces());
+                    dialogueBox.newMessage(newDt.get(num).getTexts(), newDt.get(num).getFaces(), newDt.get(num).getSounds());
                 }
                 
                 if (line.startsWith("Move")) {
