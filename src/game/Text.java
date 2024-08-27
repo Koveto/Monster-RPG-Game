@@ -6,7 +6,7 @@ import java.awt.Font;
 /**
  * Text
  * @author Kobe Goodwin
- * @version 8/26/2024
+ * @version 8/27/2024
  * 
  * A message to be drawn to the screen. 
  */
@@ -56,6 +56,7 @@ public class Text {
      * @param sound             Sound for text scroll
      * @param wrapSize          Width of wrap
      * @param doubleSpaces      True to double the spaces
+     * @param newLineSpace      Distance to add between new lines
      */
     public Text( String message, int x, int y, boolean scrollingText, 
             Color color, Font font, String sound,
@@ -246,6 +247,35 @@ public class Text {
         else this.message = message;
         scrollIndex = 0;
         timeLastScroll = System.nanoTime();
+        
+    }
+
+    /**
+     * Compares Object to Text. Returns True if they are both Texts
+     * with the same Message. Their other fields can be differ.
+     * @param o Object to compare to.
+     * @return  Boolean evaluating if the message is the same.
+     */
+    public boolean equals( Object o ) {
+        
+        if (!(o instanceof Text)) return false;
+        Text t = (Text) o;
+        return t.getMessage().equals(this.getMessage());
+    }
+
+    /**
+     * Describes Text.
+     * @return  String describing Text.
+     */
+    public String toString( ) {
+        
+        return "Text object {Message=\n[" + message + "]\nSound=[" + sound + "]\nScrolling Text? " + 
+        String.valueOf(scrollingText) + "\nDouble Spaces? " + String.valueOf(doubleSpaces) + 
+        "\nX, Y: " + String.valueOf(x) + ", " + String.valueOf(y) + "\nScrollIndex: " +
+        String.valueOf(scrollIndex) + "\nWrap: " + String.valueOf(wrap) + "\nnewLineSpace: " +
+        String.valueOf(newLineSpace) + "\ntimeLastScroll: " + String.valueOf(timeLastScroll) +
+        "\ntimeLastSound: " + String.valueOf(timeLastSound) + "\nColor: " + String.valueOf(color) +
+        "\nFont: " + String.valueOf(font) + "}";
         
     }
     

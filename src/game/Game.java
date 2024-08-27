@@ -4,32 +4,21 @@ package game;
 
 import game.gameObjects.SpritedObject;
 import game.gameObjects.Player;
-import game.gameObjects.DoublySpritedObject;
 import game.gameObjects.Entity;
 import game.gameObjects.GameObject;
 import game.gameObjects.Rectangle;
 import game.listeners.MouseEventListener;
 import game.listeners.KeyboardListener;
-import java.awt.AlphaComposite;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import java.io.IOException;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 public class Game extends JFrame implements Runnable {
     
@@ -50,7 +39,6 @@ public class Game extends JFrame implements Runnable {
     
     private final BufferedImage iconImage;
     
-    private final SpriteSheet soulSheet;
     private final SpritedObject ftb;
     
     private Overworld overworld;
@@ -92,7 +80,6 @@ public class Game extends JFrame implements Runnable {
         music2 = new Sound();
         sound = new Sound();
         
-        soulSheet = new SpriteSheet(loadImage("ss\\soul.png"), 18, 18);
         SpriteSheet friskSheet = new SpriteSheet(Game.loadImage("ss//frisk.png"), 19, 29);
         Player player = new Player("CHARA", friskSheet.getSprites(), new Path("1", "1", 200, 200, 0, 0, 0.1, true), 200, 200, 100, 20, 1, false, true);
         

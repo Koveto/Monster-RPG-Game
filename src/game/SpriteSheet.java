@@ -1,12 +1,11 @@
 package game;
 
 import java.awt.image.BufferedImage;
-import java.time.Clock;
 
 /**
  * SpriteSheet
  * @author Kobe Goodwin
- * @version 8/13/2023
+ * @version 8/27/2024
  * 
  * A container for several Sprites loaded from a sheet image.
  */
